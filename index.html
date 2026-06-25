@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>통합 매뉴얼 허브 · KT 메시징</title>
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <template id="__bundler_thumbnail" data-bg-color="#ffffff">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="800" fill="#ffffff"/>
+      <rect x="470" y="262" width="120" height="120" rx="30" fill="#4f46e5"/>
+      <g stroke="#ffffff" stroke-width="13" stroke-linejoin="round" stroke-linecap="round" fill="none">
+        <path d="M530 300l40 20-40 20-40-20z"/>
+        <path d="M490 333l40 20 40-20"/>
+      </g>
+      <rect x="470" y="430" width="260" height="26" rx="13" fill="#0f172a"/>
+      <rect x="500" y="482" width="200" height="18" rx="9" fill="#cbd2e0"/>
+    </svg>
+  </template>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <!-- 표 영역 이미지 저장용 (설치 준비사항·방화벽) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- 데이터 모델 (plain JS) -->
+  <script src="data.js"></script>
+  <script src="versions.js"></script>
+  <script src="resultcodes.js"></script>
+
+  <!-- 본문 콘텐츠 — 공용 더미 생성기 + 셀(agent×service) -->
+  <!-- 새 매뉴얼 셀 추가 시 이 목록에 <script> 한 줄을 더한다. -->
+  <script src="content/common.js"></script>
+  <script src="content/openapi/smart.js"></script>
+  <script src="content/openapi/communis.js"></script>
+  <script src="content/openapi/rcs.js"></script>
+  <script src="content/openapi/twoway.js"></script>
+  <script src="content/mcs/smart.js"></script>
+  <script src="content/mcs/rcs.js"></script>
+  <script src="content/m2x_one/smart.js"></script>
+  <script src="content/m2x_one/communis.js"></script>
+  <script src="content/m2x_one/rcs.js"></script>
+  <script src="content/tw/twoway.js"></script>
+
+  <!-- 서비스 콘텐츠 셀(서비스 상세 페이지 플로우) -->
+  <script src="content/services/smart.js"></script>
+  <script src="content/services/rcs.js"></script>
+
+  <!-- 본문 소비자(셀 → 섹션 조립) -->
+  <script src="manuals.js"></script>
+
+  <!-- 컴포넌트 / 화면 / 앱 (JSX) -->
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

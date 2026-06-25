@@ -1,0 +1,5 @@
+node_modules/
+temp/
+_codecheck/
+.DS_Store
+*.log
