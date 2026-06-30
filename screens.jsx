@@ -539,8 +539,13 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
 }
 
 function Home({ index, onNavigate }) {
-  const services = window.HUB.SERVICES;
-  const agents = window.HUB.visibleAgents(); // hidden(비공개) 에이전트는 홈 목록에서 제외
+  // 사용 가능(발행됨) 항목이 위로 오도록 정렬 — 그룹 내 기존 순서는 유지(안정 정렬)
+  const services = window.HUB.SERVICES.slice().sort(
+    (a, b) => window.HUB.isServicePublished(b.id) - window.HUB.isServicePublished(a.id)
+  );
+  const agents = window.HUB.visibleAgents().sort( // hidden(비공개) 에이전트는 홈 목록에서 제외
+    (a, b) => window.HUB.isAgentPublished(b.id) - window.HUB.isAgentPublished(a.id)
+  );
   React.useEffect(() => {
     if (window.__homeScroll) {
       const id = window.__homeScroll; window.__homeScroll = null;

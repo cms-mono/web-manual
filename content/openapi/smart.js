@@ -754,10 +754,10 @@ public class ReserveInquiry {
               "아래는 <b>SMS 동보 발송</b> 최소 예제입니다. 인증 정보(API-KEY/SECRET-KEY)는 발급받은 값으로 바꿔 사용하세요. " +
               "HASH 계산에 쓴 <b>body 문자열을 그대로 전송</b>하는 점에 유의하세요.",
             codeTabs: [
+              { name: "Java", code: SEND_JAVA },
               { name: "Python", code: SEND_PY },
               { name: "cURL (bash)", code: SEND_CURL },
               { name: "Node.js", code: SEND_NODE },
-              { name: "Java", code: SEND_JAVA },
             ],
             note:
               "테스트 전 <b>발신(회신)번호 사전등록</b>과 <b>접속 IP 등록</b>이 되어 있어야 합니다. " +
@@ -864,10 +864,10 @@ public class ReserveInquiry {
           {
             title: "결과 조회 테스트 코드",
             codeTabs: [
+              { name: "Java", code: INQ_JAVA },
               { name: "Python", code: INQ_PY },
               { name: "cURL (bash)", code: INQ_CURL },
               { name: "Node.js", code: INQ_NODE },
-              { name: "Java", code: INQ_JAVA },
             ],
             note: "<code>job_ids</code>는 발송 응답에서 받은 <b>JobID</b>, <code>send_day</code>는 <b>발송 날짜(YYYYMMDD)</b>입니다. 동일 JobID 재조회는 권장 10분(최소 5분).",
           },
@@ -926,10 +926,10 @@ public class ReserveInquiry {
             title: "예약 취소·조회 테스트 코드",
             body: "<code>Type</code> 값으로 <b>취소(0)·조회(1)</b>를 구분합니다. 예약 발송 시 받은 JobID와 발송 날짜로 요청합니다.",
             codeTabs: [
+              { name: "Java", code: RSV_JAVA },
               { name: "Python", code: RSV_PY },
               { name: "cURL (bash)", code: RSV_CURL },
               { name: "Node.js", code: RSV_NODE },
-              { name: "Java", code: RSV_JAVA },
             ],
             note: "<b>Type 0</b>=예약 취소, <b>Type 1</b>=예약 조회. 차세대 센터는 <code>SendDay</code>(발송일)가 필수이며, JobID는 한 번에 최대 10건입니다.",
           },
