@@ -87,13 +87,13 @@
     },
     {
       id: "communis_api",
-      name: "Communis API",
-      label: "API",
+      name: "Communis 이용가이드",
+      label: "가이드",
       provider: "service",
       transport: "API",
       center: null,
-      desc: "Communis가 제공하는 통합 메시징 REST API 연동 방식.",
-      aliases: ["communis api", "커뮤니즈 api"],
+      desc: "Communis 통합 메시징 이용·연동 가이드 — 회원가입·발송 준비부터 웹 발송·REST API 연동까지.",
+      aliases: ["communis api", "커뮤니즈 api", "communis 이용가이드", "커뮤니즈 이용가이드", "커뮤니즈 웹발송", "communis web"],
       versions: [],
       supports: ["communis"],
       status: "live",
@@ -244,8 +244,8 @@
      '클릭 가능(활성)'하고 나머지는 비활성(회색)으로 잠긴다.
      검색·직접 URL 접근도 활성 항목으로 제한된다.
      ▶ 매뉴얼이 준비되면 해당 id를 배열에 추가해 버튼을 활성화한다.   */
-  const PUBLISHED_AGENTS = ["mcs", "openapi"];    // 클릭 활성 Agent
-  const PUBLISHED_SERVICES = ["smart", "rcs"];    // 클릭 활성 서비스
+  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api"];    // 클릭 활성 Agent
+  const PUBLISHED_SERVICES = ["smart", "rcs", "communis"];    // 클릭 활성 서비스
   function isAgentPublished(id) { return PUBLISHED_AGENTS.indexOf(id) >= 0; }
   function isServicePublished(id) { return PUBLISHED_SERVICES.indexOf(id) >= 0; }
   function publishedAgents() { return AGENTS.filter((a) => isAgentPublished(a.id)); }

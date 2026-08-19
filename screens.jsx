@@ -726,7 +726,7 @@ function buildPages(sections) {
         key: sec.service.id + "/" + f.id,
         serviceId: sec.service.id,
         featureId: f.id,
-        group: sec.navName || sec.service.name,
+        group: f.group || sec.navName || sec.service.name,
         title: f.name,
         construction: !!f.construction,
         steps: f.steps || [],
@@ -752,7 +752,7 @@ function buildNavGroups(pages) {
   const groups = [];
   pages.forEach((p, i) => {
     let g = groups[groups.length - 1];
-    if (!g || g.serviceId !== p.serviceId) {
+    if (!g || g.serviceId !== p.serviceId || g.name !== p.group) {
       g = { serviceId: p.serviceId, name: p.group, items: [] };
       groups.push(g);
     }

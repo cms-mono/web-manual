@@ -658,6 +658,34 @@ public class ReserveInquiry {
             note: "센터(1센터/2센터/차세대)는 고객 계정이 속한 센터를 사용합니다. <i>(소속 센터는 발급 정보 확인)</i>",
           },
           {
+            title: "방화벽 · 접속 정보 (IP / PORT)",
+            body: "크로샷 Open API를 호출하려면 아래 IP·PORT(HTTPS <code>443</code>)로 아웃바운드 통신이 열려 있어야 합니다. 발급받은 센터의 IP를 방화벽에 등록하세요.",
+            tables: [
+              {
+                label: "운영 센터",
+                cols: ["센터", "IP 정보", "포트", "비고"],
+                colWidths: ["18%", "34%", "12%", "36%"],
+                rows: [
+                  ["차세대 센터", "<code>14.32.72.77</code>", "<code>443</code>", "<code>openapis.xroshot.com</code>"],
+                  ["", "<code>14.32.72.203</code>", "", ""],
+                  ["", "<code>221.148.244.55</code>", "", ""],
+                  ["", "<code>221.148.244.157</code>", "", ""],
+                  ["1센터", "<code>119.205.196.198</code>", "<code>443</code>", "<code>openapi1.xroshot.com</code>"],
+                  ["2센터", "<code>210.105.195.164</code>", "<code>443</code>", "<code>openapi2.xroshot.com</code>"],
+                ],
+              },
+              {
+                label: "DEV — 테스트 계정 별도",
+                cols: ["센터", "IP 정보", "포트", "비고"],
+                colWidths: ["18%", "34%", "12%", "36%"],
+                rows: [
+                  ["레거시 DEV", "<code>112.175.63.244</code>", "<code>443</code>", "<code>devopenapi.xroshot.com</code>"],
+                ],
+              },
+            ],
+            note: "방화벽 확인은 <code>telnet &lt;목적지IP&gt; 443</code> 으로 점검합니다. 표의 IP·PORT는 드래그하여 복사할 수 있습니다. 미등록 발신 IP는 KT에 별도 등록해야 차단되지 않습니다. <b>DEV(devopenapi)는 테스트 계정 전용</b>으로 운영과 별개 계정·IP가 발급됩니다.",
+          },
+          {
             title: "요청 Body — 최상위 필드 (동보/대량)",
             body: "Content-Type: <code>application/json; charset=utf-8</code>. <b>Message</b>(동보)와 <b>Bundle</b>(대량)은 발송 방식에 따라 택일합니다.",
             table: {

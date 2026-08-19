@@ -504,12 +504,16 @@ function Shot({ shot }) {
         <div className="shot-dots"><i></i><i></i><i></i></div>
         <span className="shot-url">{shot.url}</span>
       </div>
-      <div className="shot-canvas">
-        <div className="shot-label">
-          <Icon name="grid" size={26} />
-          <span>{shot.label}</span>
+      {shot.img ? (
+        <img className="shot-img" src={shot.img} alt={shot.label || ""} loading="lazy" />
+      ) : (
+        <div className="shot-canvas">
+          <div className="shot-label">
+            <Icon name="grid" size={26} />
+            <span>{shot.label}</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
