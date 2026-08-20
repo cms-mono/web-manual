@@ -5,7 +5,12 @@
 /* 라우트 ↔ 해시 직렬화 */
 function routeToHash(r) {
   if (!r || r.name === "home") return "#/";
-  if (r.name === "service") return "#/service/" + r.id;
+  if (r.name === "service") {
+    const p = [];
+    if (r.anchor) p.push("sec=" + r.anchor);
+    if (r.q) p.push("q=" + encodeURIComponent(r.q));
+    return "#/service/" + r.id + (p.length ? "?" + p.join("&") : "");
+  }
   if (r.name === "agent") {
     const p = [];
     if (r.anchor) p.push("sec=" + r.anchor);
@@ -32,8 +37,15 @@ function hashToRoute(hash) {
     const [k, v] = p.split("=");
     if (k) params[k] = decodeURIComponent(v || "");
   });
-  if (parts[0] === "service") return { name: "service", id: parts[1] };
-  if (parts[0] === "agent") return { name: "agent", id: parts[1], anchor: params.sec, q: params.q || "" };
+  if (parts[0] === "service") return { name: "service", id: parts[1], anchor: params.sec, q: params.q || "" };
+  if (parts[0] === "agent") {
+    // serviceGuide 에이전트(예: Communis 이용가이드)는 서비스 경로로 정규화한다.
+    const ag = window.HUB && window.HUB.AGENT_MAP[parts[1]];
+    if (ag && ag.serviceGuide && ag.supports && ag.supports[0]) {
+      return { name: "service", id: ag.supports[0], anchor: params.sec, q: params.q || "" };
+    }
+    return { name: "agent", id: parts[1], anchor: params.sec, q: params.q || "" };
+  }
   if (parts[0] === "search") return { name: "search", q: params.q || "" };
   if (parts[0] === "changelog") return { name: "changelog" };
   if (parts[0] === "codes") return { name: "resultcodes", group: params.svc || "", q: params.q || "" };
@@ -241,7 +253,15 @@ function App() {
   }, [navigate]);
 
   let screen;
-  if (route.name === "service") screen = <ServiceView serviceId={route.id} index={index} onNavigate={navigate} />;
+  if (route.name === "service") {
+    const svc = window.HUB.SERVICE_MAP[route.id];
+    if (svc && svc.guideAgentId) {
+      // 이 서비스는 이용가이드(가이드 콘텐츠)를 서비스 경로에서 바로 렌더한다.
+      screen = <AgentDetail key={"svc-" + route.id} agentId={svc.guideAgentId} index={index} onNavigate={navigate} anchor={route.anchor} query={route.q} navToken={route._seq} />;
+    } else {
+      screen = <ServiceView serviceId={route.id} index={index} onNavigate={navigate} />;
+    }
+  }
   else if (route.name === "agent") screen = <AgentDetail key={route.id} agentId={route.id} index={index} onNavigate={navigate} anchor={route.anchor} query={route.q} navToken={route._seq} />;
   else if (route.name === "search") screen = <SearchResults query={route.q} index={index} onNavigate={navigate} />;
   else if (route.name === "changelog") screen = <Changelog onNavigate={navigate} />;

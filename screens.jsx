@@ -745,6 +745,7 @@ function buildPages(sections) {
         construction: !!f.construction,
         steps: f.steps || [],
         intro: f.intro,
+        mapGroups: f.mapGroups,
       }));
     } else {
       pages.push({
@@ -1031,6 +1032,36 @@ function AgentDetail({ agentId, index, onNavigate, anchor, query, navToken }) {
   );
 }
 
+/* 가이드 맵 — 가이드 첫 페이지의 '한눈에 보기'. 그룹 카드 + 링크 항목(해시 이동) */
+function GuideMap({ groups }) {
+  return (
+    <div className="gmap">
+      {(groups || []).map((g, i) => (
+        <section className="gmap-card" key={i}>
+          <div className="gmap-head">
+            <span className="gmap-ic"><Icon name={g.icon || "hash"} size={18} /></span>
+            <div className="gmap-htx">
+              <h3>{g.title}</h3>
+              {g.desc && <p>{g.desc}</p>}
+            </div>
+          </div>
+          <div className="gmap-items">
+            {(g.items || []).map((it, j) => (
+              <a className="gmap-item" key={j} href={it.href}>
+                <span className="gmap-item-tx">
+                  <span className="gmap-item-label">{it.label}</span>
+                  {it.sub && <span className="gmap-item-sub">{it.sub}</span>}
+                </span>
+                <Icon name="arrow" size={14} className="gmap-item-arr" />
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
 /* 단일 페이지 본문 (캡처 스택 또는 공사중) */
 const CapPage = React.memo(function CapPage({ page, agentId }) {
   if (!page) return null;
@@ -1052,17 +1083,21 @@ const CapPage = React.memo(function CapPage({ page, agentId }) {
     <div>
       <h2 className="doc-page-title">{page.title}</h2>
       {page.intro && <p className="doc-page-intro">{page.intro}</p>}
-      <div className="cap-stack">
-        {page.steps.map((st, i, arr) => {
-          const showGrp = st._group && st._group !== (i > 0 ? arr[i - 1]._group : null);
-          return (
-            <React.Fragment key={i}>
-              {showGrp && <div className="cap-group" id={"grp-" + (i + 1)}>{st._group}</div>}
-              <CapStep step={st} n={i + 1} id={"step-" + (i + 1)} agentId={agentId} serviceId={page.serviceId} featureId={page.featureId} />
-            </React.Fragment>
-          );
-        })}
-      </div>
+      {page.mapGroups ? (
+        <GuideMap groups={page.mapGroups} />
+      ) : (
+        <div className="cap-stack">
+          {page.steps.map((st, i, arr) => {
+            const showGrp = st._group && st._group !== (i > 0 ? arr[i - 1]._group : null);
+            return (
+              <React.Fragment key={i}>
+                {showGrp && <div className="cap-group" id={"grp-" + (i + 1)}>{st._group}</div>}
+                <CapStep step={st} n={i + 1} id={"step-" + (i + 1)} agentId={agentId} serviceId={page.serviceId} featureId={page.featureId} />
+              </React.Fragment>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 });
@@ -1115,7 +1150,12 @@ function CapStep({ step, n, id, agentId, serviceId, featureId, noLink }) {
   const linkTimer = React.useRef(null);
   function copySectionLink() {
     const base = location.href.split("#")[0];
-    const url = base + "#/agent/" + agentId + "?sec=step-" + serviceId + "-" + featureId + "-" + n;
+    const ag = window.HUB.AGENT_MAP[agentId];
+    // serviceGuide(예: Communis)는 서비스 경로로 공유
+    const path = (ag && ag.serviceGuide)
+      ? "#/service/" + serviceId + "?sec=step-" + serviceId + "-" + featureId + "-" + n
+      : "#/agent/" + agentId + "?sec=step-" + serviceId + "-" + featureId + "-" + n;
+    const url = base + path;
     copyToClipboard(url, () => {
       setLinked(true);
       showToast("링크가 복사되었습니다.");

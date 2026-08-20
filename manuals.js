@@ -163,7 +163,9 @@
       agentId: agent.id,
       serviceId: svc.id,
       feature: featureId,
-      route: { name: "agent", id: agent.id, anchor: `step-${svc.id}-${featureId}-${stepNo}` },
+      route: agent.serviceGuide
+        ? { name: "service", id: svc.id, anchor: `step-${svc.id}-${featureId}-${stepNo}` }
+        : { name: "agent", id: agent.id, anchor: `step-${svc.id}-${featureId}-${stepNo}` },
     };
   }
 
@@ -189,7 +191,9 @@
               agentId: agent.id,
               serviceId: svc.id,
               feature: f.id,
-              route: { name: "agent", id: agent.id, anchor: `step-${svc.id}-${f.id}-1` },
+              route: agent.serviceGuide
+                ? { name: "service", id: svc.id, anchor: `step-${svc.id}-${f.id}-1` }
+                : { name: "agent", id: agent.id, anchor: `step-${svc.id}-${f.id}-1` },
             });
             arrangeSteps(f.id, f.steps).forEach((st, si) => docs.push(stepDoc(agent, svc, ctxName, f.id, st, si + 1)));
           });
@@ -203,7 +207,9 @@
             body: cell.intro || SVC_INTRO[svc.id],
             agentId: agent.id,
             serviceId: svc.id,
-            route: { name: "agent", id: agent.id, anchor: `sec-${svc.id}` },
+            route: agent.serviceGuide
+              ? { name: "service", id: svc.id, anchor: `sec-${svc.id}` }
+              : { name: "agent", id: agent.id, anchor: `sec-${svc.id}` },
           });
           steps.forEach((st, si) => docs.push(stepDoc(agent, svc, ctxName, "_", st, si + 1)));
         }

@@ -211,6 +211,47 @@ print(res.status_code, res.text)`;
       "왼쪽 그룹에서 항목을 선택하세요. (규격서 v3.0.29 기준 · 순차 작성 중)",
     download: { title: "Communis API 연동 규격서", meta: "api.communis.kt.com · v3.0.29 · 제공 KT" },
     features: [
+      /* ── [개요] 가이드 한눈에 보기 (랜딩 · 그룹 카드 + 링크) ── */
+      { id: "overview", group: "개요", name: "한눈에 보기",
+        intro: "Communis로 무엇을, 어떻게 할 수 있는지 한눈에 정리했습니다. 각 항목을 클릭하면 해당 설명으로 이동합니다.",
+        mapGroups: [
+          { title: "시작하기", icon: "bolt", desc: "가입부터 발송 준비까지 순서대로",
+            items: [
+              { label: "① 회원가입", sub: "법인 가입 · 필요 서류", href: "#/service/communis?sec=step-communis-signup-1" },
+              { label: "② 서비스 신청 · 설정", sub: "청구계정 · API KEY 발급", href: "#/service/communis?sec=step-communis-setup-1" },
+              { label: "③ 발신정보", sub: "발신번호 · 카카오/RCS 발신프로필", href: "#/service/communis?sec=step-communis-sender-1" },
+              { label: "④ 템플릿", sub: "등록 · 검수", href: "#/service/communis?sec=step-communis-template-1" },
+            ] },
+          { title: "웹 콘솔로 발송", icon: "message", desc: "코딩 없이 콘솔에서 직접 발송",
+            items: [
+              { label: "웹 문자", sub: "SMS · LMS · MMS", href: "#/service/communis?sec=step-communis-webSms-1" },
+              { label: "웹 카카오", sub: "알림톡 · 브랜드 메시지", href: "#/service/communis?sec=step-communis-webKakao-1" },
+              { label: "웹 RCS", sub: "템플릿 · 공통포맷", href: "#/service/communis?sec=step-communis-webRcs-1" },
+              { label: "주소록 · 결과 · 통계", sub: "수신자 관리 · 발송 통계", href: "#/service/communis?sec=step-communis-webResult-1" },
+            ] },
+          { title: "API로 연동", icon: "api", desc: "REST API로 시스템 자동 · 대량 발송",
+            items: [
+              { label: "공통 규격", sub: "인증 · 헤더 · 응답 · 제한", href: "#/service/communis?sec=step-communis-common-1" },
+              { label: "문자", sub: "SMS · LMS · MMS", href: "#/service/communis?sec=step-communis-sms-1" },
+              { label: "카카오 알림톡", sub: "정보성 템플릿", href: "#/service/communis?sec=step-communis-alimtalk-1" },
+              { label: "RCS", sub: "비승인 · 승인 · 통합", href: "#/service/communis?sec=step-communis-rcs-1" },
+              { label: "결과 수신", sub: "UMS REPORT", href: "#/service/communis?sec=step-communis-report-1" },
+              { label: "그 외 (부록)", sub: "국제SMS · 2FA · 메일 · 앱푸시 · WhatsApp · 대체발송 · 통계 · 에러코드 · 080 · Agent", href: "#/service/communis?sec=step-communis-brand-1" },
+            ] },
+          { title: "지원 서비스 · 채널", icon: "layers", desc: "하나의 API로 보내는 메시지 채널",
+            items: [
+              { label: "문자 (SMS/LMS/MMS)", href: "#/service/communis?sec=step-communis-sms-1" },
+              { label: "카카오 알림톡 · 브랜드", href: "#/service/communis?sec=step-communis-alimtalk-1" },
+              { label: "RCS", href: "#/service/communis?sec=step-communis-rcs-1" },
+              { label: "국제 SMS", href: "#/service/communis?sec=step-communis-global-1" },
+              { label: "메일", href: "#/service/communis?sec=step-communis-mail-1" },
+              { label: "앱푸시", href: "#/service/communis?sec=step-communis-push-1" },
+              { label: "2FA 인증", href: "#/service/communis?sec=step-communis-twofa-1" },
+              { label: "WhatsApp", href: "#/service/communis?sec=step-communis-whatsapp-1" },
+            ] },
+        ],
+      },
+
       /* ── [시작하기] ─────────────────────────────── */
       { id: "signup", group: "시작하기", name: "① 회원가입",
         intro: "커뮤니즈 회원가입 절차입니다. 접속 → 회원 유형 선택 → 약관 동의 → 기본정보 → 사업자정보 → 멤버(팀) 등록 순으로 진행하며, 가입 신청 후 운영팀 승인으로 완료됩니다.",
@@ -461,17 +502,196 @@ print(res.status_code, res.text)`;
         ],
       },
 
-      /* ── [웹 발송] (콘솔 UI · 추후 작성) ── */
-      { id: "webIntro", group: "웹 발송", name: "웹 발송 개요", construction: true,
-        intro: "커뮤니즈 콘솔의 WEB발송 메뉴에서 코딩 없이 직접 발송하는 방법입니다. (준비 중)" },
-      { id: "webSms", group: "웹 발송", name: "웹 문자 발송", construction: true,
-        intro: "콘솔에서 문자(SMS/LMS/MMS)를 발송하는 방법. (준비 중)" },
-      { id: "webKakao", group: "웹 발송", name: "웹 카카오 발송", construction: true,
-        intro: "콘솔에서 알림톡·브랜드메시지를 발송하는 방법. (준비 중)" },
-      { id: "webRcs", group: "웹 발송", name: "웹 RCS 발송", construction: true,
-        intro: "콘솔에서 RCS를 발송하는 방법. (준비 중)" },
-      { id: "webResult", group: "웹 발송", name: "주소록 · 발송 결과·통계", construction: true,
-        intro: "주소록 관리와 발송 결과·통계 조회. (준비 중)" },
+      /* ── [웹 발송] (콘솔 WEB발송 메뉴) ── */
+      { id: "webIntro", group: "웹 발송", name: "웹 발송 개요",
+        intro: "커뮤니즈 콘솔의 WEB발송 메뉴에서 코딩 없이 직접 메시지를 보내는 방법입니다. 채널·발송 방식과 공통 발송 흐름을 먼저 정리합니다.",
+        steps: [
+          {
+            title: "WEB발송 메뉴 구성",
+            body: "콘솔 좌측 <b>WEB발송</b> 메뉴에서 채널을 고른 뒤, 채널별 방식으로 발송합니다.",
+            table: {
+              cols: ["채널", "발송 방식"],
+              colWidths: ["26%", "74%"],
+              rows: [
+                ["문자", "<b>템플릿 발송</b> · <b>신규 발송</b>(직접 작성) — SMS/LMS/MMS"],
+                ["RCS", "<b>템플릿 발송</b>(승인 템플릿) · <b>공통포맷 발송</b>(자유 작성)"],
+                ["알림톡", "<b>승인된 템플릿을 선택</b>해 발송 (자유 작성 불가)"],
+                ["브랜드 메시지", "<b>템플릿 발송</b> · <b>신규 발송</b> (광고성)"],
+              ],
+            },
+            note: "발송 이력·통계는 <b>통계</b> 메뉴, 수신자 관리는 <b>주소록</b> 메뉴에서 합니다(→ 주소록·발송 결과·통계 탭).",
+          },
+          {
+            title: "공통 발송 흐름 (신규 발송)",
+            body: "직접 작성(신규) 발송은 한 화면에서 <b>4단계</b>로 진행합니다.",
+            list: [
+              "<b>① 메시지 작성</b> — 종류 선택(SMS/LMS/MMS 등)·내용 작성·치환변수 <code>#{변수}</code> 삽입·광고성 여부 체크",
+              "<b>② 발송대상 고객</b> — [발송대상 추가하기]로 수신자 추가(직접 입력·주소록 불러오기), 총 인원 확인",
+              "<b>③ 발신정보</b> — 등록·승인된 발신번호 선택",
+              "<b>④ 발송옵션</b> — 즉시 발송 / 예약 발송",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "신규 발송 4단계(메시지 작성·발송대상·발신정보·발송옵션)" },
+            note: "작성 중 <b>[테스트 발송]</b>으로 담당자 번호에 먼저 보내 확인하고, <b>[미리보기]</b>·우측 실시간 미리보기로 실제 표시를 확인할 수 있습니다.",
+          },
+          {
+            title: "광고성 메시지 처리",
+            body: "광고성 메시지는 작성 시 <b>광고성 메시지</b>를 체크하고 <b>무료수신거부 번호</b>를 입력합니다.",
+            list: [
+              "체크 시 본문에 <code>(광고)</code> 접두 + <code>무료수신거부:(번호)</code>가 자동 추가",
+              "광고 발송 가능 시간: 정보통신망법상 <b>08:00~21:00</b> (→ 공통 규격 탭)",
+            ],
+            note: "발신번호·발신프로필·템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 탭을 참고하세요.",
+          },
+        ],
+      },
+      { id: "webSms", group: "웹 발송", name: "웹 문자 발송",
+        intro: "콘솔 WEB발송 > 문자에서 SMS/LMS/MMS를 직접 발송하는 방법입니다. 템플릿 발송과 신규 발송(직접 작성) 중 선택합니다.",
+        steps: [
+          {
+            title: "발송 방식 선택",
+            body: "<b>WEB발송 &gt; 문자</b> 진입 후 발송 방식을 선택합니다.",
+            list: [
+              "<b>템플릿 발송하기</b> — 미리 등록한 문자 템플릿을 불러와 발송",
+              "<b>신규로 발송하기</b> — 원하는 내용을 직접 작성해 발송",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/message/choice.do", label: "문자 발송 방법 선택(템플릿 / 신규)" },
+          },
+          {
+            title: "① 메시지 작성",
+            body: "메시지 종류와 내용을 작성합니다.",
+            list: [
+              "<b>메시지 종류</b> — <b>SMS</b>(단문) / <b>LMS</b>(장문) / <b>MMS</b>(이미지 첨부)",
+              "<b>내용</b> — 본문 입력. 치환변수는 <code>#{변수명}</code>으로 삽입 (예 <code>#{name}</code>)",
+              "<b>템플릿 불러오기</b> — 등록된 문자 템플릿을 선택해 본문 자동 채움",
+              "<b>광고성 메시지</b> 체크 시 무료수신거부 번호 입력",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "① 메시지 작성(종류·내용·광고성)" },
+            note: "우측 실시간 미리보기로 (광고)·무료수신거부 표기를 확인할 수 있습니다. 종류(SMS/LMS/MMS)별 글자수·첨부 규격은 <b>API 연동 &gt; 문자</b> 탭과 동일합니다.",
+          },
+          {
+            title: "② 발송대상 고객",
+            body: "<b>[+ 발송대상 추가하기]</b>로 수신자를 추가합니다. 추가된 <b>총 인원</b>이 표시되며 <b>[전체삭제]</b>로 초기화합니다.",
+            list: [
+              "<b>직접 입력</b> — 수신번호를 직접 입력",
+              "<b>주소록 불러오기</b> — [주소록](개인/공용)에 저장한 수신자를 선택",
+            ],
+            note: "치환변수를 쓰는 경우 수신자별 변수값이 함께 매핑되어야 합니다.",
+          },
+          {
+            title: "③ 발신정보 · ④ 발송옵션",
+            body: "발신번호를 선택하고 발송 시점을 정합니다.",
+            list: [
+              "<b>③ 발신정보</b> — 등록·승인된 <b>발신번호</b>를 드롭다운에서 선택",
+              "<b>④ 발송옵션</b> — <b>즉시 발송</b> 또는 <b>예약 발송</b>(예약 일시 지정)",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "발신번호 선택 · 발송옵션(즉시/예약)" },
+            note: "<b>[테스트 발송]</b>으로 담당자 번호에 먼저 보내 확인한 뒤 <b>[보내기]</b>로 실제 발송합니다.",
+          },
+        ],
+      },
+      { id: "webKakao", group: "웹 발송", name: "웹 카카오 발송",
+        intro: "콘솔에서 카카오 알림톡·브랜드 메시지를 발송하는 방법입니다. 발신프로필과 승인 템플릿이 준비돼 있어야 합니다.",
+        steps: [
+          {
+            title: "사전 준비",
+            body: "카카오 발송은 <b>발신프로필 등록</b>과 <b>승인된 템플릿</b>이 선행되어야 합니다.",
+            note: "카카오 채널 생성 → 발신프로필 키 등록 → 템플릿 등록·검수는 <b>시작하기 &gt; 발신정보·템플릿</b> 탭을 참고하세요.",
+          },
+          {
+            title: "알림톡 발송 (승인 템플릿 선택)",
+            body: "<b>WEB발송 &gt; 알림톡</b>은 <b>승인된 템플릿을 선택</b>해 발송합니다(자유 작성 불가).",
+            list: [
+              "템플릿 목록에서 발송할 <b>승인 템플릿</b> 선택 (유형: 강조표기형·아이템리스트형·리스트형 등)",
+              "치환변수(<code>#{변수}</code>) 값 입력",
+              "발송대상 추가 → 발송옵션(즉시/예약) → 보내기",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/alimtalk/templateList.do", label: "알림톡 — 승인 템플릿 목록에서 선택" },
+            note: "알림톡 = 정보성. 템플릿은 카카오 검수 승인 후에만 목록에 나타납니다.",
+          },
+          {
+            title: "브랜드 메시지 발송",
+            body: "<b>WEB발송 &gt; 브랜드 메시지</b>는 문자와 동일하게 <b>템플릿 발송 / 신규 발송</b>을 선택합니다.",
+            list: [
+              "브랜드 메시지 = <b>광고성</b> (발신프로필 필요)",
+              "광고 발송 가능 시간: 정보통신망법상 <b>08:00~21:00</b>",
+            ],
+            note: "발신프로필·브랜드 메시지 템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 탭을 참고하세요.",
+          },
+        ],
+      },
+      { id: "webRcs", group: "웹 발송", name: "웹 RCS 발송",
+        intro: "콘솔에서 RCS를 발송하는 방법입니다. 승인 템플릿 기반의 템플릿 발송과 자유 작성 공통포맷 발송 두 가지가 있습니다.",
+        steps: [
+          {
+            title: "사전 준비",
+            body: "RCS 발송은 <b>RBC 브랜드·대화방 등록</b>과 대행사 지정이 선행되어야 합니다.",
+            note: "RBC 브랜드·대화방, 대행사 ‘케이티’ 지정은 <b>시작하기 &gt; 발신정보</b> 탭을 참고하세요.",
+          },
+          {
+            title: "템플릿 발송 vs 공통포맷 발송",
+            body: "<b>WEB발송 &gt; RCS</b>에는 두 가지 발송 방식이 있습니다.",
+            table: {
+              cols: ["방식", "설명"],
+              colWidths: ["26%", "74%"],
+              rows: [
+                ["템플릿 발송", "사전 <b>승인된 RCS 템플릿</b>을 선택해 발송"],
+                ["공통포맷 발송", "RCS 타입을 고르고 <b>직접 작성</b>(자유 양식)"],
+              ],
+            },
+          },
+          {
+            title: "공통포맷 발송 (직접 작성)",
+            body: "<b>WEB발송 &gt; RCS &gt; 공통포맷 발송</b>에서 자유 양식으로 작성합니다.",
+            list: [
+              "<b>RCS 타입</b> — SMS/LMS/MMS + 표시 형식(Standalone 등) 선택",
+              "<b>내용</b> — 본문 작성(RCS SMS 100자), 치환변수 <code>#{변수}</code>",
+              "<b>RCS 버튼</b> — [+ RCS 버튼 추가] (RCS SMS 최대 1개)",
+              "<b>광고성</b> 체크 시 무료수신거부 입력",
+              "발송대상 → 발신정보 → 보내기",
+            ],
+            shot: { url: "communis.kt.co.kr/ums/user/send/rcs/sendNew.do", label: "RCS 공통포맷 — RCS 타입·내용·버튼" },
+            note: "RCS 미지원 단말 대체발송(통합 RCS)·필드 상세 규격은 <b>API 연동 &gt; RCS</b> 탭을 참고하세요.",
+          },
+        ],
+      },
+      { id: "webResult", group: "웹 발송", name: "주소록 · 발송 결과·통계",
+        intro: "발송 대상 관리(주소록)와 발송 결과·통계 조회 메뉴입니다.",
+        steps: [
+          {
+            title: "주소록",
+            body: "자주 보내는 수신자를 <b>주소록</b>에 저장해 발송 시 불러옵니다.",
+            table: {
+              cols: ["구분", "설명"],
+              colWidths: ["26%", "74%"],
+              rows: [
+                ["개인 주소록", "개인 계정용 수신자 목록"],
+                ["공용 주소록", "조직(팀) 공용 수신자 목록"],
+              ],
+            },
+            note: "발송 화면의 <b>[발송대상 추가하기]</b>에서 주소록을 선택해 수신자를 불러옵니다.",
+          },
+          {
+            title: "발송 통계",
+            body: "<b>통계</b> 메뉴에서 발송량과 성공/실패를 조회합니다.",
+            table: {
+              cols: ["메뉴", "내용"],
+              colWidths: ["30%", "70%"],
+              rows: [
+                ["발송통계", "기간별 발송량·성공·실패 (채널별)"],
+                ["발송통계 상세", "건별 상세 내역"],
+                ["국제SMS 발송통계", "국제 SMS 전용 통계"],
+              ],
+            },
+            shot: { url: "communis.kt.co.kr/ums/admin/statistics/send/list.do", label: "발송통계 — 기간·채널별 발송량/성공·실패" },
+            note: "대시보드 상단에서도 전체 발송량(성공/실패)과 최근 3개월 발송량 추이를 볼 수 있습니다.",
+          },
+          {
+            title: "API 발송 결과 조회",
+            body: "API로 발송한 결과는 <code>trackingId</code>로 조회합니다.",
+            note: "상세는 <b>API 연동 &gt; 결과 수신(UMS REPORT)</b> 탭을 참고하세요. 콘솔 <b>API 테스트</b>에서도 결과를 확인할 수 있습니다.",
+          },
+        ],
+      },
 
       /* ── [API 연동 · 핵심] (필수 + 사용 빈도 높음) ──────── */
       { id: "common", group: "API 연동 · 핵심", name: "공통 규격 (인증·헤더·응답)",

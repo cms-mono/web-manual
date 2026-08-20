@@ -1289,6 +1289,34 @@ mark.search-hit {
 .topmenu-panel-item:hover { background: var(--accent-soft); color: var(--accent-text); }
 .topmenu-panel-item.on { background: var(--accent-soft); color: var(--accent-text); font-weight: 700; }
 
+/* 가이드 맵 (한눈에 보기) — 가이드 첫 페이지 랜딩 */
+.gmap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+@media (max-width: 760px) { .gmap { grid-template-columns: 1fr; } }
+.gmap-card {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  padding: 16px 16px 10px; display: flex; flex-direction: column;
+}
+.gmap-head { display: flex; gap: 11px; align-items: flex-start; margin-bottom: 12px; }
+.gmap-ic {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent-text);
+}
+.gmap-htx h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--text); }
+.gmap-htx p { margin: 3px 0 0; font-size: 12.5px; color: var(--text-3); line-height: 1.45; }
+.gmap-items { display: flex; flex-direction: column; gap: 2px; }
+.gmap-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px;
+  cursor: pointer; text-decoration: none; transition: background .12s;
+}
+.gmap-item:hover { background: var(--accent-soft); }
+.gmap-item-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.gmap-item-label { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.gmap-item:hover .gmap-item-label { color: var(--accent-text); }
+.gmap-item-sub { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+.gmap-item-arr { flex-shrink: 0; color: var(--text-3); opacity: 0; transform: translateX(-4px); transition: opacity .14s, transform .14s; }
+.gmap-item:hover .gmap-item-arr { opacity: 1; transform: translateX(0); color: var(--accent-text); }
+
 .hdr-link {
   display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px;
   border-radius: 10px; border: 1px solid var(--border); background: var(--surface);

@@ -35,6 +35,9 @@
       // 홈 카드 '지원 Agent 수' 표시용 오버라이드 — M2X ONE·Odyssey 2종이 지원(추후 문서화 예정).
       // 실제 노출/연결 전까지는 이 숫자로만 안내한다.
       agentCount: 2,
+      // 이 서비스의 이용가이드(가이드 콘텐츠를 보유한 에이전트). 지정 시
+      // /service/communis 경로에서 이 가이드를 바로 렌더한다(별도 에이전트 페이지 없음).
+      guideAgentId: "communis_api",
       icon: "layers",
       sites: [
         { kind: "서비스 소개", title: "KT Communis", url: "https://communis.kt.co.kr/main/index.do", desc: "통합 메시징 API 플랫폼 · 요금 · 콘솔 로그인" },
@@ -278,7 +281,7 @@
         route: { name: "service", id: s.id },
       })
     );
-    AGENTS.filter((a) => isAgentPublished(a.id)).forEach((a) =>
+    AGENTS.filter((a) => isAgentPublished(a.id) && !a.serviceGuide).forEach((a) =>
       idx.push({
         type: "agent",
         id: a.id,
