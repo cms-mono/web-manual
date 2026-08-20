@@ -776,7 +776,7 @@ print(res.status_code, res.text)`;
         ],
       },
       { id: "sms", group: "API 연동 · 핵심", name: "문자 (SMS/LMS/MMS)",
-        intro: "문자 발송 API입니다. SMS는 CPaaS_sendSMS, LMS/MMS는 CPaaS_sendMMS를 사용합니다. (규격서 v3.0.29 §2)",
+        intro: "문자(SMS/LMS/MMS) 발송 API입니다. 기준 API — SMS: CPaaS_sendSMS(v2.0) / LMS·MMS: CPaaS_sendMMS(v2.0). (규격서 v3.0.29 §2)",
         steps: [
           {
             title: "엔드포인트",
@@ -868,7 +868,7 @@ print(res.status_code, res.text)`;
         ],
       },
       { id: "alimtalk", group: "API 연동 · 핵심", name: "카카오 알림톡",
-        intro: "카카오 알림톡(정보성 메시지) 발송 API입니다. 발신프로필 키·승인 템플릿이 필수이며, 사전 준비(채널→발신프로필→템플릿)가 선행됩니다. (규격서 v3.0.29 §3)",
+        intro: "카카오 알림톡(정보성 메시지) 발송 API입니다. 기준 API — 기본: CPaaS_sendAlimtalk(v2.0) / 대체발송(failover) 포함: CPaaS_sendAlimtalkUms(v2.1). 발신프로필 키·승인 템플릿이 필수입니다. (규격서 v3.0.29 §3)",
         steps: [
           {
             title: "개요",
@@ -880,12 +880,13 @@ print(res.status_code, res.text)`;
             body: "전송방식은 <b>HTTPS / POST</b>.",
             table: {
               cols: ["구분", "API", "URL (외부도메인)"],
-              colWidths: ["16%", "30%", "54%"],
+              colWidths: ["16%", "34%", "50%"],
               rows: [
                 ["기본 발송", "CPaaS_sendAlimtalk", "<code>https://api.communis.kt.com/cpaas/v2.0/CPaaS_sendAlimtalk</code>"],
+                ["대체발송(UMS)", "CPaaS_sendAlimtalkUms", "<code>https://api.communis.kt.com/cpaas/v2.1/CPaaS_sendAlimtalkUms</code>"],
               ],
             },
-            note: "대체발송(알림톡 실패 → SMS/LMS 전환)은 <code>CPaaS_sendAlimtalkUms</code>(v2.1)를 사용합니다 → <b>대체발송(UMS 전환)</b> 탭 참고. 미들웨어 연동은 <code>CPaaS_sendAlimtalkMw</code>가 별도 제공됩니다.",
+            note: "<b>대체발송(failOver)</b>이 필요하면 <code>CPaaS_sendAlimtalkUms</code>(v2.1)를 사용합니다(아래 ‘대체발송’ 단계 참고). 미들웨어 연동은 <code>CPaaS_sendAlimtalkMw</code>·<code>CPaaS_sendAlimtalkMwUms</code>가 별도 제공됩니다.",
           },
           {
             title: "요청 Body",
@@ -917,6 +918,24 @@ print(res.status_code, res.text)`;
             note: "<code>returncode</code>(0/1) + <code>data</code>{ <code>wrkId</code> · <code>totalCnt/successCnt/failCnt</code> · <code>trackingList</code>(trackingId) · <code>failReceiveList</code> }. 발송작업ID(<code>wrkId</code>)와 <code>trackingId</code>로 결과를 조회합니다. (상세: <b>문자</b> 탭)",
           },
           {
+            title: "대체발송 (failOver) — 알림톡 실패 시 문자 전환",
+            body: "<code>CPaaS_sendAlimtalkUms</code>(v2.1)로 발송하면 알림톡 실패 시 <b>SMS/LMS로 자동 전환</b>됩니다. 위 요청 Body에 아래 필드를 추가합니다.",
+            table: {
+              schema: true,
+              cols: ["필드", "필수", "설명"],
+              colWidths: ["26%", "12%", "62%"],
+              rows: [
+                ["failOver", "필수", "<code>Y</code> 사용 / <code>N</code> 미사용"],
+                ["failOverType", "△", "<code>SMS</code> / <code>LMS</code> (failOver=Y 시 필수, 내용 90byte 초과 시 자동 LMS)"],
+                ["failOverCallbackNum", "△", "대체 발송 회신번호 (failOver=Y 시 필수, 숫자 3~16자리)"],
+                ["failOverKisaOrgCode", "", "대체발송 최초 발신 사업자코드 (9자리)"],
+                ["failOverSubject", "", "대체 발송 제목 (LMS, 최대 64byte)"],
+                ["failOverContent", "", "대체 발송 내용 (없으면 알림톡 본문 사용, 최대 4,000byte)"],
+              ],
+            },
+            note: "대체발송 여부·전환 결과는 <b>결과 수신</b> 탭(UMS REPORT)의 채널별 <code>utxStatus</code>로 확인합니다.",
+          },
+          {
             title: "발송 테스트 코드 (알림톡 1건)",
             body: "Basic 인증으로 알림톡을 발송하는 최소 예제입니다.",
             codeTabs: [
@@ -928,7 +947,7 @@ print(res.status_code, res.text)`;
         ],
       },
       { id: "rcs", group: "API 연동 · 핵심", name: "RCS",
-        intro: "RCS 발송 API입니다. 발송 전 RBC 브랜드·대화방(챗봇) 등록과 대행사 지정이 필요합니다(→ 시작하기 > 발신정보). 비승인형/승인형/통합RCS를 지원합니다. (규격서 v3.0.29 §6)",
+        intro: "RCS 발송 API입니다. 발송 전 RBC 브랜드·대화방(챗봇) 등록과 대행사 지정이 필요합니다(→ 시작하기 > 발신정보). 기준 API — 비승인형 CPaaS_rcsSendUnappd*, 승인형 CPaaS_rcsSendAppd*, 통합 CPaaS_ircsSend* (모두 v2.0). (규격서 v3.0.29 §6)",
         steps: [
           {
             title: "개요 — RCS 종류",
@@ -1023,6 +1042,20 @@ print(res.status_code, res.text)`;
             note: "<code>returncode</code> + <code>data</code>{ <code>wrkId</code> · <code>totalCnt/successCnt/failCnt</code> · <code>trackingList</code> · <code>failReceiveList</code> }. 최종 발송 결과는 <b>결과 수신</b> 탭(UMS REPORT)에서 <code>trackingId</code>로 조회합니다.",
           },
           {
+            title: "대체발송 (umsChannelInfo) — RCS 실패 시 다단계 전환",
+            body: "RCS 발송 요청에 <code>umsChannelInfo</code> 오브젝트를 추가하면 RCS 실패 시 지정한 순서로 <b>다단계 전환</b>(알림톡·문자 등)됩니다.",
+            table: {
+              cols: ["오브젝트", "설명"],
+              colWidths: ["30%", "70%"],
+              rows: [
+                ["channelOrder", "전환 순서 배열: <code>MESSAGE</code> / <code>KAKAO_ALIM</code> / <code>RCS</code>"],
+                ["umsMessageInfo", "SMS/LMS 전환 시 (channel·msgKind·content·callbackNum)"],
+                ["umsKakaoAlimInfo", "알림톡 전환 시 (kakaoSenderKey·templateId)"],
+              ],
+            },
+            note: "예: RCS 부달 → 알림톡 → LMS = channelOrder <code>[\"KAKAO_ALIM\",\"MESSAGE\"]</code>. 최종 결과는 <b>결과 수신</b> 탭에서 채널별 utxStatus로 확인.",
+          },
+          {
             title: "발송 테스트 코드 (RCS 비승인형 SMS)",
             body: "chatbotId·brandId는 RBC에서 발급받은 값으로 바꿔 실행하세요.",
             codeTabs: [
@@ -1106,7 +1139,7 @@ print(res.status_code, res.text)`;
 
       /* ── [API 연동 · 부록] (비주류 · 참조/FAQ) ────────── */
       { id: "brand", group: "API 연동 · 부록", name: "카카오 브랜드메시지 (구 친구톡)",
-        intro: "카카오 브랜드 메시지(구 친구톡) 발송 API입니다. 알림톡과 구조가 유사하나 <b>광고성</b> 메시지입니다. (규격서 v3.0.29 §3.2)",
+        intro: "카카오 브랜드 메시지(구 친구톡) 발송 API입니다. 알림톡과 구조가 유사하나 광고성 메시지입니다. 기준 API — 기본: CPaaS_sendFriendtalk(v2.0) / 대체발송 포함: CPaaS_sendFriendtalkUms(v2.1). (규격서 v3.0.29 §3.2)",
         steps: [
           {
             title: "개요 & 엔드포인트",
@@ -1116,16 +1149,16 @@ print(res.status_code, res.text)`;
               colWidths: ["32%", "68%"],
               rows: [
                 ["기본 발송", "<code>CPaaS_sendFriendtalk</code> (/cpaas/v2.0/)"],
-                ["대체발송(UMS)", "<code>CPaaS_sendFriendtalkUms</code> (v2.1)"],
+                ["대체발송(UMS)", "<code>CPaaS_sendFriendtalkUms</code> (/cpaas/v2.1/) — 알림톡과 동일한 failOver 필드 지원"],
                 ["템플릿 등록", "<code>CPaaS_friendTalkTemplate</code> 등"],
               ],
             },
-            note: "브랜드 메시지는 <b>광고성만</b> 가능하며, 광고 발송은 <b>정보통신망법상 08:00~21:00</b>입니다(발송시간 정책은 <b>공통 규격</b> 탭 참고). (v3.0.25 '친구톡'→'브랜드 메시지' 개명, API명 유지) 요청 Body는 알림톡과 유사 — 상세는 규격서 §3.2. 발신프로필·템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 참고.",
+            note: "브랜드 메시지는 <b>광고성만</b> 가능하며, 광고 발송은 <b>정보통신망법상 08:00~21:00</b>입니다(발송시간 정책은 <b>공통 규격</b> 탭 참고). 대체발송(failOver: SMS/LMS 전환)은 <code>CPaaS_sendFriendtalkUms</code>에서 알림톡과 동일하게 지원합니다(→ <b>카카오 알림톡</b> 탭의 ‘대체발송’ 참고). (v3.0.25 '친구톡'→'브랜드 메시지' 개명, API명 유지) 발신프로필·템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 참고.",
           },
         ],
       },
       { id: "global", group: "API 연동 · 부록", name: "국제 SMS",
-        intro: "해외 수신자에게 SMS를 발송하는 국제 SMS API입니다. (규격서 v3.0.29 §4)",
+        intro: "해외 수신자에게 SMS를 발송하는 국제 SMS API입니다. 기준 API: CPaaS_globalSms(v1.0). (규격서 v3.0.29 §4)",
         steps: [
           {
             title: "개요 & 엔드포인트",
@@ -1157,8 +1190,42 @@ print(res.status_code, res.text)`;
           },
         ],
       },
+      { id: "block080", group: "API 연동 · 부록", name: "080 수신거부",
+        intro: "광고 수신거부용 080 번호를 청약·관리하는 API 13종입니다. 기준 API: CPaaS_080* 시리즈(v2.0). (규격서 v3.0.29 §12, v3.0.25 신규)",
+        steps: [
+          {
+            title: "API 목록",
+            tables: [
+              {
+                label: "번호 관리",
+                cols: ["API", "설명"],
+                colWidths: ["46%", "54%"],
+                rows: [
+                  ["CPaaS_080GetNumbers", "가용한 080번호 조회"],
+                  ["CPaaS_080RegNumber / DelNumber", "080번호 청약 / 해지"],
+                  ["CPaaS_080GetCallback / ModCallback", "연동 발신번호 조회 / 변경"],
+                  ["CPaaS_080GetInfo / InitArsMent", "번호 정보 조회 / ARS 멘트 초기화"],
+                ],
+              },
+              {
+                label: "수신거부 고객 · 설정",
+                cols: ["API", "설명"],
+                colWidths: ["46%", "54%"],
+                rows: [
+                  ["CPaaS_080GetBlockCustomerNumbers", "수신거부 고객번호 조회"],
+                  ["CPaaS_080RegBlockCustomerNumbers", "수신거부 고객번호 대량 등록"],
+                  ["CPaaS_080DelBlockCustomerNumber", "수신거부 고객번호 삭제"],
+                  ["CPaaS_080ModArsMent / ModMode", "ARS 멘트 변경 / 수집모드 변경"],
+                  ["CPaaS_080ModWebhookUrl", "웹훅 URL 변경"],
+                ],
+              },
+            ],
+            note: "수집모드: 0(발신 시 수집) / 1(DTMF '1' 입력 시 수집). 080 번호 등록은 <b>시작하기 &gt; 발신정보</b>에서도 안내됩니다.",
+          },
+        ],
+      },
       { id: "twofa", group: "API 연동 · 부록", name: "2FA (2차 인증)",
-        intro: "OTP(1회용 비밀번호)를 발송하고 검증하는 2단계 인증 API입니다. 문자·RCS·알림톡 매체로 OTP를 보낼 수 있습니다. (규격서 v3.0.29 §11)",
+        intro: "OTP(1회용 비밀번호)를 발송하고 검증하는 2단계 인증 API입니다. 문자·RCS·알림톡 매체로 OTP를 보낼 수 있습니다. 기준 API — 발송: CPaaS_send2fa(v2.0) / 검증: CPaaS_auth2fa(v2.0). (규격서 v3.0.29 §11)",
         steps: [
           {
             title: "엔드포인트 (발송 → 검증)",
@@ -1204,42 +1271,8 @@ print(res.status_code, res.text)`;
           },
         ],
       },
-      { id: "failover", group: "API 연동 · 부록", name: "대체발송 (UMS 전환)",
-        intro: "발송 실패 시 다른 채널로 자동 전환하는 대체발송입니다. 알림톡 failOver(단순)과 RCS umsChannelInfo(다단계) 두 방식이 있습니다. (규격서 §3·§6)",
-        steps: [
-          {
-            title: "① 알림톡 failOver (알림톡 → SMS/LMS)",
-            body: "알림톡 UMS 발송 API(<code>_Ums_v2.1</code> 버전)에서 지원. 알림톡 실패 시 SMS/LMS로 <b>1단계 전환</b>.",
-            table: {
-              schema: true,
-              cols: ["파라미터", "필수", "설명"],
-              colWidths: ["28%", "12%", "60%"],
-              rows: [
-                ["failOver", "필수", "<code>Y</code> 사용 / <code>N</code> 미사용"],
-                ["failOverType", "△", "<code>SMS</code> / <code>LMS</code> (90byte 초과 시 자동 LMS)"],
-                ["failOverCallbackNum", "△", "대체 발송 회신번호 (failOver=Y 시 필수)"],
-                ["failOverContent", "선택", "대체 본문 (없으면 알림톡 본문 사용)"],
-              ],
-            },
-          },
-          {
-            title: "② RCS umsChannelInfo (RCS → 다단계 전환)",
-            body: "RCS 발송 API 요청에 <code>umsChannelInfo</code> 오브젝트를 추가. <b>다단계 전환</b> 가능.",
-            table: {
-              cols: ["오브젝트", "설명"],
-              colWidths: ["30%", "70%"],
-              rows: [
-                ["channelOrder", "전환 순서 배열: <code>MESSAGE</code> / <code>KAKAO_ALIM</code> / <code>RCS</code>"],
-                ["umsMessageInfo", "SMS/LMS 전환 시 (channel·msgKind·content·callbackNum)"],
-                ["umsKakaoAlimInfo", "알림톡 전환 시 (kakaoSenderKey·templateId)"],
-              ],
-            },
-            note: "예: RCS 부달 → 알림톡 → LMS = channelOrder <code>[\"KAKAO_ALIM\",\"MESSAGE\"]</code>. 최종 결과는 <b>결과 수신</b> 탭에서 채널별 utxStatus로 확인.",
-          },
-        ],
-      },
       { id: "stat", group: "API 연동 · 부록", name: "통계 API",
-        intro: "발송 이력 통계를 조회하는 마케팅 통계 API 3종입니다. (v2.0)",
+        intro: "발송 이력 통계를 조회하는 마케팅 통계 API 3종입니다. 기준 API: CPaaS_getDailyStatList · CPaaS_getSvcStatInfo · CPaaS_getSvcStatDetail (모두 v2.0).",
         steps: [
           {
             title: "API 3종",
@@ -1270,83 +1303,8 @@ print(res.status_code, res.text)`;
           },
         ],
       },
-      { id: "error", group: "API 연동 · 부록", name: "에러코드",
-        intro: "발송/조회 응답의 errorcode 해석 참조입니다. (에러코드 정의서 v0.94 기준)",
-        steps: [
-          {
-            title: "에러코드 체계",
-            body: "코드 앞자리로 오류 영역을 구분합니다.",
-            table: {
-              cols: ["범주", "영역", "범주", "영역"],
-              colWidths: ["12%", "38%", "12%", "38%"],
-              rows: [
-                ["E001xx", "파라미터 공통", "E010xx", "RCS 발송(footer·BizCenter)"],
-                ["E002xx", "템플릿 공통", "E011xx", "UMS 발송"],
-                ["E003xx", "카카오 템플릿/발신프로필", "E012xx", "조회(날짜·trackingID)"],
-                ["E004xx", "알림톡 발송등록", "E013xx", "080"],
-                ["E005xx", "첨부파일", "E018xx", "대체발송"],
-                ["E007xx", "발송 시간(광고·예약)", "E020xx", "2FA 인증"],
-                ["E008xx", "수신자(없음·초과)", "E022xx", "PUSH 발송"],
-                ["E009xx", "RCS 템플릿(승인상태)", "E101xx", "DB"],
-              ],
-            },
-          },
-          {
-            title: "자주 발생하는 코드",
-            table: {
-              cols: ["코드", "의미"],
-              colWidths: ["18%", "82%"],
-              rows: [
-                ["E00101", "필수 파라미터 null/규격 미달"],
-                ["E00102", "유효하지 않은 JSON"],
-                ["E00201", "템플릿 없음 / 발신프로필키 오류"],
-                ["E00313", "알림톡 템플릿 미승인"],
-                ["E00702", "광고 발송 불가 시간대"],
-                ["E00804", "수신자 수 제한 초과"],
-                ["E00906", "brandId / brandKey 오류"],
-                ["E01001", "광고 메시지에 수신거부번호(footer) 누락"],
-              ],
-            },
-            note: "전체 코드는 KB 에러코드 레퍼런스 참고. 자체 오류는 공통 응답값 <code>200001</code>(연동/인증/규격)·<code>200002</code>(유효성).",
-          },
-        ],
-      },
-      { id: "block080", group: "API 연동 · 부록", name: "080 수신거부",
-        intro: "광고 수신거부용 080 번호를 청약·관리하는 API 13종입니다. (규격서 v3.0.29 §12, v3.0.25 신규)",
-        steps: [
-          {
-            title: "API 목록",
-            tables: [
-              {
-                label: "번호 관리",
-                cols: ["API", "설명"],
-                colWidths: ["46%", "54%"],
-                rows: [
-                  ["CPaaS_080GetNumbers", "가용한 080번호 조회"],
-                  ["CPaaS_080RegNumber / DelNumber", "080번호 청약 / 해지"],
-                  ["CPaaS_080GetCallback / ModCallback", "연동 발신번호 조회 / 변경"],
-                  ["CPaaS_080GetInfo / InitArsMent", "번호 정보 조회 / ARS 멘트 초기화"],
-                ],
-              },
-              {
-                label: "수신거부 고객 · 설정",
-                cols: ["API", "설명"],
-                colWidths: ["46%", "54%"],
-                rows: [
-                  ["CPaaS_080GetBlockCustomerNumbers", "수신거부 고객번호 조회"],
-                  ["CPaaS_080RegBlockCustomerNumbers", "수신거부 고객번호 대량 등록"],
-                  ["CPaaS_080DelBlockCustomerNumber", "수신거부 고객번호 삭제"],
-                  ["CPaaS_080ModArsMent / ModMode", "ARS 멘트 변경 / 수집모드 변경"],
-                  ["CPaaS_080ModWebhookUrl", "웹훅 URL 변경"],
-                ],
-              },
-            ],
-            note: "수집모드: 0(발신 시 수집) / 1(DTMF '1' 입력 시 수집). 080 번호 등록은 <b>시작하기 &gt; 발신정보</b>에서도 안내됩니다.",
-          },
-        ],
-      },
       { id: "mail", group: "API 연동 · 부록", name: "메일",
-        intro: "대량 이메일 발송 API입니다. (규격서 v3.0.29 §5)",
+        intro: "대량 이메일 발송 API입니다. 기준 API — 발송: CPaaS_sendEmail(v2.0) / 결과·취소: CPaaS_resultEmail · CPaaS_deleteEmail. (규격서 v3.0.29 §5)",
         steps: [
           {
             title: "개요 & 엔드포인트",
@@ -1382,7 +1340,7 @@ print(res.status_code, res.text)`;
         ],
       },
       { id: "push", group: "API 연동 · 부록", name: "앱푸시",
-        intro: "안드로이드/iOS 앱에 푸시를 발송하는 API입니다. 앱 사전 등록이 필요합니다. (규격서 v3.0.29 §9)",
+        intro: "안드로이드/iOS 앱에 푸시를 발송하는 API입니다. 앱 사전 등록이 필요합니다. 기준 API: CPaaS_sendPush(v2.0). (규격서 v3.0.29 §9)",
         steps: [
           {
             title: "개요 & 엔드포인트",
@@ -1415,7 +1373,7 @@ print(res.status_code, res.text)`;
         ],
       },
       { id: "whatsapp", group: "API 연동 · 부록", name: "WhatsApp",
-        intro: "WhatsApp 템플릿 메시지 발송 API입니다. 템플릿 용도별로 4종의 발송 API가 있습니다. (규격서 v3.0.29 §13)",
+        intro: "WhatsApp 템플릿 메시지 발송 API입니다. 템플릿 용도별로 4종의 발송 API가 있습니다. 기준 API: CPaaS_sendWhatsAppTemplates{Auth|Mark|Util|Free} (v1.0). (규격서 v3.0.29 §13)",
         steps: [
           {
             title: "발송 API (템플릿 용도별 4종)",
@@ -1450,30 +1408,45 @@ print(res.status_code, res.text)`;
           },
         ],
       },
-      { id: "agent", group: "API 연동 · 부록", name: "DB + Agent 연동 방식",
-        intro: "REST API 직접 개발 대신, 모노 설치형 Agent + DB INSERT로 발송하는 방식입니다. DB 방식을 선호하는 고객사에 적합합니다.",
+      { id: "error", group: "API 연동 · 부록", name: "에러코드",
+        intro: "발송/조회 응답의 errorcode 해석 참조입니다. 기준: 에러코드 정의서 v0.94.",
         steps: [
           {
-            title: "개요",
-            body: "커뮤니즈 연동은 <b>① REST API 직접 개발</b>과 <b>② DB+Agent</b> 두 가지가 있습니다. Agent 방식은 고객사 DB에 발송 데이터를 INSERT하면 모노 Agent가 이를 읽어 커뮤니즈로 발송합니다.",
+            title: "에러코드 체계",
+            body: "코드 앞자리로 오류 영역을 구분합니다.",
             table: {
-              cols: ["방식", "특징", "적합 대상"],
-              colWidths: ["20%", "48%", "32%"],
+              cols: ["범주", "영역", "범주", "영역"],
+              colWidths: ["12%", "38%", "12%", "38%"],
               rows: [
-                ["REST API", "가입 후 API KEY로 직접 개발", "개발 역량 있는 고객사"],
-                ["DB + Agent", "모노 Agent 설치 + DB INSERT", "DB 방식 선호 고객사"],
+                ["E001xx", "파라미터 공통", "E010xx", "RCS 발송(footer·BizCenter)"],
+                ["E002xx", "템플릿 공통", "E011xx", "UMS 발송"],
+                ["E003xx", "카카오 템플릿/발신프로필", "E012xx", "조회(날짜·trackingID)"],
+                ["E004xx", "알림톡 발송등록", "E013xx", "080"],
+                ["E005xx", "첨부파일", "E018xx", "대체발송"],
+                ["E007xx", "발송 시간(광고·예약)", "E020xx", "2FA 인증"],
+                ["E008xx", "수신자(없음·초과)", "E022xx", "PUSH 발송"],
+                ["E009xx", "RCS 템플릿(승인상태)", "E101xx", "DB"],
               ],
             },
-            note: "Agent 설치파일은 <b>모노에 요청</b>합니다. 한 서비스에서 API형+Agent형을 함께 쓰면 API KEY를 2개 생성합니다.",
           },
           {
-            title: "적용 절차",
-            list: [
-              "① 커뮤니즈 가입·서비스 신청 → API KEY 발급",
-              "② 모노에 Agent 설치파일 요청 → 설치·설정(API KEY 세팅)",
-              "③ 고객사 DB 발송 테이블에 INSERT → Agent가 발송",
-            ],
-            note: "샘플·설치파일·상세 설정은 모노(<code>cms@mono.co.kr</code>)에 문의하세요.",
+            title: "자주 발생하는 코드",
+            table: {
+              cols: ["코드", "의미"],
+              colWidths: ["18%", "82%"],
+              rows: [
+                ["E00101", "필수 파라미터 null/규격 미달"],
+                ["E00102", "유효하지 않은 JSON"],
+                ["E00201", "템플릿 없음 / 발신프로필키 오류"],
+                ["E00313", "알림톡 템플릿 미승인"],
+                ["E00702", "광고 발송 불가 시간대"],
+                ["E00804", "수신자 수 제한 초과"],
+                ["E00906", "brandId / brandKey 오류"],
+                ["E01001", "광고 메시지에 수신거부번호(footer) 누락"],
+              ],
+            },
+            note: "자체 오류는 공통 응답값 <code>200001</code>(연동/인증/규격)·<code>200002</code>(유효성).",
+            cta: { href: "#/codes?svc=communis", label: "모든 에러코드 보러 가기 (결과코드 · Communis)", icon: "hash" },
           },
         ],
       },
