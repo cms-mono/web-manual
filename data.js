@@ -26,15 +26,19 @@
     },
     {
       id: "communis",
-      name: "Communis",
+      name: "KT Communis",
       short: "Communis",
       tagline: "문자 · RCS · 카카오 알림톡 · 국제 SMS를 하나로 묶은 통합 메시징 서비스.",
       features: ["통합 API", "문자", "RCS", "카카오 알림톡", "메일·앱푸쉬", "국제 SMS", "2FA"],
       hasCenter: false,
       integrated: true,
+      // 홈 카드 '지원 Agent 수' 표시용 오버라이드 — M2X ONE·Odyssey 2종이 지원(추후 문서화 예정).
+      // 실제 노출/연결 전까지는 이 숫자로만 안내한다.
+      agentCount: 2,
       icon: "layers",
       sites: [
-        { kind: "서비스 소개", title: "KT Communis", url: "https://communis.kt.co.kr/", desc: "통합 메시징 API 플랫폼, 요금, 이용 가이드, 콘솔" },
+        { kind: "서비스 소개", title: "KT Communis", url: "https://communis.kt.co.kr/main/index.do", desc: "통합 메시징 API 플랫폼 · 요금 · 콘솔 로그인" },
+        { kind: "이용 가이드", title: "Communis API 가이드", url: "https://communis.kt.co.kr/guide/guide.do", desc: "KT 공식 연동 규격 · API 가이드" },
       ],
     },
     {
@@ -87,7 +91,7 @@
     },
     {
       id: "communis_api",
-      name: "Communis 이용가이드",
+      name: "KT Communis 이용가이드",
       label: "가이드",
       provider: "service",
       transport: "API",
@@ -96,6 +100,15 @@
       aliases: ["communis api", "커뮤니즈 api", "communis 이용가이드", "커뮤니즈 이용가이드", "커뮤니즈 웹발송", "communis web"],
       versions: [],
       supports: ["communis"],
+      // Communis는 서비스(통합 메시징)이며 별도 '에이전트'가 아니다. 이 항목은 서비스의
+      // 이용가이드일 뿐이므로 홈 '에이전트별' 목록·상단 에이전트 메뉴에서는 감춘다.
+      // (서비스 상세 페이지의 '연동 방법' 칩과 검색·직접 URL로는 계속 접근 가능)
+      serviceGuide: true,
+      // 상세 페이지 상단 버튼 — 다운로드 대신 커뮤니즈 공식 사이트/가이드로 연결
+      links: [
+        { url: "https://communis.kt.co.kr/main/index.do", label: "커뮤니즈 사이트", icon: "external" },
+        { url: "https://communis.kt.co.kr/guide/guide.do", label: "커뮤니즈 API 가이드", icon: "book" },
+      ],
       status: "live",
     },
     {
@@ -216,9 +229,10 @@
   function liveAgentsForService(serviceId) {
     return AGENTS.filter((a) => !a.hidden && a.supports.includes(serviceId));
   }
-  // 공개 노출 대상 Agent (hidden 제외) — 홈 목록 등 공개 화면용
+  // 공개 노출 대상 Agent (hidden·serviceGuide 제외) — 홈 '에이전트별' 목록용.
+  // serviceGuide(예: Communis 이용가이드)는 서비스 소속 가이드라 에이전트 목록에서 뺀다.
   function visibleAgents() {
-    return AGENTS.filter((a) => !a.hidden);
+    return AGENTS.filter((a) => !a.hidden && !a.serviceGuide);
   }
   // Agent가 지원하는 서비스 목록 (본문 섹션 순서 = SERVICES 순서)
   function servicesForAgent(agentId) {
@@ -248,7 +262,7 @@
   const PUBLISHED_SERVICES = ["smart", "rcs", "communis"];    // 클릭 활성 서비스
   function isAgentPublished(id) { return PUBLISHED_AGENTS.indexOf(id) >= 0; }
   function isServicePublished(id) { return PUBLISHED_SERVICES.indexOf(id) >= 0; }
-  function publishedAgents() { return AGENTS.filter((a) => isAgentPublished(a.id)); }
+  function publishedAgents() { return AGENTS.filter((a) => isAgentPublished(a.id) && !a.serviceGuide); }
   function publishedServices() { return SERVICES.filter((s) => isServicePublished(s.id)); }
 
   // 전역 검색 인덱스 빌드 (서비스 / Agent / 문서) — 게시된 항목만 색인

@@ -89,6 +89,18 @@ function hlName(name) {
 /* ============================ 다운로드 버튼 ============================
    매뉴얼·에이전트가 한 페이지(통합 다운로드 센터)에 있어 단일 버튼으로 연결 */
 function DownloadButtons({ agent }) {
+  // 링크 배열이 지정된 경우(예: Communis 이용가이드) → 다운로드 대신 외부 사이트 버튼 여러 개
+  if (agent && agent.links && agent.links.length) {
+    return (
+      <div className="dl-buttons">
+        {agent.links.map((l, i) => (
+          <a key={i} className="dl-btn" href={l.url} target="_blank" rel="noopener noreferrer">
+            <Icon name={l.icon || "external"} size={16} /> {l.label}
+          </a>
+        ))}
+      </div>
+    );
+  }
   // 에이전트에 siteUrl 이 있으면 다운로드 대신 해당 사이트 링크를 노출(예: openAPI 포털)
   if (agent && agent.siteUrl) {
     return (
@@ -453,6 +465,8 @@ function MstgExamples() {
 function HomeServiceCard({ service, onNavigate }) {
   const agents = window.HUB.liveAgentsForService(service.id);
   const enabled = window.HUB.isServicePublished(service.id);
+  // 서비스에 agentCount(표시용 오버라이드)가 있으면 그 값을, 없으면 실제 지원 Agent 수를 사용
+  const agentCount = (service.agentCount != null) ? service.agentCount : agents.length;
   return (
     <a
       className={"hcard hcard-svc" + (enabled ? " linkcard ready" : " locked")}
@@ -469,7 +483,7 @@ function HomeServiceCard({ service, onNavigate }) {
       </div>
       <p className="hcard-desc">{service.tagline}</p>
       <div className="hcard-foot">
-        <span>{enabled ? agents.length + "개 Agent 지원" : "준비 중"}</span>
+        <span>{enabled ? agentCount + "개 Agent 지원" : "준비 중"}</span>
         {enabled && <span className="mrow-arrow"><Icon name="arrow" size={15} /></span>}
       </div>
     </a>

@@ -153,21 +153,32 @@ function TopMenu({ onNavigate, route }) {
           <Icon name="layers" size={15} /><span>홈</span>
         </button>
         <span className="topmenu-sep" />
-        <span className="topmenu-label">에이전트</span>
-        {agents.map((a) => (
-          <a key={a.id} className={"topmenu-link" + (curAgent === a.id ? " on" : "")}
-             onClick={() => onNavigate({ name: "agent", id: a.id })}>
-            {window.HUB.agentDisplayName(a, null)}
-          </a>
-        ))}
-        <span className="topmenu-sep" />
-        <span className="topmenu-label">서비스</span>
-        {services.map((s) => (
-          <a key={s.id} className={"topmenu-link" + (curSvc === s.id ? " on" : "")}
-             onClick={() => onNavigate({ name: "service", id: s.id })}>
-            {s.name}
-          </a>
-        ))}
+        <div className="topmenu-dd">
+          <button className={"topmenu-trigger" + (curAgent ? " on" : "")}>
+            에이전트 <Icon name="chevron" size={13} className="topmenu-caret" />
+          </button>
+          <div className="topmenu-panel">
+            {agents.map((a) => (
+              <a key={a.id} className={"topmenu-panel-item" + (curAgent === a.id ? " on" : "")}
+                 onClick={() => onNavigate({ name: "agent", id: a.id })}>
+                {window.HUB.agentDisplayName(a, null)}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div className="topmenu-dd">
+          <button className={"topmenu-trigger" + (curSvc ? " on" : "")}>
+            서비스 <Icon name="chevron" size={13} className="topmenu-caret" />
+          </button>
+          <div className="topmenu-panel">
+            {services.map((s) => (
+              <a key={s.id} className={"topmenu-panel-item" + (curSvc === s.id ? " on" : "")}
+                 onClick={() => onNavigate({ name: "service", id: s.id })}>
+                {s.name}
+              </a>
+            ))}
+          </div>
+        </div>
         <span className="topmenu-sep" />
         <a className={"topmenu-link" + (route.name === "resultcodes" ? " on" : "")}
            onClick={() => onNavigate({ name: "resultcodes" })}>결과코드</a>

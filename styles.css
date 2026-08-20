@@ -1223,7 +1223,9 @@ mark.search-hit {
    래퍼가 헤더 아래 영역만 보이도록 잘라(overflow) 메뉴가 헤더 밑 가장자리에서만 나오/사라진다. */
 .topmenu-wrap {
   position: fixed; top: var(--header-h); left: 0; right: 0; z-index: 65;
-  overflow: hidden; pointer-events: none; padding-bottom: 16px;
+  /* 위쪽(헤더 아래 경계)만 잘라 슬라이드를 가리고, 아래로는 드롭다운이 넘칠 수 있게 연다 */
+  overflow: visible; clip-path: inset(0 0 -620px 0);
+  pointer-events: none; padding-bottom: 16px;
 }
 .topmenu {
   pointer-events: auto;
@@ -1238,7 +1240,8 @@ mark.search-hit {
 .topmenu-spacer.on { height: calc(var(--header-h) + 1px); }
 .topmenu-inner {
   max-width: var(--maxw); margin: 0 auto; height: var(--header-h); padding: 0 24px;
-  display: flex; align-items: center; gap: 4px; overflow-x: auto; white-space: nowrap;
+  /* 드롭다운 패널이 아래로 넘쳐야 하므로 가로 스크롤(→ 세로 클리핑 유발) 대신 visible */
+  display: flex; align-items: center; gap: 4px; overflow: visible; white-space: nowrap;
 }
 .topmenu-inner::-webkit-scrollbar { height: 0; }
 .topmenu-home {
@@ -1255,6 +1258,36 @@ mark.search-hit {
 .topmenu-link.on { color: var(--accent-text); background: var(--accent-soft); }
 .topmenu-label { font-size: 10.5px; font-weight: 800; color: var(--text-3); letter-spacing: .03em; flex-shrink: 0; padding-left: 4px; }
 .topmenu-sep { width: 1px; height: 18px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
+
+/* 에이전트·서비스 드롭다운 — 트리거에 마우스를 올리면 아래로 패널이 슬라이드 */
+.topmenu-dd { position: relative; flex-shrink: 0; }
+.topmenu-trigger {
+  display: inline-flex; align-items: center; gap: 5px; font-family: inherit;
+  font-size: 13px; font-weight: 700; color: var(--text-2); background: none; border: none;
+  cursor: pointer; padding: 6px 11px; border-radius: 8px; transition: .12s;
+}
+.topmenu-dd:hover .topmenu-trigger,
+.topmenu-trigger.on { background: var(--accent-soft); color: var(--accent-text); }
+.topmenu-caret { transform: rotate(90deg); transition: transform .18s; opacity: .65; }
+.topmenu-dd:hover .topmenu-caret { transform: rotate(-90deg); opacity: 1; }
+.topmenu-panel {
+  position: absolute; top: 100%; left: 0; margin-top: 8px; min-width: 210px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: var(--shadow); padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s; z-index: 6;
+}
+/* 트리거와 패널 사이 빈틈을 덮는 투명 브릿지(호버 유지) */
+.topmenu-panel::before { content: ""; position: absolute; top: -10px; left: 0; right: 0; height: 10px; }
+.topmenu-dd:hover .topmenu-panel,
+.topmenu-dd:focus-within .topmenu-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.topmenu-panel-item {
+  display: block; padding: 9px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  color: var(--text-2); white-space: nowrap; cursor: pointer; transition: .12s;
+}
+.topmenu-panel-item:hover { background: var(--accent-soft); color: var(--accent-text); }
+.topmenu-panel-item.on { background: var(--accent-soft); color: var(--accent-text); font-weight: 700; }
 
 .hdr-link {
   display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px;
