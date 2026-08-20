@@ -31,7 +31,7 @@ auth = base64.b64encode(f"{API_ID}:{API_PW}".encode()).decode()
 headers = {
     "Content-Type": "application/json; charset=UTF-8",
     "Authorization": f"Basic {auth}",
-    # "SubKey": "부서ID",   # 콘솔에서 APIID로 SubKey를 사전 등록한 경우
+    # "SubKey": "과금분리키",   # 과금분리(MASTER/SUB) 전환 시에만 사용 (영업 협의 필요)
 }
 body = {
     "receiveList": [
@@ -348,7 +348,7 @@ print(res.status_code, res.text)`;
             list: [
               "<b>발신번호 사전등록신청서</b>(KT 양식) + <b>통신가입증명원</b>(회선 통신사 발급) 작성·업로드",
               "통신가입증명원은 <b>발신번호별</b>로 제출 (번호 10개면 증명원 10개)",
-              "등록 후 <b>승인 1~3일</b> 소요(영업일 기준) → 승인 완료 번호만 발송 가능",
+              "등록 후 <b>승인 절차</b>를 거쳐 → 승인 완료된 번호만 발송 가능",
             ],
             shot: { img: "assets/communis/sender-sms.png", url: "communis.kt.co.kr/sender/sms", label: "발신정보 — 문자 발신번호 등록" },
             note: "국제 SMS·이메일·앱푸시는 별도 발신번호 등록이 필요 없습니다.",
@@ -364,7 +364,7 @@ print(res.status_code, res.text)`;
                 rows: [
                   ["① 브랜드 등록", "로그인 → 브랜드 개설 → 정보 입력 → 퀵메뉴/탭설정 → <b>브랜드 승인 요청</b>. (브랜드명 = 모바일에서 검색 시 노출되는 이름)"],
                   ["② 대화방 등록", "승인된 브랜드 대시보드 → 대화방 등록 → 대화방 명·유형 입력 → <b>통신가입증명원 등록</b> → 승인 요청. (대화방 = 미저장 시 발신번호 대신 표시되는 이름)"],
-                  ["③ 대행사 권한 부여", "브랜드 <b>운영관리</b> 탭 → 대행사 운영권한 부여 → 대행사 검색·초대: <b>‘케이티’</b> + <b>‘모노커뮤니케이션즈’</b>"],
+                  ["③ 대행사 권한 부여", "브랜드 <b>운영관리</b> 탭 → 대행사 운영권한 부여 → 대행사 검색·초대: <b>‘케이티’(필수)</b>. <b>‘모노커뮤니케이션즈’</b>는 선택 — 초대 시 모노가 브랜드·발송 운영을 관리 지원"],
                 ],
               },
             ],
@@ -412,7 +412,7 @@ print(res.status_code, res.text)`;
             title: "국제SMS 웹훅",
             body: "국제 SMS 발송결과를 수신할 <b>웹훅 URL</b>을 등록합니다. <b>발신정보 &gt; 국제SMS 웹훅</b>에서 등록합니다.",
             shot: { img: "assets/communis/sender-intlsms-webhook.png", url: "communis.kt.co.kr/sender/intlsms-webhook", label: "발신정보 — 국제SMS 웹훅 등록" },
-            note: "웹훅 URL 등록 후 승인은 <b>방화벽 작업</b>이 필요하여 <b>3~5일</b> 소요됩니다(영업일 기준).",
+            note: "웹훅 URL 등록 후 승인에는 <b>방화벽 작업</b>이 필요합니다.",
           },
           {
             title: "080 수신거부",
@@ -503,7 +503,7 @@ print(res.status_code, res.text)`;
               rows: [
                 ["Content-Type", "필수", "<code>application/json; charset=UTF-8</code>"],
                 ["Authorization", "필수", "<code>Basic {base64(APIID:APIPW)}</code> — 콘솔 발급 API-ID/PW를 <code>ID:PW</code>로 이어 Base64 인코딩"],
-                ["SubKey", "선택", "부서id(=OrgId). 콘솔에서 APIID로 SubKey를 <b>사전 등록</b>한 경우 사용"],
+                ["SubKey", "선택", "<b>과금 분리</b>용(MASTER/SUB 구조). 기본 미사용 — 커뮤니즈에 <b>별도 요청·영업 협의</b> 후 전환. 발송 시 넣으면 해당 SubKey <b>청구계정으로 과금</b>"],
               ],
             },
           },
@@ -546,12 +546,12 @@ print(res.status_code, res.text)`;
               rows: [
                 ["동보 발송 (receiveList)", "최대 5,000건"],
                 ["동보 발송 (receiveExcel)", "최대 10,000건 (Base64 업로드)"],
-                ["광고 문자 발송 가능 시간", "08:00 ~ 19:50"],
+                ["광고 발송 가능 시간", "08:00 ~ 21:00 (정보통신망법 기준)"],
                 ["customMessageId 크기", "최대 100자"],
                 ["param 전체 크기", "JSON 문자열 9,900byte 이하"],
               ],
             },
-            note: "광고성(msgKind=A) 발송 시 본문에 <code>(광고)</code> 접두 + <code>무료수신거부:(번호)</code> 접미가 자동 추가됩니다.",
+            note: "광고 발송은 <b>정보통신망법상 08:00~21:00</b> 가능합니다. 커뮤니즈는 별도 발송금지 시간을 두지 않으며(하드 차단 없음), 통상 21시 발송을 피해 <b>20:50</b>까지 발송하도록 가이드합니다(RCS <b>웹 발송</b>만 프론트에서 차단). 야간 광고 수신 동의 고객은 21시 이후 발송이 허용되는 경우가 있습니다. 광고성(msgKind=A)은 본문에 <code>(광고)</code> 접두 + <code>무료수신거부:(번호)</code> 접미가 자동 추가됩니다.",
           },
         ],
       },
@@ -900,7 +900,7 @@ print(res.status_code, res.text)`;
                 ["템플릿 등록", "<code>CPaaS_friendTalkTemplate</code> 등"],
               ],
             },
-            note: "브랜드 메시지는 <b>광고성만</b> 가능하며 발송 시간이 <b>08:00~19:50</b>로 제한됩니다. (v3.0.25 '친구톡'→'브랜드 메시지' 개명, API명 유지) 요청 Body는 알림톡과 유사 — 상세는 규격서 §3.2. 발신프로필·템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 참고.",
+            note: "브랜드 메시지는 <b>광고성만</b> 가능하며, 광고 발송은 <b>정보통신망법상 08:00~21:00</b>입니다(발송시간 정책은 <b>공통 규격</b> 탭 참고). (v3.0.25 '친구톡'→'브랜드 메시지' 개명, API명 유지) 요청 Body는 알림톡과 유사 — 상세는 규격서 §3.2. 발신프로필·템플릿 준비는 <b>시작하기 &gt; 발신정보·템플릿</b> 참고.",
           },
         ],
       },
@@ -1138,7 +1138,7 @@ print(res.status_code, res.text)`;
                 ["결과조회 / 취소", "<code>CPaaS_resultEmail</code> / <code>CPaaS_deleteEmail</code>"],
               ],
             },
-            note: "receiveList 최대 <b>1,000건</b>. 광고성(msgKind=A)은 08:00~19:50 발송.",
+            note: "receiveList 최대 <b>1,000건</b>. 광고성(msgKind=A)은 정보통신망법상 <b>08:00~21:00</b> 발송(공통 규격 탭 참고).",
           },
           {
             title: "요청 Body (핵심)",
