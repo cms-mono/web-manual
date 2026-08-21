@@ -472,7 +472,7 @@ function HomeServiceCard({ service, onNavigate }) {
       className={"hcard hcard-svc" + (enabled ? " linkcard ready" : " locked")}
       onClick={enabled ? () => onNavigate({ name: "service", id: service.id }) : undefined}
     >
-      <div className="hcard-head">
+      <div className="hcard-head" style={enabled ? { background: headColorForService(service.id) } : undefined}>
         <div className="hcard-logo svc"><ServiceGlyph service={service} size={20} /></div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <p className="hcard-title">{service.name}</p>
@@ -490,17 +490,19 @@ function HomeServiceCard({ service, onNavigate }) {
   );
 }
 
-/* Agent 카드 헤더 배경 팔레트 (카드별 1색 — 라이트/다크 공용 반투명 틴트) */
-const AGENT_HEAD_COLORS = [
-  "rgba(79,70,229,0.12)",   // indigo
-  "rgba(14,148,136,0.12)",  // teal
-  "rgba(225,29,72,0.10)",   // rose
-  "rgba(217,119,6,0.13)",   // amber
-  "rgba(14,116,144,0.12)",  // cyan
-  "rgba(139,92,246,0.13)",  // violet
-  "rgba(22,163,74,0.12)",   // green
-  "rgba(100,116,139,0.12)", // slate
-];
+/* 카드 색상 — '같은 서비스는 같은 색'이 되도록 서비스 기준으로 통일한다.
+   (Agent는 서비스에 종속되지 않는 설치형이라 별도 색을 쓴다) */
+const SERVICE_HEAD_COLORS = {
+  smart:    "rgba(79,70,229,0.12)",   // indigo — KT 스마트메시지 Biz
+  communis: "rgba(14,148,136,0.12)",  // teal   — KT Communis
+  rcs:      "rgba(139,92,246,0.13)",  // violet — KT 스마트메시지 RCS
+  twoway:   "rgba(14,116,144,0.12)",  // cyan   — KT 양방향서비스
+};
+const AGENT_KIND_COLOR = "rgba(225,29,72,0.10)"; // rose — Agent(설치형 엔진) 전용
+const FALLBACK_HEAD_COLOR = "rgba(100,116,139,0.12)"; // slate
+function headColorForService(serviceId) {
+  return SERVICE_HEAD_COLORS[serviceId] || FALLBACK_HEAD_COLOR;
+}
 
 /* Agent 카드 — 헤더(색상 배경) + 지원 서비스 목록(매뉴얼)을 인라인 노출 */
 function HomeAgentCard({ agent, idx, onNavigate }) {
@@ -510,7 +512,10 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
   const soon = agent.status === "soon" && !ext;
   const services = window.HUB.servicesForAgent(agent.id);
   const p = window.HUB.PROVIDERS[agent.provider];
-  const headBg = AGENT_HEAD_COLORS[idx % AGENT_HEAD_COLORS.length];
+  // Agent(설치형)는 전용 색, API 카드는 대상 서비스 색을 따른다
+  const headBg = window.HUB.agentKind(agent) === "agent"
+    ? AGENT_KIND_COLOR
+    : headColorForService(agent.supports && agent.supports[0]);
   // serviceGuide(예: Communis)는 서비스 경로가 정식 주소 — 카드에서도 바로 서비스로 보낸다.
   const routeTo = (anchor) =>
     agent.serviceGuide && agent.supports && agent.supports[0]
@@ -562,7 +567,7 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
 /* 홈 '웹' 그룹 카드 — 콘솔(웹) 발송 가이드로 보내는 바로가기 */
 function HomeWebCard({ card, idx, onNavigate }) {
   const ready = !!card.goto && card.status !== "soon";
-  const headBg = AGENT_HEAD_COLORS[idx % AGENT_HEAD_COLORS.length];
+  const headBg = headColorForService(card.serviceId);
   return (
     <div className={"hcard" + (ready ? " ready" : " locked")}>
       <div

@@ -254,6 +254,7 @@
     {
       id: "communis_web",
       name: "KT Communis 웹",
+      serviceId: "communis",   // 카드 색상(서비스별 통일) 기준
       sub: "커뮤니즈 콘솔 · WEB발송",
       desc: "문자·알림톡·RCS를 코딩 없이 커뮤니즈 콘솔에서 직접 발송합니다.",
       icon: "layers",
@@ -264,6 +265,7 @@
     {
       id: "rcs_web",
       name: "KT RCS 웹 (헤르메스)",
+      serviceId: "rcs",        // 카드 색상(서비스별 통일) 기준
       sub: "헤르메스 · RCS 웹 발송",
       desc: "헤르메스에서 RCS 브랜드 메시지를 웹으로 발송합니다.",
       icon: "sparkle",
