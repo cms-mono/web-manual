@@ -472,7 +472,7 @@ function HomeServiceCard({ service, onNavigate }) {
       className={"hcard hcard-svc" + (enabled ? " linkcard ready" : " locked")}
       onClick={enabled ? () => onNavigate({ name: "service", id: service.id }) : undefined}
     >
-      <div className="hcard-head" style={enabled ? { background: headColorForService(service.id) } : undefined}>
+      <div className="hcard-head" style={{ background: headColorForService(service.id) }}>
         <div className="hcard-logo svc"><ServiceGlyph service={service} size={20} /></div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <p className="hcard-title">{service.name}</p>
@@ -491,15 +491,18 @@ function HomeServiceCard({ service, onNavigate }) {
 }
 
 /* 카드 색상 — '같은 서비스는 같은 색'이 되도록 서비스 기준으로 통일한다.
-   (Agent는 서비스에 종속되지 않는 설치형이라 별도 색을 쓴다) */
+   서비스끼리는 확실히 구분되도록 계열(파랑/초록/주황)을 달리하고,
+   Agent는 서비스에 종속되지 않는 설치형이라 별도 색(무채)을 쓴다. */
 const SERVICE_HEAD_COLORS = {
-  smart:    "rgba(79,70,229,0.12)",   // indigo — KT 스마트메시지 Biz
-  communis: "rgba(14,148,136,0.12)",  // teal   — KT Communis
-  rcs:      "rgba(139,92,246,0.13)",  // violet — KT 스마트메시지 RCS
-  twoway:   "rgba(14,116,144,0.12)",  // cyan   — KT 양방향서비스
+  smart:    "rgba(79,70,229,0.13)",   // indigo — KT 스마트메시지 Biz (openAPI)
+  communis: "rgba(14,148,136,0.13)",  // teal   — KT Communis (웹·API)
+  rcs:      "rgba(217,119,6,0.15)",   // amber  — KT 스마트메시지 RCS (RCS API·Hermes)
+  twoway:   "rgba(139,92,246,0.13)",  // violet — KT 양방향서비스
 };
-const AGENT_KIND_COLOR = "rgba(225,29,72,0.10)"; // rose — Agent(설치형 엔진) 전용
-const FALLBACK_HEAD_COLOR = "rgba(100,116,139,0.12)"; // slate
+const AGENT_KIND_COLOR = "rgba(100,116,139,0.14)"; // slate — Agent(설치형 엔진) 전용
+const FALLBACK_HEAD_COLOR = "rgba(100,116,139,0.12)";
+// 준비중(locked) 카드는 .hcard.locked의 opacity로 자연히 흐려지므로 색은 그대로 준다
+// (같은 서비스 계열임을 색으로 알 수 있게).
 function headColorForService(serviceId) {
   return SERVICE_HEAD_COLORS[serviceId] || FALLBACK_HEAD_COLOR;
 }
@@ -527,7 +530,7 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
     <div className={"hcard" + (enabled ? " ready" : " locked")}>
       <div
         className="hcard-head"
-        style={enabled ? { background: headBg } : undefined}
+        style={{ background: headBg }}
         onClick={ext ? openExt : (window.HUB.isAgentPublished(agent.id) ? goHome : undefined)}
       >
         <AgentAvatar agent={agent} className="hcard-logo" />
@@ -572,7 +575,7 @@ function HomeWebCard({ card, idx, onNavigate }) {
     <div className={"hcard" + (ready ? " ready" : " locked")}>
       <div
         className="hcard-head"
-        style={ready ? { background: headBg } : undefined}
+        style={{ background: headBg }}
         onClick={ready ? () => onNavigate(card.goto) : undefined}
       >
         <div className="hcard-logo av-svc"><Icon name={card.icon || "grid"} size={20} /></div>

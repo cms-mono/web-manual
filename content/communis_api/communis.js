@@ -437,7 +437,7 @@ print(res.status_code, res.text)`;
               },
             ],
             shot: { img: "assets/communis/sender-rcs.png", url: "communis.kt.co.kr/sender/rcs", label: "발신정보 — RCS 발신번호" },
-            note: "대행사 권한 부여 후 <b>서버 동기화 약 3~4시간</b> 뒤 헤르메스(발송)에서 브랜드·대화방이 확인됩니다. 상세: 브랜드 <code>docs.rcsbizcenter.com/policy/brand</code> · 대화방 <code>/policy/chatbot</code>. 진행 문의 02-333-7223(내선 1).",
+            note: "대행사 권한 부여 후 <b>서버 동기화 약 3~4시간</b> 뒤 Hermes(발송)에서 브랜드·대화방이 확인됩니다. 상세: 브랜드 <code>docs.rcsbizcenter.com/policy/brand</code> · 대화방 <code>/policy/chatbot</code>. 진행 문의 02-333-7223(내선 1).",
           },
           {
             title: "카카오 발신프로필 ① 카카오 채널 준비 (Part A)",

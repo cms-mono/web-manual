@@ -36,18 +36,18 @@
             cols: ["방법", "설명", "적합 환경"],
             colWidths: ["22%", "44%", "34%"],
             rows: [
-              ["웹 발송 (KT 헤르메스)", "헤르메스 포털에서 직접 작성·발송", "소량·수동 발송, 개발 없이"],
+              ["웹 발송 (KT Hermes)", "Hermes 포털에서 직접 작성·발송", "소량·수동 발송, 개발 없이"],
               ["API 발송", "REST API로 발송 요청", "시스템 연동·발송 자동화"],
               ["Agent 발송", "MCS / X_MCS Agent(RCS 버전)로 DB 기반 발송", "기존 스마트메시지 Agent 환경·대량"],
             ],
           },
         ],
         list: [
-          "<b>웹 발송</b> — <b>KT 헤르메스</b>(<code>rcs.hermes.kt.com</code>) 로그인 후 발송",
+          "<b>웹 발송</b> — <b>KT Hermes</b>(<code>rcs.hermes.kt.com</code>) 로그인 후 발송",
           "<b>API 발송</b> — REST API로 발송 요청 <i>(API 포털·규격은 확인 필요)</i>",
           "<b>Agent 발송</b> — <b>MCS &amp; X_MCS Agent(RCS 버전)</b>로 발송. 기존 <code>SDK_SMS/MMS_SEND</code> 테이블에 <code>RCS_*</code> 컬럼을 채워 발송",
         ],
-        note: "상세 연동은 우측 <b>연동 방법</b>에서 방식을 선택해 매뉴얼에서 확인하세요. Agent 방식은 ‘RCS 버전’ 매뉴얼을, 웹 발송은 헤르메스 포털을 참고합니다.",
+        note: "상세 연동은 우측 <b>연동 방법</b>에서 방식을 선택해 매뉴얼에서 확인하세요. Agent 방식은 ‘RCS 버전’ 매뉴얼을, 웹 발송은 Hermes 포털을 참고합니다.",
         cta: { href: "#/agent/mcs?sec=sec-rcs", label: "Agent 연동 매뉴얼 보기 (RCS 버전)", icon: "cpu" },
       },
 

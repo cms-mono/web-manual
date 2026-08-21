@@ -54,7 +54,7 @@
       icon: "sparkle",
       sites: [
         { kind: "Biz Center", title: "RCS Biz Center", url: "https://www.rcsbizcenter.com/main", desc: "RCS 브랜드, 에이전트 등록 및 메시지 관리", manualUrl: "https://docs.rcsbizcenter.com/" },
-        { kind: "발송 연동", title: "KT RCS 헤르메스", url: "https://rcs.hermes.kt.com/", desc: "RCS 발송 연동 게이트웨이, 운영 포털 (KT 관리)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyNF4xNzQ3" },
+        { kind: "발송 연동", title: "KT RCS Hermes", url: "https://rcs.hermes.kt.com/", desc: "RCS 발송 연동 게이트웨이, 운영 포털 (KT 관리)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyNF4xNzQ3" },
       ],
     },
     {
@@ -264,10 +264,10 @@
     },
     {
       id: "rcs_web",
-      name: "KT RCS 웹 (헤르메스)",
+      name: "KT RCS 웹 (Hermes)",
       serviceId: "rcs",        // 카드 색상(서비스별 통일) 기준
-      sub: "헤르메스 · RCS 웹 발송",
-      desc: "헤르메스에서 RCS 브랜드 메시지를 웹으로 발송합니다.",
+      sub: "Hermes · RCS 웹 발송",
+      desc: "Hermes에서 RCS 브랜드 메시지를 웹으로 발송합니다.",
       icon: "sparkle",
       rowLabel: "웹 발송 가이드",
       goto: null,          // 매뉴얼 준비 후 연결
