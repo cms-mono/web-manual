@@ -470,9 +470,10 @@ function HomeServiceCard({ service, onNavigate }) {
   return (
     <a
       className={"hcard hcard-svc" + (enabled ? " linkcard ready" : " locked")}
+      style={{ background: cardColorForService(service.id) }}
       onClick={enabled ? () => onNavigate({ name: "service", id: service.id }) : undefined}
     >
-      <div className="hcard-head" style={{ background: headColorForService(service.id) }}>
+      <div className="hcard-head">
         <div className="hcard-logo svc"><ServiceGlyph service={service} size={20} /></div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <p className="hcard-title">{service.name}</p>
@@ -493,19 +494,21 @@ function HomeServiceCard({ service, onNavigate }) {
 /* 카드 색상 — '같은 서비스는 같은 색'이 되도록 서비스 기준으로 통일한다.
    서비스끼리는 확실히 구분되도록 계열(파랑/초록/주황)을 달리하고,
    Agent는 서비스에 종속되지 않는 설치형이라 별도 색(무채)을 쓴다. */
-const SERVICE_HEAD_COLORS = {
-  smart:    "rgba(79,70,229,0.13)",   // indigo — KT 스마트메시지 Biz (openAPI)
-  communis: "rgba(14,148,136,0.13)",  // teal   — KT Communis (웹·API)
-  rcs:      "rgba(217,119,6,0.15)",   // amber  — KT 스마트메시지 RCS (RCS API·Hermes)
-  twoway:   "rgba(139,92,246,0.13)",  // violet — KT 양방향서비스
+const SERVICE_RGB = {
+  smart:    "79,70,229",    // indigo — KT 스마트메시지 Biz (openAPI)
+  communis: "14,148,136",   // teal   — KT Communis (웹·API)
+  rcs:      "217,119,6",    // amber  — KT 스마트메시지 RCS (RCS API·Hermes)
+  twoway:   "139,92,246",   // violet — KT 양방향서비스
 };
-const AGENT_KIND_COLOR = "rgba(100,116,139,0.14)"; // slate — Agent(설치형 엔진) 전용
-const FALLBACK_HEAD_COLOR = "rgba(100,116,139,0.12)";
+const AGENT_KIND_RGB = "100,116,139"; // slate — Agent(설치형 엔진) 전용
+const FALLBACK_RGB = "100,116,139";
+function serviceRgb(serviceId) { return SERVICE_RGB[serviceId] || FALLBACK_RGB; }
+// 헤더 밴드용(흰 카드 위 한 겹) / 카드 전체용(면적이 넓어 더 옅게)
+function headColorForService(serviceId) { return "rgba(" + serviceRgb(serviceId) + ",0.13)"; }
+function cardColorForService(serviceId) { return "rgba(" + serviceRgb(serviceId) + ",0.06)"; }
+const AGENT_KIND_COLOR = "rgba(" + AGENT_KIND_RGB + ",0.13)";
 // 준비중(locked) 카드는 .hcard.locked의 opacity로 자연히 흐려지므로 색은 그대로 준다
 // (같은 서비스 계열임을 색으로 알 수 있게).
-function headColorForService(serviceId) {
-  return SERVICE_HEAD_COLORS[serviceId] || FALLBACK_HEAD_COLOR;
-}
 
 /* Agent 카드 — 헤더(색상 배경) + 지원 서비스 목록(매뉴얼)을 인라인 노출 */
 function HomeAgentCard({ agent, idx, onNavigate }) {

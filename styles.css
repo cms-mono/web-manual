@@ -813,7 +813,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 .hcard-svc { display: flex; flex-direction: column; }
 .hcard-svc .hcard-title { font-size: 20px; }   /* 서비스명 강조 (보조명 제거) */
 .hcard-svc .hcard-head { padding: 20px 24px 18px; }
-.hcard-svc .hcard-desc { min-height: 54px; padding: 0 24px 16px; }  /* 약 2줄 + 좌우 여백 */
+.hcard-svc .hcard-desc { min-height: 54px; margin-top: 0; padding: 4px 24px 18px; }  /* 약 2줄 + 좌우 여백 */
 .hcard-svc .hcard-foot { margin-top: auto; padding: 12px 24px; }
 
 /* ---- 매뉴얼 행 ---- */
