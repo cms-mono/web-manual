@@ -516,12 +516,14 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
     agent.serviceGuide && agent.supports && agent.supports[0]
       ? { name: "service", id: agent.supports[0], anchor: anchor }
       : { name: "agent", id: agent.id, anchor: anchor };
+  // 카드 제목 클릭 시 도착 지점(agent.homeAnchor 지정 시 해당 섹션으로 바로 이동)
+  const goHome = () => onNavigate(routeTo(agent.homeAnchor));
   return (
     <div className={"hcard" + (enabled ? " ready" : " locked")}>
       <div
         className="hcard-head"
         style={enabled ? { background: headBg } : undefined}
-        onClick={ext ? openExt : (window.HUB.isAgentPublished(agent.id) ? () => onNavigate(routeTo()) : undefined)}
+        onClick={ext ? openExt : (window.HUB.isAgentPublished(agent.id) ? goHome : undefined)}
       >
         <AgentAvatar agent={agent} className="hcard-logo" />
         <div style={{ minWidth: 0, flex: 1 }}>
@@ -557,6 +559,39 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
   );
 }
 
+/* 홈 '웹' 그룹 카드 — 콘솔(웹) 발송 가이드로 보내는 바로가기 */
+function HomeWebCard({ card, idx, onNavigate }) {
+  const ready = !!card.goto && card.status !== "soon";
+  const headBg = AGENT_HEAD_COLORS[idx % AGENT_HEAD_COLORS.length];
+  return (
+    <div className={"hcard" + (ready ? " ready" : " locked")}>
+      <div
+        className="hcard-head"
+        style={ready ? { background: headBg } : undefined}
+        onClick={ready ? () => onNavigate(card.goto) : undefined}
+      >
+        <div className="hcard-logo av-svc"><Icon name={card.icon || "grid"} size={20} /></div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p className="hcard-title">{card.name}</p>
+          <p className="hcard-sub">{card.sub}</p>
+        </div>
+        {!ready && <span className="hcard-tag locked">준비중</span>}
+      </div>
+      <div className="mlist">
+        {ready ? (
+          <a className="mrow" onClick={() => onNavigate(card.goto)}>
+            <span className="mrow-badge svc"><Icon name="book" size={13} /></span>
+            <span className="mrow-text">{card.rowLabel || "웹 발송 가이드"}</span>
+            <span className="mrow-arrow"><Icon name="arrow" size={15} /></span>
+          </a>
+        ) : (
+          <div className="mrow disabled">준비 중입니다</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Home({ index, onNavigate }) {
   // 사용 가능(발행됨) 항목이 위로 오도록 정렬 — 그룹 내 기존 순서는 유지(안정 정렬)
   const services = window.HUB.SERVICES.slice().sort(
@@ -566,10 +601,12 @@ function Home({ index, onNavigate }) {
   const cards = window.HUB.homeAgentApiCards().sort(
     (a, b) => window.HUB.isAgentPublished(b.id) - window.HUB.isAgentPublished(a.id)
   );
-  // Agent(설치형 엔진) / API(REST 직접 연동) 두 그룹으로 나눠 태그와 함께 표시
+  const webCards = window.HUB.HOME_WEB_CARDS || [];
+  // 이용·연동 방법을 웹(콘솔) / API / Agent 세 그룹으로 나눠 태그와 함께 표시
   const KIND_GROUPS = [
-    { kind: "agent", label: "Agent", desc: "설치형 연동 엔진" },
+    { kind: "web", label: "웹", desc: "콘솔에서 직접 발송" },
     { kind: "api", label: "API", desc: "REST API 직접 연동" },
+    { kind: "agent", label: "Agent", desc: "설치형 연동 엔진" },
   ];
   React.useEffect(() => {
     if (window.__homeScroll) {
@@ -598,11 +635,12 @@ function Home({ index, onNavigate }) {
         <section className="home-sec" id="home-agents" style={{ paddingBottom: 64 }}>
           <div className="home-sec-head">
             <span className="bar agt"></span>
-            <h2>Agent &amp; API</h2>
-            <span className="count">{cards.length}</span>
+            <h2>이용 · 연동 방법</h2>
+            <span className="count">{cards.length + webCards.length}</span>
           </div>
           {KIND_GROUPS.map((g) => {
-            const list = cards.filter((a) => window.HUB.agentKind(a) === g.kind);
+            const isWeb = g.kind === "web";
+            const list = isWeb ? webCards : cards.filter((a) => window.HUB.agentKind(a) === g.kind);
             return (
               <div className="home-kind" key={g.kind}>
                 <div className="home-kind-head">
@@ -612,9 +650,13 @@ function Home({ index, onNavigate }) {
                 </div>
                 {list.length ? (
                   <div className="hgrid stagger">
-                    {list.map((a) => (
-                      <HomeAgentCard key={a.id} agent={a} idx={cards.indexOf(a)} onNavigate={onNavigate} />
-                    ))}
+                    {list.map((a, i) =>
+                      isWeb ? (
+                        <HomeWebCard key={a.id} card={a} idx={i} onNavigate={onNavigate} />
+                      ) : (
+                        <HomeAgentCard key={a.id} agent={a} idx={cards.indexOf(a)} onNavigate={onNavigate} />
+                      )
+                    )}
                   </div>
                 ) : (
                   <p className="home-kind-empty">준비 중입니다.</p>

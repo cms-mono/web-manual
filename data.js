@@ -95,8 +95,10 @@
     },
     {
       id: "communis_api",
-      name: "KT Communis 이용가이드",
-      label: "가이드",
+      name: "KT Communis API",
+      label: "API",
+      // 홈 카드에서 바로 API 공통 규격으로 진입시킨다(가이드 첫 페이지 대신).
+      homeAnchor: "step-communis-common-1",
       provider: "service",
       transport: "API",
       center: null,
@@ -245,6 +247,31 @@
   function visibleAgents() {
     return AGENTS.filter((a) => !a.hidden && !a.serviceGuide);
   }
+  /* 홈 '웹' 그룹 카드 — 콘솔(웹 화면)에서 직접 발송하는 방법으로 가는 바로가기.
+     Agent/API처럼 별도 매뉴얼 주체가 아니라 기존 가이드의 '웹 발송' 구간으로 보내는
+     내비게이션 카드이므로, AGENTS(검색·본문 생성 대상)에 넣지 않고 홈 전용으로 둔다. */
+  const HOME_WEB_CARDS = [
+    {
+      id: "communis_web",
+      name: "KT Communis 웹",
+      sub: "커뮤니즈 콘솔 · WEB발송",
+      desc: "문자·알림톡·RCS를 코딩 없이 커뮤니즈 콘솔에서 직접 발송합니다.",
+      icon: "layers",
+      rowLabel: "웹 발송 가이드",
+      goto: { name: "service", id: "communis", anchor: "step-communis-webIntro-1" },
+      status: "live",
+    },
+    {
+      id: "rcs_web",
+      name: "KT RCS 웹 (헤르메스)",
+      sub: "헤르메스 · RCS 웹 발송",
+      desc: "헤르메스에서 RCS 브랜드 메시지를 웹으로 발송합니다.",
+      icon: "sparkle",
+      rowLabel: "웹 발송 가이드",
+      goto: null,          // 매뉴얼 준비 후 연결
+      status: "soon",
+    },
+  ];
   // 홈 'Agent & API' 섹션용 카드 목록 — hidden만 제외한다.
   // 상단 '에이전트' 드롭다운(visibleAgents)과 달리, 서비스 가이드 성격의 API 카드
   // (예: Communis)도 API 그룹에 함께 노출한다.
@@ -343,6 +370,7 @@
     agentsForService,
     liveAgentsForService,
     visibleAgents,
+    HOME_WEB_CARDS,
     homeAgentApiCards,
     agentKind,
     servicesForAgent,
