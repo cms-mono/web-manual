@@ -552,7 +552,10 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
             <a
               key={s.id}
               className="mrow"
-              onClick={() => onNavigate(routeTo("sec-" + s.id))}
+              onClick={() => onNavigate(routeTo(
+                // 단일 서비스 카드(예: Communis API)는 카드가 가리키는 지점으로 통일
+                (agent.homeAnchor && services.length === 1) ? agent.homeAnchor : "sec-" + s.id
+              ))}
             >
               <span className="mrow-badge svc"><ServiceGlyph service={s} size={13} /></span>
               <span className="mrow-text">{s.name}</span>
