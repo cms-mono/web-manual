@@ -511,12 +511,17 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
   const services = window.HUB.servicesForAgent(agent.id);
   const p = window.HUB.PROVIDERS[agent.provider];
   const headBg = AGENT_HEAD_COLORS[idx % AGENT_HEAD_COLORS.length];
+  // serviceGuide(예: Communis)는 서비스 경로가 정식 주소 — 카드에서도 바로 서비스로 보낸다.
+  const routeTo = (anchor) =>
+    agent.serviceGuide && agent.supports && agent.supports[0]
+      ? { name: "service", id: agent.supports[0], anchor: anchor }
+      : { name: "agent", id: agent.id, anchor: anchor };
   return (
     <div className={"hcard" + (enabled ? " ready" : " locked")}>
       <div
         className="hcard-head"
         style={enabled ? { background: headBg } : undefined}
-        onClick={ext ? openExt : (window.HUB.isAgentPublished(agent.id) ? () => onNavigate({ name: "agent", id: agent.id }) : undefined)}
+        onClick={ext ? openExt : (window.HUB.isAgentPublished(agent.id) ? () => onNavigate(routeTo()) : undefined)}
       >
         <AgentAvatar agent={agent} className="hcard-logo" />
         <div style={{ minWidth: 0, flex: 1 }}>
@@ -537,7 +542,7 @@ function HomeAgentCard({ agent, idx, onNavigate }) {
             <a
               key={s.id}
               className="mrow"
-              onClick={() => onNavigate({ name: "agent", id: agent.id, anchor: "sec-" + s.id })}
+              onClick={() => onNavigate(routeTo("sec-" + s.id))}
             >
               <span className="mrow-badge svc"><ServiceGlyph service={s} size={13} /></span>
               <span className="mrow-text">{s.name}</span>
@@ -557,9 +562,15 @@ function Home({ index, onNavigate }) {
   const services = window.HUB.SERVICES.slice().sort(
     (a, b) => window.HUB.isServicePublished(b.id) - window.HUB.isServicePublished(a.id)
   );
-  const agents = window.HUB.visibleAgents().sort( // hidden(비공개) 에이전트는 홈 목록에서 제외
+  // 홈 'Agent & API' 카드 — hidden 제외, 발행된 항목이 위로(안정 정렬)
+  const cards = window.HUB.homeAgentApiCards().sort(
     (a, b) => window.HUB.isAgentPublished(b.id) - window.HUB.isAgentPublished(a.id)
   );
+  // Agent(설치형 엔진) / API(REST 직접 연동) 두 그룹으로 나눠 태그와 함께 표시
+  const KIND_GROUPS = [
+    { kind: "agent", label: "Agent", desc: "설치형 연동 엔진" },
+    { kind: "api", label: "API", desc: "REST API 직접 연동" },
+  ];
   React.useEffect(() => {
     if (window.__homeScroll) {
       const id = window.__homeScroll; window.__homeScroll = null;
@@ -587,14 +598,30 @@ function Home({ index, onNavigate }) {
         <section className="home-sec" id="home-agents" style={{ paddingBottom: 64 }}>
           <div className="home-sec-head">
             <span className="bar agt"></span>
-            <h2>에이전트별</h2>
-            <span className="count">{agents.length}</span>
+            <h2>Agent &amp; API</h2>
+            <span className="count">{cards.length}</span>
           </div>
-          <div className="hgrid stagger">
-            {agents.map((a, i) => (
-              <HomeAgentCard key={a.id} agent={a} idx={i} onNavigate={onNavigate} />
-            ))}
-          </div>
+          {KIND_GROUPS.map((g) => {
+            const list = cards.filter((a) => window.HUB.agentKind(a) === g.kind);
+            return (
+              <div className="home-kind" key={g.kind}>
+                <div className="home-kind-head">
+                  <span className={"kind-tag " + g.kind}>{g.label}</span>
+                  <span className="home-kind-desc">{g.desc}</span>
+                  <span className="count">{list.length}</span>
+                </div>
+                {list.length ? (
+                  <div className="hgrid stagger">
+                    {list.map((a) => (
+                      <HomeAgentCard key={a.id} agent={a} idx={cards.indexOf(a)} onNavigate={onNavigate} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="home-kind-empty">준비 중입니다.</p>
+                )}
+              </div>
+            );
+          })}
         </section>
       </div>
     </div>

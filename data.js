@@ -85,6 +85,7 @@
       transport: "API",
       center: null,
       desc: "KT 스마트메시지 Biz(크로샷)의 표준 REST API. 별도 엔진 설치 없이 HMAC 인증으로 SMS·LMS·MMS·VMS·FMS를 직접 발송한다.",
+      kind: "api",
       aliases: ["openAPI", "open API", "REST API", "크로샷 API", "xroshot"],
       versions: [],
       supports: ["smart"],
@@ -100,6 +101,7 @@
       transport: "API",
       center: null,
       desc: "Communis 통합 메시징 이용·연동 가이드 — 회원가입·발송 준비부터 웹 발송·REST API 연동까지.",
+      kind: "api",
       aliases: ["communis api", "커뮤니즈 api", "communis 이용가이드", "커뮤니즈 이용가이드", "커뮤니즈 웹발송", "communis web"],
       versions: [],
       supports: ["communis"],
@@ -122,6 +124,7 @@
       transport: "API",
       center: null,
       desc: "KT 스마트메시지 RCS의 REST API 연동 방식.",
+      kind: "api",
       aliases: ["rcs api"],
       versions: [],
       supports: ["rcs"],
@@ -135,6 +138,7 @@
       transport: "API",
       center: null,
       desc: "KT 양방향서비스의 REST API 연동 방식.",
+      kind: "api",
       aliases: ["양방향 api", "twoway api"],
       versions: [],
       supports: ["twoway"],
@@ -148,6 +152,7 @@
       transport: "TCP_SOCKET",
       center: null, // 레거시·차세대 모두 포함(단일 센터 아님) — 차이는 본문에서 표기
       desc: "KT가 직접 제공하는 TCP 소켓 통신 엔진. 레거시(McsAgent)와 차세대(X_McsAgent)를 합친 연동 방식.",
+      kind: "agent",
       cardSub: "KT 제공 · TCP 소켓 · 레거시 + 차세대", // 카드 보조 텍스트
 
       // 상세 페이지 헤더에 문단(불릿)으로 표시 — 카드/검색에는 위 desc 사용
@@ -169,6 +174,7 @@
       provider: "Mono",
       transport: "API",
       center: null,
+      kind: "agent",
       desc: "여러 서비스를 단일 연동 포인트로 통합한 Mono Agent. 스마트메시지·Communis·RCS를 함께 지원한다.",
       hidden: true, // 모노 제공 — 전체 공개하지 않고 특정 고객에게만 별도 안내(비공개)
       versions: [],
@@ -182,6 +188,7 @@
       provider: "Mono",
       transport: "API",
       center: null,
+      kind: "agent",
       desc: "양방향 송수신 전용 Mono Agent. 인바운드 수신과 대화형 시나리오 연동을 담당한다.",
       hidden: true, // 모노 제공 — 전체 공개하지 않고 특정 고객에게만 별도 안내(비공개)
       versions: [],
@@ -195,6 +202,7 @@
       provider: "Mono",
       transport: "API",
       center: null,
+      kind: "agent",
       desc: "M2X 계열을 리브랜딩한 차세대 Mono 통합 Agent. 매뉴얼은 별도 사이트에서 제공됩니다.",
       hidden: true, // 모노 제공 — 전체 공개하지 않고 특정 고객에게만 별도 안내(비공개)
       versions: [],
@@ -236,6 +244,16 @@
   // serviceGuide(예: Communis 이용가이드)는 서비스 소속 가이드라 에이전트 목록에서 뺀다.
   function visibleAgents() {
     return AGENTS.filter((a) => !a.hidden && !a.serviceGuide);
+  }
+  // 홈 'Agent & API' 섹션용 카드 목록 — hidden만 제외한다.
+  // 상단 '에이전트' 드롭다운(visibleAgents)과 달리, 서비스 가이드 성격의 API 카드
+  // (예: Communis)도 API 그룹에 함께 노출한다.
+  function homeAgentApiCards() {
+    return AGENTS.filter((a) => !a.hidden);
+  }
+  // 카드 분류: "agent"(설치형 엔진) / "api"(REST 직접 연동). 미지정 시 transport로 추론.
+  function agentKind(a) {
+    return a.kind || (a.transport === "TCP_SOCKET" ? "agent" : "api");
   }
   // Agent가 지원하는 서비스 목록 (본문 섹션 순서 = SERVICES 순서)
   function servicesForAgent(agentId) {
@@ -325,6 +343,8 @@
     agentsForService,
     liveAgentsForService,
     visibleAgents,
+    homeAgentApiCards,
+    agentKind,
     servicesForAgent,
     showsCenter,
     agentDisplayName,
