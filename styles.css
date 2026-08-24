@@ -522,7 +522,9 @@ button { font-family: inherit; cursor: pointer; }
 .shot-dots { display: flex; gap: 5px; }
 .shot-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); display: block; }
 .shot-url { font-size: 11.5px; color: var(--text-3); font-family: var(--mono-font); margin-left: 6px; }
-.shot-img { display: block; width: 100%; height: auto; background: var(--bg); }
+/* 캡처는 원본 크기를 넘겨 확대하지 않는다(작은 부분 캡처가 뭉개지는 것 방지).
+   폭이 넓은 캡처는 컨테이너에 맞춰 축소되고, 작은 캡처는 원본 크기로 가운데 정렬. */
+.shot-img { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; background: var(--bg); }
 .shot-canvas {
   height: 168px; display: grid; place-items: center; position: relative;
   background:
