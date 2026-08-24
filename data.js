@@ -119,6 +119,25 @@
       status: "live",
     },
     {
+      id: "rbc",
+      name: "RCS Biz Center (RBC)",
+      label: "사전 준비",
+      provider: "service",
+      transport: "API",
+      center: null,
+      desc: "RCS 발송 전 브랜드·대화방(발신번호)을 등록하는 이동통신 3사 공동 포털(rcsbizcenter.com) 사용 가이드.",
+      cardSub: "rcsbizcenter.com · 브랜드·발신번호 등록",
+      // 발송 방법이 아니라 '발송 전 준비' 절차라 홈에서 [기타 · 부록] 그룹에 둔다.
+      kind: "etc",
+      aliases: ["rbc", "rcs biz center", "알씨에스 비즈센터", "브랜드 등록", "대화방 등록", "발신번호 등록", "rcsbizcenter"],
+      versions: [],
+      supports: ["rcs"],
+      links: [
+        { url: "https://www.rcsbizcenter.com/", label: "RCS Biz Center", icon: "external" },
+      ],
+      status: "live",
+    },
+    {
       id: "rcs_api",
       name: "RCS API",
       label: "API",
@@ -308,7 +327,7 @@
      '클릭 가능(활성)'하고 나머지는 비활성(회색)으로 잠긴다.
      검색·직접 URL 접근도 활성 항목으로 제한된다.
      ▶ 매뉴얼이 준비되면 해당 id를 배열에 추가해 버튼을 활성화한다.   */
-  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api"];    // 클릭 활성 Agent
+  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api", "rbc"];    // 클릭 활성 Agent
   const PUBLISHED_SERVICES = ["smart", "rcs", "communis"];    // 클릭 활성 서비스
   function isAgentPublished(id) { return PUBLISHED_AGENTS.indexOf(id) >= 0; }
   function isServicePublished(id) { return PUBLISHED_SERVICES.indexOf(id) >= 0; }

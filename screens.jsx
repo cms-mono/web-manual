@@ -621,6 +621,7 @@ function Home({ index, onNavigate }) {
     { kind: "web", label: "웹", desc: "콘솔에서 직접 발송" },
     { kind: "api", label: "API", desc: "REST API 직접 연동" },
     { kind: "agent", label: "Agent", desc: "설치형 연동 엔진" },
+    { kind: "etc", label: "기타 · 부록", desc: "발송 전 준비 · 외부 포털 가이드" },
   ];
   React.useEffect(() => {
     if (window.__homeScroll) {
