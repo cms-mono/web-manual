@@ -155,8 +155,8 @@
       versions: [],
       supports: ["communis"],
       links: [
-        { url: "https://business.kakao.com/", label: "카카오 비즈니스", icon: "external" },
-        { url: "https://center-pf.kakao.com/", label: "카카오 채널 관리자센터", icon: "external" },
+        // business.kakao.com은 채널 관리자센터로 연결되므로 버튼은 하나만 둔다.
+        { url: "https://center-pf.kakao.com/", label: "카카오 비즈니스 채널 관리자센터", icon: "external" },
       ],
       status: "live",
     },
