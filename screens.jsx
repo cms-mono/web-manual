@@ -917,6 +917,20 @@ function AgentDetail({ agentId, index, onNavigate, anchor, query, navToken }) {
 
   React.useEffect(() => { setActive(initial); setNavOpen(true); window.scrollTo(0, 0); }, [agentId, anchor, initial, navToken]);
 
+  /* 현재 보고 있는 탭의 그룹을 상단 메뉴에 알린다.
+     한 페이지(예: Communis 가이드)가 '서비스 소개'와 '연동 방법'을 겸하는 경우,
+     상단 메뉴가 지금 구간에 맞는 항목만 활성화할 수 있게 한다. */
+  React.useEffect(() => {
+    const cur = pages[active];
+    const detail = { agentId: agentId, group: (cur && cur.group) || null };
+    window.__hubSection = detail;
+    window.dispatchEvent(new CustomEvent("hub:section", { detail: detail }));
+    return () => {
+      window.__hubSection = null;
+      window.dispatchEvent(new CustomEvent("hub:section", { detail: { agentId: null, group: null } }));
+    };
+  }, [agentId, active, pages]);
+
   // 스크롤 위치에 따라 현재 보고 있는 스텝을 좌측 네비에 표시(스크롤스파이)
   React.useEffect(() => {
     setActiveStep(1);

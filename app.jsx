@@ -148,6 +148,14 @@ function TopMenu({ onNavigate, route }) {
     };
   }, []);
 
+  // 본문(AgentDetail)이 알려주는 '지금 보고 있는 탭의 그룹'
+  const [section, setSection] = React.useState(() => window.__hubSection || null);
+  React.useEffect(() => {
+    function onSection(e) { setSection(e.detail || null); }
+    window.addEventListener("hub:section", onSection);
+    return () => window.removeEventListener("hub:section", onSection);
+  }, []);
+
   const services = window.HUB.publishedServices();
   const curAgent = route.name === "agent" ? route.id : null;
   const curSvc = route.name === "service" ? route.id : null;
@@ -167,8 +175,22 @@ function TopMenu({ onNavigate, route }) {
       ? { name: "service", id: a.supports[0], anchor: a.homeAnchor }
       : { name: "agent", id: a.id, anchor: a.homeAnchor };
   }
-  // 현재 보고 있는 항목이 '이용 · 연동 방법'에 속하는지(트리거 활성 표시용)
-  const onMethod = !!curAgent || (!!curSvc && !!(window.HUB.SERVICE_MAP[curSvc] || {}).guideAgentId);
+  /* 트리거 활성 표시 — 두 메뉴가 동시에 켜지지 않도록 한쪽만 고른다.
+     가이드가 서비스 경로에서 렌더되는 경우(Communis)에는 지금 보고 있는 구간으로 판단한다.
+       · 개요·시작하기 구간  → '서비스'
+       · 웹 발송·API 연동 등 → '이용 · 연동 방법' */
+  const guideAgentId = curSvc ? (window.HUB.SERVICE_MAP[curSvc] || {}).guideAgentId : null;
+  let svcActive = !!curSvc;
+  let onMethod = !!curAgent;
+  if (guideAgentId) {
+    const ga = window.HUB.AGENT_MAP[guideAgentId] || {};
+    const scope = ga.serviceScopeGroups || [];
+    const g = section && section.agentId === guideAgentId ? section.group : null;
+    // 그룹 정보가 아직 없으면(초기 렌더) 서비스 쪽을 기본으로 둔다
+    const inServiceScope = g == null ? true : scope.indexOf(g) >= 0;
+    svcActive = inServiceScope;
+    onMethod = !inServiceScope;
+  }
 
   return (
     <div className="topmenu-wrap">
@@ -183,7 +205,7 @@ function TopMenu({ onNavigate, route }) {
         </button>
         <span className="topmenu-sep" />
         <div className="topmenu-dd">
-          <button className={"topmenu-trigger" + (curSvc ? " on" : "")}>
+          <button className={"topmenu-trigger" + (svcActive ? " on" : "")}>
             서비스 <Icon name="chevron" size={13} className="topmenu-caret" />
           </button>
           <div className="topmenu-panel">
