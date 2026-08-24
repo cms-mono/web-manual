@@ -148,10 +148,27 @@ function TopMenu({ onNavigate, route }) {
     };
   }, []);
 
-  const agents = window.HUB.publishedAgents();
   const services = window.HUB.publishedServices();
   const curAgent = route.name === "agent" ? route.id : null;
   const curSvc = route.name === "service" ? route.id : null;
+
+  /* '이용 · 연동 방법' 드롭다운 — 홈 섹션과 같은 카테고리(웹 / API / Agent / 기타·부록)로 묶는다.
+     serviceGuide(예: Communis)도 포함하고, 이동 경로는 홈 카드와 동일하게 맞춘다. */
+  const methodAgents = window.HUB.homeAgentApiCards().filter((a) => window.HUB.isAgentPublished(a.id));
+  const webCards = (window.HUB.HOME_WEB_CARDS || []).filter((c) => !!c.goto && c.status !== "soon");
+  const METHOD_GROUPS = [
+    { kind: "web", label: "웹" },
+    { kind: "api", label: "API" },
+    { kind: "agent", label: "Agent" },
+    { kind: "etc", label: "기타 · 부록" },
+  ];
+  function agentRoute(a) {
+    return (a.serviceGuide && a.supports && a.supports[0])
+      ? { name: "service", id: a.supports[0], anchor: a.homeAnchor }
+      : { name: "agent", id: a.id, anchor: a.homeAnchor };
+  }
+  // 현재 보고 있는 항목이 '이용 · 연동 방법'에 속하는지(트리거 활성 표시용)
+  const onMethod = !!curAgent || (!!curSvc && !!(window.HUB.SERVICE_MAP[curSvc] || {}).guideAgentId);
 
   return (
     <div className="topmenu-wrap">
@@ -166,19 +183,6 @@ function TopMenu({ onNavigate, route }) {
         </button>
         <span className="topmenu-sep" />
         <div className="topmenu-dd">
-          <button className={"topmenu-trigger" + (curAgent ? " on" : "")}>
-            에이전트 <Icon name="chevron" size={13} className="topmenu-caret" />
-          </button>
-          <div className="topmenu-panel">
-            {agents.map((a) => (
-              <a key={a.id} className={"topmenu-panel-item" + (curAgent === a.id ? " on" : "")}
-                 onClick={() => onNavigate({ name: "agent", id: a.id })}>
-                {window.HUB.agentDisplayName(a, null)}
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className="topmenu-dd">
           <button className={"topmenu-trigger" + (curSvc ? " on" : "")}>
             서비스 <Icon name="chevron" size={13} className="topmenu-caret" />
           </button>
@@ -189,6 +193,34 @@ function TopMenu({ onNavigate, route }) {
                 {s.name}
               </a>
             ))}
+          </div>
+        </div>
+        <div className="topmenu-dd">
+          <button className={"topmenu-trigger" + (onMethod ? " on" : "")}>
+            이용 · 연동 방법 <Icon name="chevron" size={13} className="topmenu-caret" />
+          </button>
+          <div className="topmenu-panel wide">
+            {METHOD_GROUPS.map((g) => {
+              const isWeb = g.kind === "web";
+              const list = isWeb ? webCards : methodAgents.filter((a) => window.HUB.agentKind(a) === g.kind);
+              if (!list.length) return null;
+              return (
+                <div className="topmenu-panel-sec" key={g.kind}>
+                  <span className={"topmenu-panel-group kind-tag " + g.kind}>{g.label}</span>
+                  {list.map((a) =>
+                    isWeb ? (
+                      <a key={a.id} className="topmenu-panel-item"
+                         onClick={() => onNavigate(a.goto)}>{a.name}</a>
+                    ) : (
+                      <a key={a.id} className={"topmenu-panel-item" + (curAgent === a.id ? " on" : "")}
+                         onClick={() => onNavigate(agentRoute(a))}>
+                        {window.HUB.agentDisplayName(a, null)}
+                      </a>
+                    )
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
         <span className="topmenu-sep" />

@@ -1288,6 +1288,15 @@ mark.search-hit {
 }
 .topmenu-panel-item:hover { background: var(--accent-soft); color: var(--accent-text); }
 .topmenu-panel-item.on { background: var(--accent-soft); color: var(--accent-text); font-weight: 700; }
+/* 카테고리(웹/API/Agent/기타)로 묶인 드롭다운 */
+.topmenu-panel.wide { min-width: 250px; }
+.topmenu-panel-sec { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
+.topmenu-panel-sec + .topmenu-panel-sec { border-top: 1px solid var(--border); }
+.topmenu-panel-group {
+  align-self: flex-start; margin: 2px 0 4px 6px; height: 20px; padding: 0 8px;
+  font-size: 10.5px; cursor: default;
+}
+.topmenu-panel-sec .topmenu-panel-item { padding-left: 14px; }
 
 /* 홈 'Agent & API' — Agent / API 태그 하위 그룹 */
 .home-kind { margin-top: 18px; }
