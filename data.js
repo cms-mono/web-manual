@@ -141,6 +141,26 @@
       status: "live",
     },
     {
+      id: "kakao_biz",
+      name: "카카오 비즈니스 채널",
+      label: "사전 준비",
+      provider: "service",
+      transport: "API",
+      center: null,
+      desc: "알림톡·브랜드메시지 발송에 필요한 카카오톡 채널 생성과 커뮤니즈 발신프로필(발신키) 등록 가이드.",
+      cardSub: "business.kakao.com · 채널·발신프로필",
+      // 발송 방법이 아니라 '발송 전 준비' 절차라 홈에서 [기타 · 부록] 그룹에 둔다.
+      kind: "etc",
+      aliases: ["카카오 채널", "카카오 비즈니스", "발신프로필", "발신키", "senderkey", "kakaoSenderKey", "검색용 아이디", "알림톡 준비", "business.kakao.com"],
+      versions: [],
+      supports: ["communis"],
+      links: [
+        { url: "https://business.kakao.com/", label: "카카오 비즈니스", icon: "external" },
+        { url: "https://center-pf.kakao.com/", label: "카카오 채널 관리자센터", icon: "external" },
+      ],
+      status: "live",
+    },
+    {
       id: "rcs_api",
       name: "RCS API",
       label: "API",
@@ -330,7 +350,7 @@
      '클릭 가능(활성)'하고 나머지는 비활성(회색)으로 잠긴다.
      검색·직접 URL 접근도 활성 항목으로 제한된다.
      ▶ 매뉴얼이 준비되면 해당 id를 배열에 추가해 버튼을 활성화한다.   */
-  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api", "rbc"];    // 클릭 활성 Agent
+  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api", "rbc", "kakao_biz"];    // 클릭 활성 Agent
   const PUBLISHED_SERVICES = ["smart", "rcs", "communis"];    // 클릭 활성 서비스
   function isAgentPublished(id) { return PUBLISHED_AGENTS.indexOf(id) >= 0; }
   function isServicePublished(id) { return PUBLISHED_SERVICES.indexOf(id) >= 0; }

@@ -892,8 +892,9 @@ function AgentDetail({ agentId, index, onNavigate, anchor, query, navToken }) {
   //  · step-<svc>-<feat>-<stepNo> → 해당 기능 페이지 (스텝은 아래 effect에서 스크롤)
   const initial = React.useMemo(() => {
     if (anchor && anchor.indexOf("step-") === 0) {
-      const p = anchor.split("-"); // [step, svc, feat, stepNo]
-      const i = pages.findIndex((pg) => pg.serviceId === p[1] && pg.featureId === p[2]);
+      // serviceId·featureId에 '-'가 들어갈 수 있어 위치 분해 대신 접두사로 매칭한다.
+      const rest = anchor.slice(5); // "<svc>-<feat>-<stepNo>"
+      const i = pages.findIndex((pg) => rest.indexOf(pg.serviceId + "-" + pg.featureId + "-") === 0);
       if (i >= 0) return i;
     }
     if (anchor && anchor.indexOf("sec-") === 0) {
