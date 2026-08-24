@@ -141,6 +141,25 @@
       status: "live",
     },
     {
+      id: "hermes",
+      name: "KT RCS 웹 발송 (Hermes)",
+      label: "웹 발송",
+      provider: "service",
+      transport: "API",
+      center: null,
+      desc: "KT RCS 발송포탈(rcs.hermes.kt.com)에서 코딩 없이 RCS를 발송·조회·관리하는 웹 발송 가이드.",
+      cardSub: "rcs.hermes.kt.com · 웹 발송",
+      // 홈/상단메뉴의 '웹' 그룹은 HOME_WEB_CARDS로 그리므로 이 항목은 카드로 중복 노출되지 않는다.
+      kind: "web",
+      aliases: ["hermes", "헤르메스", "허메스", "rcs 웹발송", "발송포탈", "포탈 발송", "웹발송"],
+      versions: [],
+      supports: ["rcs"],
+      links: [
+        { url: "https://rcs.hermes.kt.com/", label: "KT RCS 발송포탈", icon: "external" },
+      ],
+      status: "live",
+    },
+    {
       id: "kakao_biz",
       name: "카카오 비즈니스 채널",
       label: "사전 준비",
@@ -312,8 +331,8 @@
       desc: "Hermes에서 RCS 브랜드 메시지를 웹으로 발송합니다.",
       icon: "sparkle",
       rowLabel: "웹 발송 가이드",
-      goto: null,          // 매뉴얼 준비 후 연결
-      status: "soon",
+      goto: { name: "agent", id: "hermes" },
+      status: "live",
     },
   ];
   // 홈 'Agent & API' 섹션용 카드 목록 — hidden만 제외한다.
@@ -350,7 +369,7 @@
      '클릭 가능(활성)'하고 나머지는 비활성(회색)으로 잠긴다.
      검색·직접 URL 접근도 활성 항목으로 제한된다.
      ▶ 매뉴얼이 준비되면 해당 id를 배열에 추가해 버튼을 활성화한다.   */
-  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api", "rbc", "kakao_biz"];    // 클릭 활성 Agent
+  const PUBLISHED_AGENTS = ["mcs", "openapi", "communis_api", "rbc", "kakao_biz", "hermes"];    // 클릭 활성 Agent
   const PUBLISHED_SERVICES = ["smart", "rcs", "communis"];    // 클릭 활성 서비스
   function isAgentPublished(id) { return PUBLISHED_AGENTS.indexOf(id) >= 0; }
   function isServicePublished(id) { return PUBLISHED_SERVICES.indexOf(id) >= 0; }
