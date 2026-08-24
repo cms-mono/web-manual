@@ -8,8 +8,10 @@
    ※ API 연동 발송은 별도(RCS API)
 
    출처: KT 스마트메시지 RCS 발송 포탈 사용자 가이드 v0.8.2 + 실제 화면(2026-08)
-   ⚠ 캡처: 포탈이 화면에 사용자 실명·사번 워터마크를 렌더링하므로
-      기존 PDF 캡처는 재사용하지 않는다. 이미지는 별도 촬영본으로 교체 예정.
+   ⚠ 캡처: 포탈이 화면에 사용자 실명·사번 워터마크를 렌더링한다.
+      원칙적으로 새로 촬영해 넣되, [포탈 발송용 RCS ID 생성]은 계정당 1회만
+      뜨는 화면이라 재촬영이 불가능해 PDF 캡처를 사용한다.
+      → temp/dewatermark.py 로 워터마크를 배경색으로 덮고, 개인정보 영역은 크롭.
    ============================================================ */
 (function () {
   "use strict";
@@ -72,18 +74,37 @@
               "로그인한 MASTER ID에 <b>발송포탈용 P_RCS_ID가 없는</b> 경우",
               "로그인한 MASTER ID가 <b>ICIS 정규청약</b>이 되어 있는 경우",
             ],
-            shot: { url: "rcs.hermes.kt.com", label: "포탈 발송용 RCS ID 생성 팝업" },
-            note: "계정이 생성되면 <b>좌측에 메시지발송(웹) 메뉴가 나타납니다.</b> 이 화면은 <b>MASTER 계정에서만</b> 출력됩니다.",
+            shot: { img: "assets/hermes/rcsid-1-popup.png", url: "rcs.hermes.kt.com", label: "포탈 발송 기능 알림 — 과금 RCS ID 선택 후 [생성]" },
+            note: "이 팝업은 <b>MASTER 계정에서만</b> 출력되며, 계정당 최초 1회만 나타납니다. 화면은 공식 가이드(v0.8.2) 캡처입니다.",
+          },
+          {
+            title: "생성 완료 확인",
+            body: "생성이 끝나면 <b>포탈 발송 RCS ID 생성 완료</b> 창에서 발급된 정보를 확인합니다.",
+            table: {
+              cols: ["항목", "설명"],
+              colWidths: ["26%", "74%"],
+              rows: [
+                ["RCS ID", "자동 생성된 포탈 발송 계정 (<code>P_</code>로 시작)"],
+                ["XROSHOT ID", "연동된 크로샷 ID (없으면 ‘없음’)"],
+                ["과금 RCS ID", "앞 단계에서 선택한 과금 대상 RCS ID"],
+              ],
+            },
+            shot: { img: "assets/hermes/rcsid-2-done.png", url: "rcs.hermes.kt.com", label: "포탈 발송 RCS ID 생성 완료" },
+            note: "계정이 생성되면 <b>좌측에 메시지발송(웹) 메뉴가 나타납니다.</b> 상세 정보는 <b>마이페이지 &gt; 청약 관리</b>에서 확인할 수 있습니다. 포탈 발송 계정은 <b>포탈 발송 시에만</b> 사용됩니다.",
           },
           {
             title: "SUB 계정에 발송 권한 부여 (MASTER만 가능)",
-            body: "SUB 유저가 웹 발송을 쓰려면 <b>MASTER가 관리 페이지에서 발송포탈 권한을 부여</b>해야 합니다.",
+            body: "SUB 유저가 웹 발송을 쓰려면 <b>MASTER가 마이페이지 &gt; 운영 담당자 관리에서 권한을 부여</b>해야 합니다. <b>메뉴 권한 설정</b>의 <b>메시지발송(웹)</b>을 <b>허용</b>으로 바꾸고 저장합니다.",
             list: [
               "MASTER 계정으로 접속하면 SUB 계정의 권한을 수정할 수 있음",
               "권한 수정 후에야 해당 SUB 계정에서 메시지 발송 가능",
-              "MASTER 계정에서 <b>SUB Type 계정 생성</b>도 가능",
             ],
-            shot: { url: "rcs.hermes.kt.com", label: "SUB 계정 발송 권한 부여" },
+            shot: { img: "assets/hermes/rcsid-3-perm.png", url: "rcs.hermes.kt.com/mypage", label: "메뉴 권한 설정 — 메시지발송(웹) 허용" },
+          },
+          {
+            title: "SUB Type 계정 생성",
+            body: "MASTER 계정에서는 <b>마이페이지 &gt; 운영 담당자 관리 &gt; [등록하기]</b>로 SUB Type 계정을 새로 만들 수도 있습니다.",
+            shot: { img: "assets/hermes/rcsid-4-sublist.png", url: "rcs.hermes.kt.com/mypage", label: "운영 담당자 관리 — 등록하기" },
           },
         ],
       },
