@@ -447,14 +447,17 @@
     // 매뉴얼·에이전트 다운로드 페이지
     DOWNLOADS: "https://cms.mono.co.kr/downloads",
     // 우측 네비 바로가기
+    /* 우측 바로가기 — CMS·MSP·RBC 같은 약어만으로는 용도를 알기 어려워
+       각 링크에 '무엇을 하는 곳인지' 한 줄(desc)을 함께 표시한다.
+       by: 운영 주체(모노/KT) — 어디에 문의할지 바로 알 수 있게. */
     QUICKLINKS: [
-      { label: "CMS (모노 고객지원)", url: "https://cms.mono.co.kr" },
-      { label: "MSP 바로가기 (레거시)", url: "https://msp.kttcs.com/" },
-      { label: "MSP 바로가기 (차세대)", url: "https://msp.xroshot.com/" },
-      { label: "KT OpenAPI (크로샷)", url: "https://openapi.xroshot.com/" },
-      { label: "KT RCS (Hermes)", url: "https://rcs.hermes.kt.com/" },
-      { label: "RBC (RCS Biz Center)", url: "https://www.rcsbizcenter.com/main" },
-      { label: "커뮤니즈", url: "https://communis.kt.co.kr/" },
+      { label: "CMS", by: "모노", desc: "고객지원 · 매뉴얼·자료 다운로드", url: "https://cms.mono.co.kr" },
+      { label: "MSP (레거시)", by: "KT", desc: "발송건수·과금 조회 (1·2센터)", url: "https://msp.kttcs.com/" },
+      { label: "MSP (차세대)", by: "KT", desc: "발송건수·과금 조회 (차세대)", url: "https://msp.xroshot.com/" },
+      { label: "KT OpenAPI", by: "KT", desc: "스마트메시지 REST API 가이드", url: "https://openapi.xroshot.com/" },
+      { label: "KT RCS Hermes", by: "KT", desc: "RCS 웹 발송 · 운영 포털", url: "https://rcs.hermes.kt.com/" },
+      { label: "RBC", by: "이통3사", desc: "RCS 브랜드·발신번호 등록", url: "https://www.rcsbizcenter.com/main" },
+      { label: "커뮤니즈", by: "KT", desc: "통합 메시징 콘솔 · 요금", url: "https://communis.kt.co.kr/" },
     ],
 
     /* 검색 동의어·별칭 사전 — 한 그룹의 표기는 서로 호환 검색됨.

@@ -140,8 +140,14 @@ function RightNav({ index, onNavigate }) {
       <div className="rnav-card">
         <div className="rnav-title">바로가기</div>
         {window.HUB.QUICKLINKS.map((l, i) => (
-          <a key={i} className="rnav-link" href={l.url} target="_blank" rel="noopener noreferrer">
-            <span>{l.label}</span>
+          <a key={i} className="rnav-link" href={l.url} target="_blank" rel="noopener noreferrer" title={l.desc || l.label}>
+            <span className="rnav-main">
+              <span className="rnav-top">
+                <span className="rnav-name">{l.label}</span>
+                {l.by && <span className="rnav-by">{l.by}</span>}
+              </span>
+              {l.desc && <span className="rnav-desc">{l.desc}</span>}
+            </span>
             <Icon name="external" size={13} />
           </a>
         ))}
