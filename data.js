@@ -18,8 +18,8 @@
       hasCenter: true,
       icon: "message",
       sites: [
-        { kind: "관리자 포털", title: "MSP (레거시)", url: "https://msp.kttcs.com", desc: "발송·과금·세션·통계 조회 (1·2센터)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyMV4xNzQ2" },
-        { kind: "관리자 포털", title: "MSP (차세대)", url: "https://msp.xroshot.com", desc: "발송·과금·세션·통계 조회 (차세대 센터)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyMl4xNzQ2" },
+        { kind: "관리자 포털", title: "MSP (레거시)", url: "https://msp.kttcs.com", desc: "스마트메시지 발송·과금·세션·통계 조회 (1·2센터)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyMV4xNzQ2" },
+        { kind: "관리자 포털", title: "MSP (차세대)", url: "https://msp.xroshot.com", desc: "스마트메시지 발송·과금·세션·통계 조회 (차세대 센터)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyMl4xNzQ2" },
         { kind: "발신번호 관리", title: "발신번호 관리 (CRS)", url: "https://crs.kttcs.com/", desc: "발신번호 조회·삭제 (번호 변작 관리 시스템)", manualUrl: "https://cms.mono.co.kr/messaging-api/v1/bd/system/file/link/download?link=MTAyM14xNzQ2" },
         { kind: "Open API", title: "크로샷 Open API", url: "https://openapi.xroshot.com/", desc: "BIZ API 가이드, SDK 다운로드, API 테스트 (HMAC+IP 인증)" },
       ],
@@ -452,8 +452,9 @@
        by: 운영 주체(모노/KT) — 어디에 문의할지 바로 알 수 있게. */
     QUICKLINKS: [
       { label: "CMS", by: "모노", desc: "고객지원 · 매뉴얼·자료 다운로드", url: "https://cms.mono.co.kr" },
-      { label: "MSP (레거시)", by: "KT", desc: "발송건수·과금 조회 (1·2센터)", url: "https://msp.kttcs.com/" },
-      { label: "MSP (차세대)", by: "KT", desc: "발송건수·과금 조회 (차세대)", url: "https://msp.xroshot.com/" },
+      // MSP는 '스마트메시지' 전용 조회 — RCS·알림톡 건수는 여기서 볼 수 없어 오인 방지용으로 서비스명을 넣는다.
+      { label: "MSP (레거시)", by: "KT", desc: "스마트메시지 발송건수·과금 (1·2센터)", url: "https://msp.kttcs.com/" },
+      { label: "MSP (차세대)", by: "KT", desc: "스마트메시지 발송건수·과금 (차세대)", url: "https://msp.xroshot.com/" },
       { label: "KT OpenAPI", by: "KT", desc: "스마트메시지 REST API 가이드", url: "https://openapi.xroshot.com/" },
       { label: "KT RCS Hermes", by: "KT", desc: "RCS 웹 발송 · 운영 포털", url: "https://rcs.hermes.kt.com/" },
       { label: "RBC", by: "이통3사", desc: "RCS 브랜드·발신번호 등록", url: "https://www.rcsbizcenter.com/main" },

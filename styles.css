@@ -1127,9 +1127,17 @@ mark.search-hit {
 .rnav-link svg { color: var(--text-3); flex-shrink: 0; }
 .rnav .search { width: 100%; }
 /* 우측 네비는 콘텐츠를 밀지 않고 우측 여백에 떠 있게 — 본문은 항상 중앙 정렬.
-   여백이 충분한 넓은 화면(중앙 1180 + 양옆 여유)에서만 표시 */
+   본문(--maxw 1180px, 절반 590px)을 가리지 않는 폭에서만 표시하고,
+   가릴 수밖에 없는 좁은 화면에서는 숨긴다.
+   ── 1단계(1660px~): 본문 오른쪽 끝(중앙+590)에서 20px 띄워 좁은 패널(200px)
+   ── 2단계(1800px~): 여백이 넉넉하므로 기존 위치·너비(우측 48px / 232px) */
+@media (min-width: 1660px) {
+  .rnav { display: flex; width: 200px; left: calc(50% + 610px); right: auto; }
+  /* 위로가기 버튼이 패널을 덮지 않도록 패널 왼쪽 끝에 맞춤 */
+  .scroll-btns { right: calc(50vw - 650px); }
+}
 @media (min-width: 1800px) {
-  .rnav { display: flex; }
+  .rnav { width: 232px; left: auto; right: 48px; }
 }
 .qgen-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px 14px; padding: 14px; }
 .qgen-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -1193,7 +1201,7 @@ mark.search-hit {
 .scroll-btn:active { transform: translateY(1px); }
 @media (max-width: 640px) { .scroll-btns { right: 14px; bottom: 18px; } .scroll-btn { width: 36px; height: 36px; } }
 /* 우측 네비(.rnav)가 보이는 넓은 화면: 버튼 왼쪽 모서리를 rnav 왼쪽 라인(오른쪽에서 48+232=280px)에 맞춤 */
-@media (min-width: 1800px) { .scroll-btns { right: calc(48px + 232px - 40px); } } /* = 240px (rnav right + width - 버튼폭) */
+@media (min-width: 1800px) { .scroll-btns { right: calc(48px + 232px - 40px); } } /* = 240px (2단계 패널 왼쪽 끝) */
 .doc-main { min-width: 0; padding-bottom: 40px; }
 .doc-page-title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 8px; }
 .doc-page-intro { font-size: 14.5px; color: var(--text-2); line-height: 1.6; margin-bottom: 22px; }
