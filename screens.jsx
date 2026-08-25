@@ -697,6 +697,11 @@ function ServiceView({ serviceId, index, onNavigate }) {
     (a, b) => (window.HUB.isAgentPublished(b.id) ? 1 : 0) - (window.HUB.isAgentPublished(a.id) ? 1 : 0)
   );
   const empty = !sites.length && !flow.length;
+  const readyAgents = agents.filter((a) => window.HUB.isAgentPublished(a.id));
+  function goManuals() {
+    const el = document.getElementById("svc-manuals");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   React.useEffect(() => { window.scrollTo(0, 0); }, [serviceId]);
 
@@ -718,36 +723,54 @@ function ServiceView({ serviceId, index, onNavigate }) {
                 {service.features.map((f) => <span className="tag" key={f}>{f}</span>)}
               </div>
             </div>
-            <div className="svc-hero-conn">
-              <span className="svc-hero-conn-label">연동 방법 · 매뉴얼 바로가기</span>
-              <div className="svc-hero-conn-chips">
-                {agents.map((a) => {
-                  const enabled = window.HUB.isAgentPublished(a.id);
-                  return (
-                    <button
-                      key={a.id}
-                      className={"svc-pill" + (enabled ? " ready" : " locked")}
-                      onClick={enabled ? () => onNavigate({ name: "agent", id: a.id, anchor: "sec-" + serviceId }) : undefined}
-                    >
-                      <Icon name={a.transport === "API" ? "api" : "cpu"} size={14} />
-                      <span className="svc-pill-tx">{window.HUB.agentDisplayName(a, serviceId)}</span>
-                      {enabled
-                        ? <Icon name="arrow" size={13} className="svc-pill-arr" />
-                        : <span className="svc-pill-tag">준비중</span>}
-                    </button>
-                  );
-                })}
+            {readyAgents.length > 0 && (
+              <div className="svc-hero-cta">
+                <span className="svc-hero-cta-cap">이 서비스의 매뉴얼 {readyAgents.length}종</span>
+                <button className="svc-cta-btn" onClick={goManuals}>
+                  <Icon name="book" size={16} /> 매뉴얼 보기
+                  <Icon name="chevron" size={14} className="svc-cta-arr" />
+                </button>
+                <span className="svc-hero-cta-sub">연동 방법을 골라 바로 확인하세요</span>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
 
       <div className="wrap section-pad">
-        {sites.length > 0 && (
-          <section className="svc-sec">
-            <div className="sec-head"><h2>관련 사이트</h2></div>
-            <SiteLinks sites={sites} />
+        {agents.length > 0 && (
+          <section className="svc-sec" id="svc-manuals">
+            <div className="sec-head">
+              <h2>매뉴얼 · 연동 방법</h2>
+              <p>사용할 방법을 고르면 해당 매뉴얼로 이동합니다.</p>
+            </div>
+            <div className="mcards">
+              {agents.map((a) => {
+                const enabled = window.HUB.isAgentPublished(a.id);
+                const route = (a.serviceGuide && a.supports && a.supports[0])
+                  ? { name: "service", id: a.supports[0], anchor: a.homeAnchor }
+                  : { name: "agent", id: a.id, anchor: "sec-" + serviceId };
+                return (
+                  <a
+                    key={a.id}
+                    className={"mcard" + (enabled ? " ready" : " locked")}
+                    onClick={enabled ? () => onNavigate(route) : undefined}
+                  >
+                    <span className="mcard-ico"><Icon name={a.transport === "API" ? "api" : "cpu"} size={20} /></span>
+                    <span className="mcard-main">
+                      <span className="mcard-top">
+                        {a.label && <span className="mcard-kind">{a.label}</span>}
+                        <span className="mcard-title">{window.HUB.agentDisplayName(a, serviceId)}</span>
+                      </span>
+                      <span className="mcard-desc">{a.cardSub || a.desc}</span>
+                    </span>
+                    {enabled
+                      ? <span className="mcard-cta">매뉴얼 보기 <Icon name="arrow" size={15} /></span>
+                      : <span className="mcard-soon">준비중</span>}
+                  </a>
+                );
+              })}
+            </div>
           </section>
         )}
 
@@ -762,6 +785,16 @@ function ServiceView({ serviceId, index, onNavigate }) {
                 <CapStep key={st.id || i} step={st} n={i + 1} id={"flow-" + (i + 1)} noLink />
               ))}
             </div>
+          </section>
+        )}
+
+        {sites.length > 0 && (
+          <section className="svc-sec svc-sec-sites">
+            <div className="sec-head">
+              <h2>관련 사이트</h2>
+              <p>매뉴얼이 아닌 <b>외부 운영 사이트</b>입니다. 실제 등록·발송 작업을 할 때 이용하세요.</p>
+            </div>
+            <SiteLinks sites={sites} compact />
           </section>
         )}
 
