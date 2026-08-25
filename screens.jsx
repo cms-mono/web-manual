@@ -643,8 +643,12 @@ function Home({ index, onNavigate }) {
   ];
   React.useEffect(() => {
     if (window.__homeScroll) {
+      // 특정 섹션으로 돌아가는 경우(예: '홈으로' 복귀) 해당 위치로
       const id = window.__homeScroll; window.__homeScroll = null;
       setTimeout(() => scrollToId(id), 80);
+    } else {
+      // 그 외에는 항상 맨 위에서 시작 (서비스·에이전트 페이지와 동일)
+      window.scrollTo(0, 0);
     }
   }, []);
   return (
