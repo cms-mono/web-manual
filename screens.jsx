@@ -14,6 +14,18 @@ function scrollToId(id) {
   const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
   window.scrollTo({ top: y, behavior: "smooth" });
 }
+/* 최상단에서 출발하면 상단 퀵메뉴 자리(topmenu-spacer, 약 65px)가 접히면서
+   본문이 그만큼 위로 밀려 목표 지점이 헤더에 가려진다.
+   스크롤이 끝난 뒤 위치를 한 번 더 확인해 어긋난 만큼만 보정한다. */
+function scrollToIdSettled(id) {
+  scrollToId(id);
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const off = el.getBoundingClientRect().top - HEADER_OFFSET;
+    if (Math.abs(off) > 8) window.scrollTo({ top: window.scrollY + off, behavior: "smooth" });
+  }, 400);
+}
 
 /* 검색 진입 시 본문 내 키워드 강조 ----------------------------------------
    문서에 이미 렌더된 DOM의 텍스트 노드를 직접 훑어 일치 구간을 <mark>로 감싼다.
@@ -698,10 +710,8 @@ function ServiceView({ serviceId, index, onNavigate }) {
   );
   const empty = !sites.length && !flow.length;
   const readyAgents = agents.filter((a) => window.HUB.isAgentPublished(a.id));
-  function goManuals() {
-    const el = document.getElementById("svc-manuals");
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  // 고정 헤더 높이를 고려해 섹션 제목이 가려지지 않게 이동
+  function goManuals() { scrollToIdSettled("svc-manuals"); }
 
   React.useEffect(() => { window.scrollTo(0, 0); }, [serviceId]);
 
