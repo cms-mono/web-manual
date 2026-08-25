@@ -1196,6 +1196,12 @@ function PeekModal({ target, onClose, onNavigate }) {
   }, [pages, target.anchor]);
   const [idx, setIdx] = React.useState(startIdx);
   React.useEffect(() => setIdx(startIdx), [startIdx]);
+  const bodyRef = React.useRef(null);
+  // 탭/이전·다음 이동 시 본문을 맨 위로
+  function go(i) {
+    setIdx(i);
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }
 
   // ESC로 닫기 + 배경 스크롤 잠금
   React.useEffect(() => {
@@ -1208,6 +1214,8 @@ function PeekModal({ target, onClose, onNavigate }) {
 
   if (!agent) return null;
   const page = pages[idx] || pages[0];
+  const prev = idx > 0 ? pages[idx - 1] : null;
+  const next = idx < pages.length - 1 ? pages[idx + 1] : null;
   const route = target.svcId
     ? { name: "service", id: target.svcId, anchor: target.anchor }
     : (agent.serviceGuide && agent.supports && agent.supports[0])
@@ -1237,14 +1245,39 @@ function PeekModal({ target, onClose, onNavigate }) {
         {pages.length > 1 && (
           <div className="peek-tabs">
             {pages.map((pg, i) => (
-              <button key={pg.key} className={"peek-tab" + (i === idx ? " on" : "")} onClick={() => setIdx(i)}>
+              <button key={pg.key} className={"peek-tab" + (i === idx ? " on" : "")} onClick={() => go(i)}>
                 {pg.title}
               </button>
             ))}
           </div>
         )}
-        <div className="peek-body">
+        <div className="peek-body" ref={bodyRef}>
           {page ? <CapPage page={page} agentId={target.agentId} /> : <p className="doc-page-intro">내용이 없습니다.</p>}
+          {/* 뒤에 더 있는지 알 수 있게 하단 이전/다음 */}
+          {pages.length > 1 && (
+            <div className="doc-pager peek-pager">
+              <div className="doc-pager-side">
+                {prev && (
+                  <button className="doc-pager-btn" onClick={() => go(idx - 1)}>
+                    <span className="dir">← 이전</span>
+                    <span className="t">{prev.title}</span>
+                  </button>
+                )}
+              </div>
+              <div className="doc-pager-side right">
+                {next && (
+                  <button className="doc-pager-btn next" onClick={() => go(idx + 1)}>
+                    <span className="dir">다음 →</span>
+                    <span className="t">{next.title}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+          <p className="peek-foot">
+            {idx + 1} / {pages.length}
+            {next ? " · 아래 [다음]으로 이어서 볼 수 있습니다" : " · 마지막 문서입니다"}
+          </p>
         </div>
       </div>
     </div>
