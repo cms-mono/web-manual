@@ -1161,6 +1161,114 @@ function GuideMap({ groups }) {
   );
 }
 
+/* ============================ 미리보기(Peek) ============================
+   본문 안의 상호참조 링크(a.xref)를 눌렀을 때, 페이지를 떠나지 않고
+   대상 문서를 딤 처리된 오버레이로 먼저 훑어보게 한다.
+   링크 형식:  <a class="xref" data-to="<agentId>" data-sec="<anchor>">텍스트</a>
+               data-svc 로 서비스 경로(가이드형)를 지정할 수도 있다.
+   ====================================================================== */
+function peekTargetOf(el) {
+  const to = el.getAttribute("data-to");
+  if (!to) return null;
+  return { agentId: to, anchor: el.getAttribute("data-sec") || null, svcId: el.getAttribute("data-svc") || null };
+}
+
+function PeekModal({ target, onClose, onNavigate }) {
+  const agent = window.HUB.AGENT_MAP[target.agentId];
+  const pages = React.useMemo(
+    () => (agent ? buildPages(window.MANUALS.getSections(target.agentId)) : []),
+    [target.agentId, agent]
+  );
+  // 앵커로 시작 페이지 찾기(없으면 첫 페이지)
+  const startIdx = React.useMemo(() => {
+    const a = target.anchor;
+    if (a && a.indexOf("step-") === 0) {
+      const rest = a.slice(5);
+      const i = pages.findIndex((pg) => rest.indexOf(pg.serviceId + "-" + pg.featureId + "-") === 0);
+      if (i >= 0) return i;
+    }
+    if (a && a.indexOf("sec-") === 0) {
+      const sid = a.slice(4);
+      const i = pages.findIndex((pg) => pg.serviceId === sid);
+      if (i >= 0) return i;
+    }
+    return 0;
+  }, [pages, target.anchor]);
+  const [idx, setIdx] = React.useState(startIdx);
+  React.useEffect(() => setIdx(startIdx), [startIdx]);
+
+  // ESC로 닫기 + 배경 스크롤 잠금
+  React.useEffect(() => {
+    function onKey(e) { if (e.key === "Escape") onClose(); }
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose]);
+
+  if (!agent) return null;
+  const page = pages[idx] || pages[0];
+  const route = target.svcId
+    ? { name: "service", id: target.svcId, anchor: target.anchor }
+    : (agent.serviceGuide && agent.supports && agent.supports[0])
+      ? { name: "service", id: agent.supports[0], anchor: target.anchor }
+      : { name: "agent", id: target.agentId, anchor: target.anchor };
+  const href = location.href.split("#")[0] + routeToHash(route);
+
+  return (
+    <div className="peek-back" onClick={onClose}>
+      <div className="peek" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className="peek-head">
+          <div className="peek-tt">
+            <span className="peek-badge">미리보기</span>
+            <b>{window.HUB.agentDisplayName(agent, null)}</b>
+            {page && <span className="peek-sub">{page.title}</span>}
+          </div>
+          <div className="peek-acts">
+            <a className="peek-btn" href={href} target="_blank" rel="noopener noreferrer">
+              <Icon name="external" size={14} /> 새 탭으로 열기
+            </a>
+            <button className="peek-btn primary" onClick={() => { onClose(); onNavigate(route); }}>
+              이 문서로 이동 <Icon name="arrow" size={14} />
+            </button>
+            <button className="peek-x" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} /></button>
+          </div>
+        </div>
+        {pages.length > 1 && (
+          <div className="peek-tabs">
+            {pages.map((pg, i) => (
+              <button key={pg.key} className={"peek-tab" + (i === idx ? " on" : "")} onClick={() => setIdx(i)}>
+                {pg.title}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="peek-body">
+          {page ? <CapPage page={page} agentId={target.agentId} /> : <p className="doc-page-intro">내용이 없습니다.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 본문 어디서든 a.xref 클릭을 가로채 미리보기를 띄운다 */
+function usePeek() {
+  const [target, setTarget] = React.useState(null);
+  React.useEffect(() => {
+    function onClick(e) {
+      const a = e.target.closest && e.target.closest("a.xref");
+      if (!a) return;
+      const t = peekTargetOf(a);
+      if (!t) return;
+      e.preventDefault();
+      setTarget(t);
+    }
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+  return [target, setTarget];
+}
+
 /* 단일 페이지 본문 (캡처 스택 또는 공사중) */
 const CapPage = React.memo(function CapPage({ page, agentId }) {
   if (!page) return null;

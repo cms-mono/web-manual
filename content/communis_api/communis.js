@@ -423,7 +423,7 @@ print(res.status_code, res.text)`;
           },
           {
             title: "RCS 발신번호 (RBC 설정)",
-            body: "RCS 발신번호는 <b>RBC(RCS Biz Center)</b>에서 브랜드·대화방을 등록하고 KT를 대행사로 지정해야 사용할 수 있습니다. RBC 회원가입 후 아래 순서로 진행합니다.",
+            body: "RCS 발신번호는 <b>RBC(RCS Biz Center)</b>에서 브랜드·대화방을 등록하고 KT를 대행사로 지정해야 사용할 수 있습니다. 아래는 요약이며, 상세 절차는 <a class=\"xref\" data-to=\"rbc\">RCS Biz Center(RBC) 가이드</a>를 참고하세요.",
             tables: [
               {
                 label: "RBC 설정 순서",
@@ -441,7 +441,7 @@ print(res.status_code, res.text)`;
           },
           {
             title: "카카오 발신프로필 ① 카카오 채널 준비 (Part A)",
-            body: "알림톡·브랜드 메시지는 먼저 <b>카카오 비즈니스(business.kakao.com)</b>에서 채널을 만들고 <b>비즈니스 심사</b>를 받아야 합니다. (카카오 영역은 KT·커뮤니즈 지원 범위 밖 — 심사 문의는 카카오 비즈니스 고객센터)",
+            body: "알림톡·브랜드 메시지는 먼저 <b>카카오 비즈니스(business.kakao.com)</b>에서 채널을 만들고 <b>비즈니스 심사</b>를 받아야 합니다. 상세 절차는 <a class=\"xref\" data-to=\"kakao_biz\">카카오 비즈니스 채널 가이드</a>를 참고하세요. (카카오 영역은 KT·커뮤니즈 지원 범위 밖 — 심사 문의는 카카오 비즈니스 고객센터)",
             list: [
               "① <b>로그인</b> — business.kakao.com 카카오 계정 로그인",
               "② <b>새 채널 만들기</b> — 유형 <b>기본 채널형</b> 선택 (알림톡/친구톡은 기본형으로 충분)",
@@ -622,7 +622,7 @@ print(res.status_code, res.text)`;
           {
             title: "사전 준비",
             body: "카카오 발송은 <b>발신프로필 등록</b>과 <b>승인된 템플릿</b>이 선행되어야 합니다.",
-            note: "카카오 채널 생성 → 발신프로필 키 등록 → 템플릿 등록·검수는 <b>시작하기 &gt; 발신정보·템플릿</b> 탭을 참고하세요.",
+            note: "카카오 채널 생성 → 발신프로필 키 등록 절차는 <a class=\"xref\" data-to=\"kakao_biz\">카카오 비즈니스 채널 가이드</a>, 템플릿 등록·검수는 <b>시작하기 &gt; 템플릿</b> 탭을 참고하세요.",
           },
           {
             title: "알림톡 발송 (승인 템플릿 선택)",
@@ -652,7 +652,7 @@ print(res.status_code, res.text)`;
           {
             title: "사전 준비",
             body: "RCS 발송은 <b>RBC 브랜드·대화방 등록</b>과 대행사 지정이 선행되어야 합니다.",
-            note: "RBC 브랜드·대화방, 대행사 ‘케이티’ 지정은 <b>시작하기 &gt; 발신정보</b> 탭을 참고하세요.",
+            note: "RBC 브랜드·대화방 등록은 <a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-brand-1\">RBC 브랜드 개설</a>, 대행사 ‘케이티’ 지정은 <a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-agency-1\">대행사 운영권한 부여</a>를 참고하세요.",
           },
           {
             title: "템플릿 발송 vs 공통포맷 발송",
@@ -900,7 +900,7 @@ print(res.status_code, res.text)`;
           {
             title: "개요",
             body: "알림톡은 카카오톡 채널로 보내는 <b>정보성 메시지</b>입니다. 발송에는 <b>발신프로필키(kakaoSenderKey)</b>와 <b>승인된 템플릿ID(templateId)</b>가 필수입니다.",
-            note: "사전 준비(카카오 채널 생성 → 발신프로필 키 등록 → 템플릿 등록·검수)는 <b>시작하기 &gt; 발신정보 · 템플릿</b> 탭을 참고하세요.",
+            note: "사전 준비 — 카카오 채널 생성·발신프로필 키 등록은 <a class=\"xref\" data-to=\"kakao_biz\">카카오 비즈니스 채널 가이드</a>, 템플릿 등록·검수는 <b>시작하기 &gt; 템플릿</b> 탭을 참고하세요.",
           },
           {
             title: "엔드포인트",
@@ -988,7 +988,7 @@ print(res.status_code, res.text)`;
                 ["통합 RCS(iRCS)", "RCS 미지원 단말은 문자로 자동 대체까지 포함한 통합 발송"],
               ],
             },
-            note: "RBC 브랜드·대화방 등록, 대행사 '케이티' 지정은 <b>시작하기 &gt; 발신정보</b> 탭을 참고하세요. <code>brandId</code>·<code>brandKey</code>는 <code>chatbotId</code> 검증용입니다.",
+            note: "RBC 브랜드·대화방 등록은 <a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-brand-1\">RBC 브랜드 개설</a>, 대행사 지정은 <a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-agency-1\">대행사 운영권한 부여</a>를 참고하세요. <code>brandId</code>·<code>brandKey</code>는 <code>chatbotId</code> 검증용입니다.",
           },
           {
             title: "엔드포인트",

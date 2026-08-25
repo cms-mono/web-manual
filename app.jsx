@@ -306,6 +306,9 @@ function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [navigate]);
 
+  // 본문 상호참조 링크(a.xref) → 미리보기 오버레이
+  const [peek, setPeek] = usePeek();
+
   let screen;
   if (route.name === "service") {
     const svc = window.HUB.SERVICE_MAP[route.id];
@@ -331,6 +334,7 @@ function App() {
       <Footer onNavigate={navigate} />
       <RightNav index={index} onNavigate={navigate} route={route} />
       <ScrollButtons />
+      {peek && <PeekModal target={peek} onClose={() => setPeek(null)} onNavigate={navigate} />}
     </div>
   );
 }
