@@ -1960,6 +1960,19 @@ Object.assign(window, {
    ============================================================ */
 const HZ_NATURAL_W = 1100;   // 헤르메스 본문 기준 폭(px)
 
+/* 상자 안에 화면을 '잘리지 않게' 담기 위한 배율·높이 계산.
+   컨테이너 패딩과 강조 테두리(inset -8px)까지 빼고 여유를 둔다. */
+function hzFit(box, page) {
+  if (!box || !page) return null;
+  var cs = getComputedStyle(box);
+  var padX = parseFloat(cs.paddingLeft || 0) + parseFloat(cs.paddingRight || 0);
+  var padY = parseFloat(cs.paddingTop || 0) + parseFloat(cs.paddingBottom || 0);
+  var avail = box.clientWidth - padX - 20;              // 좌우 여유 20px
+  var nat = Math.max(page.scrollWidth, HZ_NATURAL_W);   // 내용이 더 넓으면 그 폭 기준
+  var s = Math.min(1, avail / nat);
+  return { scale: s, height: page.scrollHeight * s + padY + 20 };
+}
+
 const HZ_STEPS = [
   { part: "brand",    title: "브랜드 · 발신번호 선택",
     desc: "<b>[조회]</b>를 눌러 팝업에서 <b>브랜드 → 발신번호</b> 순으로 고릅니다. 발신번호는 대표번호가 자동 선택됩니다.",
@@ -1993,11 +2006,9 @@ function HzZoom({ step, idx, onClose, onGo }) {
 
   React.useLayoutEffect(() => {
     function fit() {
-      const box = boxRef.current, page = pageRef.current;
-      if (!box || !page) return;
-      const s = Math.min(1, box.clientWidth / HZ_NATURAL_W);
-      setScale(s);
-      setH(page.scrollHeight * s);
+      const r = hzFit(boxRef.current, pageRef.current);
+      if (!r) return;
+      setScale(r.scale); setH(r.height);
     }
     fit();
     const t = setTimeout(fit, 250);
@@ -2039,7 +2050,7 @@ function HzZoom({ step, idx, onClose, onGo }) {
           {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
         </div>
         <div className="peek-body hz-zoom-body">
-          <div className="hz-fit" ref={boxRef} style={{ height: h ? h + 24 : undefined }}>
+          <div className="hz-fit" ref={boxRef} style={{ height: h || undefined }}>
             <div className="hz-real hz-page" ref={pageRef}
                  style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}
                  dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
@@ -2074,11 +2085,9 @@ function HermesSendFlow() {
 
   React.useLayoutEffect(() => {
     function fit() {
-      const box = boxRef.current, page = pageRef.current;
-      if (!box || !page) return;
-      const s = Math.min(1, box.clientWidth / HZ_NATURAL_W);
-      setScale(s);
-      setBoxH(page.scrollHeight * s);
+      const r = hzFit(boxRef.current, pageRef.current);
+      if (!r) return;
+      setScale(r.scale); setBoxH(r.height);
     }
     fit();
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(fit) : null;
@@ -2151,7 +2160,7 @@ function HermesSendFlow() {
           <span className="hz-path">rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송</span>
           <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 크게 볼 수 있습니다</span>
         </div>
-        <div className="hz-fit" ref={boxRef} style={{ height: boxH ? boxH + 32 : undefined }}>
+        <div className="hz-fit" ref={boxRef} style={{ height: boxH || undefined }}>
           <div className="hz-real hz-page" ref={pageRef} style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}>
             <div className="hz-tabrow">
               <span className="hz-tabon">메시지 생성/상세조회/발송</span>
