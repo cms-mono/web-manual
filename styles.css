@@ -1580,20 +1580,51 @@ mark.search-hit {
 }
 .hz-chip.on .hz-chip-n { background: var(--accent); color: #fff; }
 
-/* 현재 단계 설명 — 스크롤해도 상단에 붙어 따라온다 */
+/* 조작 바 — 제목 드롭다운·설명·이전/다음. 스크롤해도 따라온다 */
 .hz-head {
-  display: flex; gap: 11px; margin-bottom: 12px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding: 12px 14px;
   border: 1px solid var(--accent); border-radius: 12px; background: var(--accent-soft);
-  position: sticky; top: calc(var(--header-h) + 8px); z-index: 5;
+  position: sticky; top: calc(var(--header-h) + 8px); z-index: 20;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
 }
+.hz-head-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .hz-head-n {
   flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
   display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800;
 }
+.hz-head-acts { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
 .hz-head-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.hz-head-tx b { font-size: 15px; font-weight: 800; color: var(--text); }
 .hz-head-tx span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 .hz-head-tx em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+
+/* 제목 드롭다운 — 눌러서 원하는 단계로 바로 이동 */
+.hz-pick { position: relative; }
+.hz-pick-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px;
+  border-radius: 9px; border: 1px solid transparent; background: transparent;
+  font-family: inherit; font-size: 15px; font-weight: 800; color: var(--text); cursor: pointer;
+}
+.hz-pick-btn:hover, .hz-pick-btn.on { background: var(--surface); border-color: var(--border); }
+.hz-pick-arr { transition: transform .16s; opacity: .6; }
+.hz-pick-btn.on .hz-pick-arr { transform: rotate(90deg); opacity: 1; }
+.hz-pick-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 300px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: var(--shadow); padding: 6px; display: flex; flex-direction: column; gap: 2px;
+}
+.hz-pick-item {
+  display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 8px;
+  border: none; background: none; font-family: inherit; font-size: 13px; font-weight: 700;
+  color: var(--text-2); text-align: left; cursor: pointer; white-space: nowrap;
+}
+.hz-pick-item:hover { background: var(--accent-soft); color: var(--accent-text); }
+.hz-pick-item.on { background: var(--accent-soft); color: var(--accent-text); }
+.hz-pick-n {
+  flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--bg-sunken);
+  color: var(--text-2); display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10.5px; font-weight: 800;
+}
+.hz-pick-item.on .hz-pick-n { background: var(--accent); color: #fff; }
 
 /* 화면 프레임 */
 .hz-stage { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
@@ -1626,7 +1657,7 @@ mark.search-hit {
 .hz-part { position: relative; cursor: pointer; border-radius: 8px; transition: opacity .2s, filter .2s; }
 .hz-part:not(.on) { opacity: .3; filter: saturate(.25); }
 .hz-part:not(.on):hover { opacity: .55; }
-.hz-part.on { opacity: 1; }
+.hz-part.on { opacity: 1; cursor: zoom-in; }
 .hz-part.on::after {
   content: ""; position: absolute; inset: -8px; border-radius: 10px;
   border: 2px solid rgb(79,70,229); box-shadow: 0 0 0 9999px rgba(15,23,42,.06);
@@ -1658,8 +1689,17 @@ mark.search-hit {
 .hz-real .label-tooltip i::after { content: "?"; }
 .hz-real caption { display: none; }
 
-/* 단계 이동 */
-.hz-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+/* 확대 팝업 */
+.hz-zoom { width: min(1240px, 96vw); }
+.hz-zoom-desc {
+  padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--accent-soft);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.hz-zoom-desc span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.hz-zoom-desc em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+.hz-zoom-body { padding: 0; background: #fff; }
+
+/* 단계 이동 버튼 */
 .hz-navbtn {
   padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface);
   font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-2); cursor: pointer;
@@ -1667,4 +1707,4 @@ mark.search-hit {
 .hz-navbtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-text); }
 .hz-navbtn.pri:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
 .hz-navbtn:disabled { opacity: .4; cursor: default; }
-.hz-nav-pos { font-size: 12px; color: var(--text-3); font-weight: 700; }
+.hz-navbtn.sm { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; font-size: 12.5px; }

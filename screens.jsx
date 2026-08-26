@@ -1951,11 +1951,12 @@ Object.assign(window, {
 });
 
 /* ============================================================
-   헤르메스 발송 가이드 — 전체 화면을 띄우고 단계별로 스포트라이트
+   헤르메스 발송 가이드 — 전체 화면 + 단계 스포트라이트 + 확대 팝업
    ------------------------------------------------------------
-   content/hermes/_ui.js 의 실제 마크업·CSS로 '메시지 조회/생성/발송'
-   화면을 통째로 그린 뒤, 선택한 단계의 영역만 밝게 두고 나머지는 음영 처리.
-   화면은 컨테이너 폭에 맞춰 비율 그대로 축소해 가로 스크롤을 없앤다.
+   · content/hermes/_ui.js 의 실제 마크업·CSS로 발송 화면을 통째로 렌더
+   · 선택한 단계만 또렷하게(나머지 음영), 축소본은 맥락 파악용
+   · 자세히 볼 때는 [크게 보기] 팝업에서 원래 크기로 확인
+   · 조작 바(제목 드롭다운·이전/다음)는 sticky로 항상 따라다닌다
    ============================================================ */
 const HZ_NATURAL_W = 1100;   // 헤르메스 본문 기준 폭(px)
 
@@ -1983,17 +1984,86 @@ const HZ_STEPS = [
     tip: "템플릿 변수를 썼다면 <b>커스텀 수신 정보 업로드</b>로 수신자별 변수 값을 함께 올립니다." },
 ];
 
+/* 선택한 영역만 원래 크기로 크게 보는 팝업 */
+function HzZoom({ step, idx, onClose, onGo }) {
+  const boxRef = React.useRef(null);
+  const pageRef = React.useRef(null);
+  const [scale, setScale] = React.useState(1);
+  const [h, setH] = React.useState(0);
+
+  React.useLayoutEffect(() => {
+    function fit() {
+      const box = boxRef.current, page = pageRef.current;
+      if (!box || !page) return;
+      const s = Math.min(1, box.clientWidth / HZ_NATURAL_W);
+      setScale(s);
+      setH(page.scrollHeight * s);
+    }
+    fit();
+    const t = setTimeout(fit, 250);
+    window.addEventListener("resize", fit);
+    return () => { clearTimeout(t); window.removeEventListener("resize", fit); };
+  }, [step.part]);
+
+  React.useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onGo(idx + 1);
+      if (e.key === "ArrowLeft") onGo(idx - 1);
+    }
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose, onGo, idx]);
+
+  const ui = window.HZ_UI || { parts: {} };
+  /* 본문(.page)에 fade-up 애니메이션의 transform이 남아 있어 그 안에서는
+     position:fixed 가 화면 기준으로 잡히지 않는다 → body로 포털 렌더 */
+  return ReactDOM.createPortal(
+    <div className="peek-back" onClick={onClose}>
+      <div className="peek hz-zoom" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className="peek-head">
+          <div className="peek-tt">
+            <span className="peek-badge">{idx + 1} / {HZ_STEPS.length}</span>
+            <b>{step.title}</b>
+          </div>
+          <div className="peek-acts">
+            <button className="peek-btn" disabled={idx === 0} onClick={() => onGo(idx - 1)}>← 이전</button>
+            <button className="peek-btn primary" disabled={idx === HZ_STEPS.length - 1} onClick={() => onGo(idx + 1)}>다음 →</button>
+            <button className="peek-x" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} /></button>
+          </div>
+        </div>
+        <div className="hz-zoom-desc">
+          <span dangerouslySetInnerHTML={{ __html: step.desc }} />
+          {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
+        </div>
+        <div className="peek-body hz-zoom-body">
+          <div className="hz-fit" ref={boxRef} style={{ height: h ? h + 24 : undefined }}>
+            <div className="hz-real hz-page" ref={pageRef}
+                 style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}
+                 dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function HermesSendFlow() {
   const [i, setI] = React.useState(0);
+  const [open, setOpen] = React.useState(false);   // 제목 드롭다운
+  const [zoom, setZoom] = React.useState(false);   // 확대 팝업
   const ui = window.HZ_UI || { css: "", parts: {} };
   const step = HZ_STEPS[i];
 
-  const boxRef = React.useRef(null);   // 축소 결과를 담을 바깥 상자
-  const pageRef = React.useRef(null);  // 원본 크기 화면
+  const boxRef = React.useRef(null);
+  const pageRef = React.useRef(null);
+  const headRef = React.useRef(null);
   const [scale, setScale] = React.useState(1);
   const [boxH, setBoxH] = React.useState(0);
 
-  // 실제 CSS는 한 번만 주입 (스코프: .hz-real)
   React.useEffect(() => {
     if (!ui.css || document.getElementById("hz-real-css")) return;
     const el = document.createElement("style");
@@ -2002,7 +2072,6 @@ function HermesSendFlow() {
     document.head.appendChild(el);
   }, [ui.css]);
 
-  // 컨테이너 폭에 맞춰 비율 그대로 축소 (가로 스크롤 없이 한눈에)
   React.useLayoutEffect(() => {
     function fit() {
       const box = boxRef.current, page = pageRef.current;
@@ -2015,17 +2084,29 @@ function HermesSendFlow() {
     const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(fit) : null;
     if (ro && boxRef.current) ro.observe(boxRef.current);
     window.addEventListener("resize", fit);
-    const t = setTimeout(fit, 300); // 폰트 로드 후 높이 보정
+    const t = setTimeout(fit, 300);
     return () => { if (ro) ro.disconnect(); window.removeEventListener("resize", fit); clearTimeout(t); };
   }, [ui.parts]);
 
-  // 단계 변경 시 해당 영역이 보이도록 스크롤
+  // 바깥 클릭 시 드롭다운 닫기
+  React.useEffect(() => {
+    if (!open) return;
+    function onDoc(e) { if (!e.target.closest || !e.target.closest(".hz-pick")) setOpen(false); }
+    document.addEventListener("click", onDoc);
+    return () => document.removeEventListener("click", onDoc);
+  }, [open]);
+
+  /* 단계 이동 — sticky 조작 바에 가리지 않도록 그 높이만큼 더 띄운다 */
   function go(k) {
-    setI(k);
+    if (k < 0 || k >= HZ_STEPS.length) return;
+    setI(k); setOpen(false);
     setTimeout(() => {
       const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].part + '"]');
       if (!el || !boxRef.current) return;
-      const y = boxRef.current.getBoundingClientRect().top + window.scrollY + el.offsetTop * scale - 110;
+      const headH = headRef.current ? headRef.current.offsetHeight : 96;
+      const hdr = 64;                      // 상단 고정 헤더
+      const y = boxRef.current.getBoundingClientRect().top + window.scrollY
+              + el.offsetTop * scale - headH - hdr - 24;
       window.scrollTo({ top: y, behavior: "smooth" });
     }, 40);
   }
@@ -2033,20 +2114,32 @@ function HermesSendFlow() {
   return (
     <div className="hz">
       <div className="hz-bar"><div className="hz-bar-fill" style={{ width: ((i + 1) / HZ_STEPS.length) * 100 + "%" }} /></div>
-      <div className="hz-chips">
-        {HZ_STEPS.map((s, k) => (
-          <button key={s.part} className={"hz-chip" + (k === i ? " on" : "") + (k < i ? " done" : "")} onClick={() => go(k)}>
-            <span className="hz-chip-n">{k < i ? <Icon name="check" size={11} /> : k + 1}</span>
-            <span className="hz-chip-t">{s.title}</span>
-          </button>
-        ))}
-      </div>
 
-      {/* 현재 단계 설명 — 스크롤해도 따라오도록 상단 고정 */}
-      <div className="hz-head">
-        <span className="hz-head-n">{i + 1}</span>
+      {/* 조작 바 — 제목 드롭다운 · 설명 · 이전/다음 · 크게 보기 (스크롤해도 따라옴) */}
+      <div className="hz-head" ref={headRef}>
+        <div className="hz-head-top">
+          <span className="hz-head-n">{i + 1}</span>
+          <div className="hz-pick">
+            <button className={"hz-pick-btn" + (open ? " on" : "")} onClick={() => setOpen(!open)}>
+              {step.title}<Icon name="chevron" size={14} className="hz-pick-arr" />
+            </button>
+            {open && (
+              <div className="hz-pick-menu">
+                {HZ_STEPS.map((s, k) => (
+                  <button key={s.part} className={"hz-pick-item" + (k === i ? " on" : "")} onClick={() => go(k)}>
+                    <span className="hz-pick-n">{k + 1}</span>{s.title}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="hz-head-acts">
+            <button className="hz-navbtn sm" onClick={() => setZoom(true)}><Icon name="search" size={13} /> 크게 보기</button>
+            <button className="hz-navbtn sm" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
+            <button className="hz-navbtn sm pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
+          </div>
+        </div>
         <div className="hz-head-tx">
-          <b>{step.title}</b>
           <span dangerouslySetInnerHTML={{ __html: step.desc }} />
           {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
         </div>
@@ -2056,14 +2149,10 @@ function HermesSendFlow() {
         <div className="hz-stage-bar">
           <span className="hz-dots"><i /><i /><i /></span>
           <span className="hz-path">rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송</span>
-          <span className="hz-live">실제 화면 {Math.round(scale * 100)}%</span>
+          <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 크게 볼 수 있습니다</span>
         </div>
         <div className="hz-fit" ref={boxRef} style={{ height: boxH ? boxH + 32 : undefined }}>
-          <div
-            className="hz-real hz-page"
-            ref={pageRef}
-            style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}
-          >
+          <div className="hz-real hz-page" ref={pageRef} style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}>
             <div className="hz-tabrow">
               <span className="hz-tabon">메시지 생성/상세조회/발송</span>
               <span className="hz-taboff">메시지 조회/삭제</span>
@@ -2073,7 +2162,7 @@ function HermesSendFlow() {
                 key={s.part}
                 className={"hz-part" + (k === i ? " on" : "")}
                 data-part={s.part}
-                onClick={() => go(k)}
+                onClick={() => { if (k === i) setZoom(true); else go(k); }}
                 dangerouslySetInnerHTML={{ __html: ui.parts[s.part] || "" }}
               />
             ))}
@@ -2085,11 +2174,7 @@ function HermesSendFlow() {
         </div>
       </div>
 
-      <div className="hz-nav">
-        <button className="hz-navbtn" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
-        <span className="hz-nav-pos">{i + 1} / {HZ_STEPS.length}</span>
-        <button className="hz-navbtn pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
-      </div>
+      {zoom && <HzZoom step={step} idx={i} onClose={() => setZoom(false)} onGo={(k) => { if (k >= 0 && k < HZ_STEPS.length) setI(k); }} />}
     </div>
   );
 }
