@@ -133,8 +133,10 @@ button { font-family: inherit; cursor: pointer; }
 .hdr {
   position: sticky; top: 0; z-index: 80; /* 퀵메뉴(z65)보다 위 — 검색 드롭다운이 메뉴에 가리지 않게 */
   height: var(--header-h);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: saturate(150%) blur(12px);
+  /* 불투명 배경 — backdrop-filter(유리 효과) 금지.
+     반투명+blur 헤더는 스크롤 프레임마다 뒤 화면을 다시 그려 읽어와 흐리게 만들어야 해서,
+     결과코드 RCS 탭(647행·28,000px)처럼 긴 페이지에서 크롬·웨일 스크롤이 눈에 띄게 버벅인다. */
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center;
 }
@@ -714,7 +716,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
   .toc-right { display: none; }
   .mobile-secnav {
     display: block; position: sticky; top: var(--header-h); z-index: 40;
-    background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px);
+    background: var(--bg);   /* 불투명 — sticky + backdrop-filter는 스크롤 버벅임의 원인 */
     border-bottom: 1px solid var(--border); margin: 0 -24px 20px; padding: 10px 24px;
   }
   .mobile-secnav select {
@@ -845,7 +847,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 
 .cap-jump {
   display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; position: sticky; top: 72px; z-index: 5;
-  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); padding: 8px 0;
+  background: var(--bg); padding: 8px 0;   /* 불투명 — sticky + backdrop-filter는 스크롤 버벅임의 원인 */
 }
 .cap-jump-chip { font-size: 13px; font-weight: 700; color: var(--text-2); background: var(--surface); border: 1px solid var(--border); padding: 7px 14px; border-radius: 20px; cursor: pointer; transition: all .12s; }
 .cap-jump-chip:hover { border-color: var(--accent); color: var(--accent-text); }
@@ -1249,14 +1251,15 @@ mark.search-hit {
 }
 .topmenu {
   pointer-events: auto;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  backdrop-filter: saturate(180%) blur(8px);
+  background: var(--surface);   /* .hdr과 같은 이유로 불투명 (backdrop-filter 금지) */
   border-bottom: 1px solid var(--border); box-shadow: var(--shadow);
   transform: translateY(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
 }
 .topmenu.show { transform: translateY(0); }
-/* 최상단에서는 본문을 메뉴 높이만큼 밀어 가리지 않게 한다(스크롤 시 0으로 접힘 → 오버레이로 전환) */
-.topmenu-spacer { height: 0; transition: height .28s cubic-bezier(.4,0,.2,1); }
+/* 최상단에서는 본문을 메뉴 높이만큼 밀어 가리지 않게 한다(스크롤 시 0으로 접힘 → 오버레이로 전환)
+   height는 애니메이션하지 않는다 — 높이가 변하는 매 프레임 문서 전체 레이아웃이 다시 계산되어
+   행이 많은 표(결과코드)에서 스크롤 시작마다 끊긴다. 메뉴 자체는 transform으로 부드럽게 슬라이드. */
+.topmenu-spacer { height: 0; }
 .topmenu-spacer.on { height: calc(var(--header-h) + 1px); }
 .topmenu-inner {
   max-width: var(--maxw); margin: 0 auto; height: var(--header-h); padding: 0 24px;
@@ -1415,8 +1418,11 @@ mark.search-hit {
 .rc-count { font-size: 13px; color: var(--text-3); font-weight: 600; white-space: nowrap; }
 .rc-count b { color: var(--accent-text); font-weight: 800; }
 
-.rc-table { font-size: 13px; }
-.rc-table th, .rc-table td { vertical-align: top; }
+/* table-layout: fixed — 열 너비를 아래 지정값으로 고정한다.
+   auto로 두면 브라우저가 647행 전부의 글자 폭을 재서 열 너비를 정하므로,
+   레이아웃이 한 번 무효화될 때마다 표 전체를 다시 계산해 스크롤이 끊긴다. */
+.rc-table { font-size: 13px; table-layout: fixed; }
+.rc-table th, .rc-table td { vertical-align: top; overflow-wrap: anywhere; }
 .rc-table .rc-c-code { width: 84px; }
 .rc-table .rc-c-title { width: 26%; }
 .rc-code { font-family: var(--mono-font); font-size: 12.5px; color: var(--accent-text); font-weight: 700; white-space: nowrap; }
