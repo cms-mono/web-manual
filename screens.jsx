@@ -1973,16 +1973,17 @@ function hzFit(box, page) {
   return { scale: s, height: page.scrollHeight * s + padY + 20 };
 }
 
-/* 각 단계의 detail[]·table 은 헤르메스 실제 화면(2026-08-26 확인)에서 옮긴 것.
-   화면 문구를 그대로 인용한 부분은 <i>…</i> 로 표시했다. */
+/* 각 단계의 detail[] 은 헤르메스 실제 화면(2026-08-26 확인)에서 옮긴 것.
+   화면 문구를 그대로 인용한 부분은 <i>…</i> 로 표시했다.
+   hi[] = 가이드 팝업에서 강조할 영역을 찾는 키워드(화면 안의 th·제목·버튼 문구). */
 const HZ_STEPS = [
   { part: "brand",    title: "브랜드 · 발신번호 선택",
     desc: "<b>[조회]</b>를 눌러 팝업에서 <b>브랜드 → 발신번호</b> 순으로 고릅니다. 발신번호는 대표번호가 자동 선택됩니다.",
     tip: "목록에 브랜드·발신번호가 없다면 RBC 등록·승인이 끝나지 않은 것입니다.",
     detail: [
-      { t: "[조회] — 브랜드 선택 팝업",
-        d: "제목은 <b>‘브랜드를 선택해주세요’</b>. 표는 <b>번호 · 브랜드 명 · 브랜드 ID</b> 3열이고 위에 검색창이 있습니다. <b>내 계정에 등록·승인된 브랜드만</b> 나옵니다. 고른 뒤 [확인]." },
-      { t: "[조회] — 발신번호 선택 팝업",
+      { t: "[조회] — 브랜드 선택 팝업", hi: ["브랜드 선택"],
+        d: "제목은 <b>‘브랜드를 선택해주세요’</b>. 표는 <b>번호 · 브랜드 명 · 브랜드 ID</b> 3열이고 위에 검색창이 있습니다. <b>내 계정에 등록·승인된 브랜드만</b> 나옵니다." },
+      { t: "[조회] — 발신번호 선택 팝업", hi: ["발신 번호"],
         d: "제목은 <b>‘발신번호를 선택해주세요’</b>. <b>브랜드를 먼저 골라야</b> 목록이 채워지고, 그 브랜드에 등록된 대화방(발신번호)만 나옵니다. <b>대표 발신번호가 자동 선택</b>됩니다." },
       { t: "목록이 비어 있다면",
         d: "① RBC에서 <b>브랜드가 승인</b>되었는지 → ② 그 브랜드에 <b>대화방(발신번호)이 등록·승인</b>되었는지 순서로 확인합니다. 브랜드가 아예 안 보이면 <b>브랜드 KEY 등록</b>(RCS 비즈니스센터에서 받은 KEY를 입력)이 남아 있는 경우입니다." },
@@ -1992,41 +1993,39 @@ const HZ_STEPS = [
     desc: "<b>[조회]</b>로 <b>메시지 베이스</b>를 고릅니다. 종류를 먼저 골라야 아래 입력란이 열립니다.",
     tip: "템플릿을 쓰려면 미리 만들어 승인까지 받아 둬야 이 목록에 나옵니다.",
     detail: [
-      { t: "먼저 규격을 고릅니다",
-        d: "팝업 상단이 <b>기존 RCS</b> / <b>통합 RCS</b> 두 갈래입니다. 아래 설명은 화면에 적힌 문구 그대로입니다." },
-      { t: "그 다음 메시지 베이스",
+      { t: "먼저 규격을 고릅니다", hi: ["메시지 종류"],
+        d: "팝업 상단이 <b>기존 RCS</b> / <b>통합 RCS</b> 두 갈래입니다. 아래는 화면에 적힌 설명 그대로입니다.",
+        table: { head: ["구분", "화면에 적힌 설명"], rows: [
+          ["기존 RCS", "삼성 단말 이용자에게만 RCS 전송이 가능하지만, 가독성이 높고 효과적인 메시지"],
+          ["통합 RCS", "삼성, 아이폰 등 단말의 구분 없이 모든 고객에 RCS 메시지를 전송할 수 있어 편리하고 효율적인 메시지"],
+        ] } },
+      { t: "그 다음 메시지 베이스", hi: ["메시지 종류"],
         d: "<b>SMS · LMS · MMS · 템플릿LMS · 템플릿이미지 · 템플릿레이아웃</b> 중에서 고릅니다. 오른쪽 <b>미리보기</b>에 고른 베이스의 모양이 나타납니다." },
       { t: "템플릿은 미리 만들어 승인받아야 합니다",
-        d: "<b>템플릿 관리 &gt; 템플릿 생성</b>에서 만들고 <b>[승인 요청]</b>까지 해야 이 목록에 뜹니다. 진행 상태는 <b>템플릿 관리 &gt; 템플릿 조회</b>에서 <b>상태</b> 열로 확인합니다(번호 · 메시지베이스 ID · 템플릿 이름 · 브랜드 ID · 브랜드 명 · 상태 · 등록자 · 최종 수정일)." },
+        d: "<b>템플릿 관리 &gt; 템플릿 생성</b>에서 만들고 <b>[승인 요청]</b>까지 해야 이 목록에 뜹니다. 진행 상태는 <b>템플릿 관리 &gt; 템플릿 조회</b>의 <b>상태</b> 열에서 확인합니다." },
       { t: "템플릿 종류 — 3분류 18종",
-        d: "<b>이미지 템플릿(8)</b> 이미지 &amp; 타이틀 강조형 · 이미지 강조형 · 썸네일형 세로 · 썸네일형 가로 · SNS형(하단버튼) · SNS형(중간버튼) · 아이템 상세형 · 슬라이드형<br><b>LMS 템플릿(4)</b> 기본형 · 기본형 타이틀 강조 · 명세서 아이템 강조 · 문단형<br><b>텍스트 템플릿(6)</b> 기본형 아이템 강조 · 테이블 아이템 강조 · 타이틀 선택형 서술 · 타이틀 선택형 스타일 · 타이틀 자유형 서술 · 타이틀 자유형 스타일" },
+        d: "<b>이미지(8)</b> 이미지 &amp; 타이틀 강조형 · 이미지 강조형 · 썸네일형 세로 · 썸네일형 가로 · SNS형(하단버튼) · SNS형(중간버튼) · 아이템 상세형 · 슬라이드형<br><b>LMS(4)</b> 기본형 · 기본형 타이틀 강조 · 명세서 아이템 강조 · 문단형<br><b>텍스트(6)</b> 기본형 아이템 강조 · 테이블 아이템 강조 · 타이틀 선택형 서술/스타일 · 타이틀 자유형 서술/스타일" },
       { t: "템플릿 생성 화면 순서",
-        d: "① <b>기본 정보</b>(요청 템플릿 ID · 브랜드 ID [조회] · 템플릿 명 · 비율 1:1 / 3:4) → ② <b>내용 작성</b>(각 항목을 클릭해 입력) → ③ <b>버튼 옵션</b> → 하단 동의문 체크 후 <b>[승인 요청]</b>.<br>버튼 유형은 <b>URL 연결 · 지도보여주기(좌표) · 지도보여주기(쿼리) · 현재위치공유 · 전화 연결 · 복사하기 · 일정 등록 · 메시지 작성</b>이며, 유형마다 <b>Display Text</b>와 값(URL 등)을 넣습니다." },
-      { t: "이미지 템플릿 주의",
-        d: "화면 상단에 <i>이미지 템플릿은 임시 저장 기능을 사용할 수 없습니다</i> 라고 안내됩니다. 중간에 빠져나오면 처음부터 다시 작성해야 합니다." },
-    ],
-    table: { head: ["구분", "화면에 적힌 설명"], rows: [
-      ["기존 RCS", "삼성 단말 이용자에게만 RCS 전송이 가능하지만, 가독성이 높고 효과적인 메시지"],
-      ["통합 RCS", "삼성, 아이폰 등 단말의 구분 없이 모든 고객에 RCS 메시지를 전송할 수 있어 편리하고 효율적인 메시지"],
-    ] } },
+        d: "① <b>기본 정보</b>(요청 템플릿 ID · 브랜드 ID [조회] · 템플릿 명 · 비율 1:1 / 3:4) → ② <b>내용 작성</b> → ③ <b>버튼 옵션</b>(URL 연결 · 지도보여주기(좌표/쿼리) · 현재위치공유 · 전화 연결 · 복사하기 · 일정 등록 · 메시지 작성) → 동의문 체크 후 <b>[승인 요청]</b>. 화면에 <i>이미지 템플릿은 임시 저장 기능을 사용할 수 없습니다</i> 라고 안내됩니다." },
+    ] },
 
   { part: "common",   title: "공통 정보 · 제목 · 내용",
     desc: "광고 표시 여부·수신거부번호·본문 복사·만료 옵션을 정하고 제목과 내용을 씁니다. 우측 <b>미리보기</b>에 반영됩니다.",
     tip: "<b>'(광고)' 표시 여부</b>와 <b>무료 수신거부번호</b>는 필수 항목(*)입니다.",
     detail: [
-      { t: "'(광고)' 표시 여부 — 필수 · 기본값 ‘사용’",
-        d: "툴팁은 <b>header</b>. <b>사용</b>이면 본문 맨 앞에 <code>(광고)</code>가 자동으로 붙고, 미리보기에 <code>[Web발신](광고)</code> 형태로 나타납니다." },
-      { t: "무료 수신거부번호 — 필수",
-        d: "툴팁은 <b>footer</b> — 본문 끝에 붙습니다. 입력란에 직접 적으며 안내 예시는 <code>08012345678</code> 입니다. <b>화면에서 번호를 만들어 주지는 않으므로</b>, 쓸 080 번호가 미리 개통돼 있어야 합니다." },
-      { t: "본문 복사 (copyAllowed)",
+      { t: "'(광고)' 표시 여부 — 필수 · 기본값 ‘사용’", hi: ["(광고)"],
+        d: "툴팁은 <b>header</b>. <b>사용</b>이면 본문 맨 앞에 <code>(광고)</code>가 자동으로 붙고, 오른쪽 미리보기에 <code>[Web발신](광고)</code> 형태로 나타납니다." },
+      { t: "무료 수신거부번호 — 필수", hi: ["무료 수신거부번호"],
+        d: "툴팁은 <b>footer</b> — 본문 끝에 붙습니다. 입력란에 직접 적으며 안내 예시는 <code>08012345678</code>. <b>화면에서 번호를 만들어 주지는 않으므로</b> 쓸 080 번호가 미리 개통돼 있어야 합니다." },
+      { t: "본문 복사 (copyAllowed)", hi: ["본문 복사"],
         d: "툴팁 그대로 — <i>발송한 메시지를 수신 고객이 복사하도록 허용할지 여부를 선택하는 메뉴</i>. <b>허용 / 비허용</b>." },
-      { t: "만료 옵션 (expiryOption)",
-        d: "툴팁 그대로 — <i>발송 결과 응답 대기 시간 이후 메시지 만료 처리. ‘전송성공 불확실(79998)’ 로 실패처리. 만료 처리 이후 SMS/LMS로 발송 가능</i>.<br>즉 <b>정해진 시간 안에 응답이 오지 않으면 실패로 떨어뜨려</b> 대체 발송으로 넘길 수 있게 하는 값입니다. 짧게 잡을수록 대체 발송이 빨라지고, 길게 잡을수록 RCS로 도달할 기회를 더 줍니다. 고를 수 있는 값은 <b>40초 · 3분 10초 · 1시간 10초 · 1일 10초</b>." },
-      { t: "제목 · 내용",
-        d: "메시지 종류를 고르기 전에는 미리보기에 <i>메시지 종류를 선택 해주세요.</i> 만 표시됩니다. 종류를 고른 뒤 제목·내용을 쓰면 미리보기에 반영됩니다." },
-      { t: "커스텀 변수 표기 규칙 (내용 입력란 안내문)",
-        d: "<i>커스텀 변수를 사용하시는 경우 아래 ‘커스텀 변수 설정’ 항목의 버튼을 클릭하여 추가하시는 것을 권장 드립니다. 변수부에 오타 또는 공백이 있을 경우 변수 처리가 불가능 합니다.</i><br>· 처리 가능 &nbsp;<code>{{변수1}}</code><br>· 처리 불가 &nbsp;<code>{{변수}}</code> · <code>{{변수1 }}</code> · <code>{{ 변수1}}</code>" },
-      { t: "액션 버튼 설정",
+      { t: "만료 옵션 (expiryOption)", hi: ["만료 옵션"],
+        d: "툴팁 그대로 — <i>발송 결과 응답 대기 시간 이후 메시지 만료 처리. ‘전송성공 불확실(79998)’ 로 실패처리. 만료 처리 이후 SMS/LMS로 발송 가능</i>.<br>짧게 잡을수록 대체 발송이 빨라지고, 길게 잡을수록 RCS로 도달할 기회를 더 줍니다." },
+      { t: "제목 · 내용 → 미리보기", hi: ["메시지 제목", "미리보기"],
+        d: "메시지 종류를 고르기 전에는 미리보기에 <i>메시지 종류를 선택 해주세요.</i> 만 표시됩니다. 종류를 고른 뒤 제목·내용을 쓰면 오른쪽에 그대로 반영됩니다." },
+      { t: "커스텀 변수 표기 규칙", hi: ["메시지 내용"],
+        d: "입력란 안내문 — <i>변수부에 오타 또는 공백이 있을 경우 변수 처리가 불가능 합니다.</i><br>· 처리 가능 &nbsp;<code>{{변수1}}</code><br>· 처리 불가 &nbsp;<code>{{변수}}</code> · <code>{{변수1 }}</code> · <code>{{ 변수1}}</code>" },
+      { t: "액션 버튼 설정", hi: ["액션 버튼 설정"],
         d: "<b>미사용 / 1개 / 2개 / 3개</b> 중에서 고릅니다." },
     ] },
 
@@ -2034,9 +2033,9 @@ const HZ_STEPS = [
     desc: "RCS 발송이 실패했을 때 SMS/LMS/MMS로 대신 보낼지 정합니다. <b>기본값은 미사용</b>입니다.",
     tip: "계정이 ‘크로샷 사용’으로 설정돼 있어야만 켤 수 있습니다.",
     detail: [
-      { t: "먼저 계정 설정이 되어 있어야 합니다",
+      { t: "먼저 계정 설정이 되어 있어야 합니다", hi: ["사용 여부"],
         d: "툴팁 그대로 — <i>RCS 발송 실패건에 대한 발송 방식이 ‘크로샷 사용’으로 설정된 경우에만 가능</i>." },
-      { t: "설정 여부 확인 경로",
+      { t: "설정 여부 확인 경로", hi: ["사용 여부"],
         d: "툴팁 그대로 — <i>마이페이지 &gt; 청약관리 &gt; 발송포탈RCS_ID(ex&gt;P_RCSID_01) 상세 화면에서 확인 가능</i>. 이 화면에서는 <b>확인만</b> 되고 값을 바꾸지는 못합니다." },
       { t: "켜면 무엇을 더 채우나",
         d: "<b>사용</b>으로 바꾸면 대체 발송으로 내보낼 문자(SMS/LMS/MMS) 내용을 따로 작성합니다. 이미지로 보낼 때는 <b>서버 파일 선택</b> 팝업(번호 · 썸네일 · 파일 ID · 사용 가능 여부)에서 파일을 고릅니다." },
@@ -2046,13 +2045,11 @@ const HZ_STEPS = [
     desc: "이름을 붙여 저장하면 다음에 그대로 불러 쓸 수 있습니다. 바로 아래에 <b>광고성 표기 의무 확인</b> 체크가 있습니다.",
     tip: "저장은 선택이지만, 저장하지 않으면 이번 발송에만 쓰이고 남지 않습니다.",
     detail: [
-      { t: "메시지 이름 + [메시지 저장]",
-        d: "입력란 안내는 <i>메시지 이름을 입력하세요.</i> 저장해 두면 다음 발송 때 <b>‘기존 메시지를 선택해주세요’</b> 팝업에서 불러 쓸 수 있습니다." },
-      { t: "저장된 메시지 목록에 나오는 항목",
-        d: "<b>번호 · 메시지 이름 · 브랜드 ID · 브랜드 명 · 메시지 베이스 · FALLBACK 사용 여부 · 생성일</b>. 브랜드와 베이스가 같이 기록되므로, 브랜드가 다른 메시지를 잘못 불러올 일은 없습니다." },
-      { t: "저장하지 않으면",
+      { t: "메시지 이름 + [메시지 저장]", hi: ["메시지 이름"],
+        d: "저장해 두면 다음 발송 때 <b>‘기존 메시지를 선택해주세요’</b> 팝업에서 불러 쓸 수 있습니다. 목록에 나오는 항목은 <b>번호 · 메시지 이름 · 브랜드 ID · 브랜드 명 · 메시지 베이스 · FALLBACK 사용 여부 · 생성일</b>." },
+      { t: "저장하지 않으면", hi: ["메시지 이름"],
         d: "발송 자체는 됩니다. 다만 내용이 남지 않아 같은 메시지를 다시 보내려면 브랜드 선택부터 다시 채워야 합니다." },
-      { t: "광고성 표기 의무 확인 체크",
+      { t: "광고성 표기 의무 확인 체크", hi: ["광고성 문자 전송 시"],
         d: "메시지 저장 바로 아래에 <b>‘광고성 문자 전송 시 표기 의무를 준수하여 메시지를 작성하였습니다’</b> 체크박스가 있습니다. 발송 직전에 확인하는 항목입니다." },
     ] },
 
@@ -2060,135 +2057,190 @@ const HZ_STEPS = [
     desc: "즉시/예약을 고르고 <b>[발송량 현황 조회]</b>로 가능한 시간대를 확인합니다. 발송그룹ID는 <b>[중복검사]</b>까지 마쳐야 합니다.",
     tip: "빨간 안내(<b>발송그룹ID 중복검사필요</b>)가 남아 있으면 발송으로 넘어가지 않습니다.",
     detail: [
-      { t: "발송 형태",
+      { t: "발송 형태", hi: ["발송 형태"],
         d: "<b>즉시 발송</b> / <b>예약 발송</b>. 예약을 고르면 옆의 <b>[발송량 현황 조회]</b>로 시간대를 먼저 확인합니다." },
-      { t: "[발송량 현황 조회] 팝업 — 조회 범위",
-        d: "<b>선택일</b>은 드롭다운으로 오늘부터 7일치가 나옵니다. 화면 안내 그대로 <i>발송량 현황 조회는 현재 시간부터 7일 뒤까지 조회 가능합니다</i>." },
-      { t: "시간대는 10분 단위",
-        d: "기본으로 <b>오전 08:00 ~ 오후 20:50</b>까지 10분 간격으로 펼쳐집니다. <b>[야간시간대 보기]</b>를 켜면 그 밖의 시간대도 함께 나옵니다. 오른쪽 위 <b>refresh</b>로 최신 수치를 다시 받습니다." },
-      { t: "칸 색깔 3가지",
-        d: "<b>선택 가능</b> · <b>부분 발송 가능</b> · <b>선택 불가</b>. <b>부분 발송 가능</b>인 칸에는 <code>17:30 / 38만건</code>처럼 남은 가용 발송량이 함께 적히고, <b>[부분 발송 가용량 펼쳐보기]</b>로 한 번에 볼 수 있습니다. 화면 안내는 <i>메시지 발송 가능한 시간대와 가용 발송량 확인 후 시간을 선택해주세요</i>." },
-      { t: "발송량 — 단건과 대용량",
+      { t: "[발송량 현황 조회] — 조회 범위", hi: ["발송량 현황 조회"],
+        d: "<b>선택일</b>은 드롭다운으로 오늘부터 7일치. 화면 안내 그대로 <i>발송량 현황 조회는 현재 시간부터 7일 뒤까지 조회 가능합니다</i>." },
+      { t: "[발송량 현황 조회] — 시간대 보기", hi: ["발송량 현황 조회"],
+        d: "기본으로 <b>오전 08:00 ~ 오후 20:50</b>까지 <b>10분 간격</b>으로 펼쳐집니다. <b>[야간시간대 보기]</b>를 켜면 그 밖의 시간대도 함께 나오고, <b>refresh</b>로 최신 수치를 다시 받습니다." },
+      { t: "[발송량 현황 조회] — 칸 색깔 3가지", hi: ["발송량 현황 조회"],
+        d: "<b>선택 가능</b> · <b>부분 발송 가능</b> · <b>선택 불가</b>. 부분 발송 가능인 칸에는 <code>17:30 / 38만건</code>처럼 남은 가용량이 함께 적히고 <b>[부분 발송 가용량 펼쳐보기]</b>로 한 번에 볼 수 있습니다." },
+      { t: "발송량 — 단건과 대용량", hi: ["발송량"],
         d: "<b>단건/20건 이하 발송</b> 과 <b>대용량 발송(1회 10만건까지 발송 가능)</b> 중에서 고릅니다. 10만 건을 넘기려면 나눠서 발송해야 합니다." },
-      { t: "발송그룹ID (화면 안내 3줄)",
-        d: "<i>· 발송 캠페인 단위로 설정, 통신사별 100건 이상 전송 성공시 RCS비즈센터에서 읽음확인, 버튼클릭 등 고객반응통계 조회 가능<br>· 발송그룹ID는 발송시마다 다르게 입력해야 함 ( 발송그룹ID 중복체크 필수 )<br>· 발송그룹ID를 입력하지 않으면 자동으로 유니크한 값이 입력 됨</i>" },
-      { t: "[중복검사] · [복사하기]",
-        d: "검사 전에는 옆에 <b>‘발송그룹ID 중복검사필요’</b>가 남아 있습니다. <b>[중복검사]</b>를 눌러 통과시켜야 하고, <b>[복사하기]</b>로 방금 쓴 ID를 클립보드에 담아 둘 수 있습니다(나중에 통계에서 찾을 때 씁니다)." },
+      { t: "발송그룹ID — 화면 안내 3줄", hi: ["발송그룹ID"],
+        d: "<i>· 발송 캠페인 단위로 설정, 통신사별 100건 이상 전송 성공시 RCS비즈센터에서 읽음확인, 버튼클릭 등 고객반응통계 조회 가능<br>· 발송그룹ID는 발송시마다 다르게 입력해야 함 ( 중복체크 필수 )<br>· 입력하지 않으면 자동으로 유니크한 값이 입력 됨</i>" },
+      { t: "[중복검사] · [복사하기]", hi: ["발송그룹ID"],
+        d: "검사 전에는 옆에 <b>‘발송그룹ID 중복검사필요’</b>가 빨갛게 남아 있습니다. <b>[중복검사]</b>를 눌러 통과시켜야 하고, <b>[복사하기]</b>로 방금 쓴 ID를 클립보드에 담아 둘 수 있습니다(나중에 통계에서 찾을 때 씁니다)." },
     ] },
 
   { part: "recv",     title: "수신자 추가",
     desc: "<b>[수신자 추가]</b>로 직접 넣거나 <b>[커스텀 수신 정보 업로드]</b> · <b>[주소록 불러오기]</b>로 가져옵니다.",
     tip: "본문에 변수를 썼다면 값도 수신자별로 같이 올려야 합니다.",
     detail: [
-      { t: "[수신자 추가] — 한 명씩",
+      { t: "[수신자 추가] — 한 명씩", hi: ["수신자 추가"],
         d: "팝업 제목은 <b>‘수신자를 추가해주세요’</b>. <b>주소록 등록</b> / <b>임시번호</b> 중에서 고릅니다. 주소록 등록이면 <b>그룹 선택</b>(없으면 <b>[그룹 등록]</b>으로 먼저 만듭니다)까지 한 뒤 <b>이름 · 전화번호</b>를 넣고 <b>[등록]</b>." },
-      { t: "[커스텀 수신 정보 업로드] — 파일로",
-        d: "<b>엑셀로 추가</b> / <b>텍스트로 추가</b> 두 탭이 있고 <b>[샘플 다운로드]</b>가 있습니다. 양식을 받아 채워 올리는 방식입니다.<br>화면 안내 그대로 — <i>직접 작성한 엑셀파일을 불러 발송할 수 있습니다. 업로드한 번호는 해당 메시지 발송에만 사용됩니다. 번호를 주소록에 추가하시려면 주소록 관리 메뉴를 사용해주세요.</i>" },
-      { t: "[주소록 불러오기] — 저장해 둔 주소록에서",
+      { t: "[커스텀 수신 정보 업로드] — 파일로", hi: ["커스텀 수신 정보 업로드"],
+        d: "<b>엑셀로 추가</b> / <b>텍스트로 추가</b> 두 탭과 <b>[샘플 다운로드]</b>가 있습니다. 화면 안내 — <i>업로드한 번호는 해당 메시지 발송에만 사용됩니다. 번호를 주소록에 추가하시려면 주소록 관리 메뉴를 사용해주세요.</i>" },
+      { t: "[주소록 불러오기] — 저장해 둔 주소록에서", hi: ["주소록 불러오기"],
         d: "그룹을 검색해서 고릅니다. 화면 안내 — <i>주소록을 더블 클릭하여 개별 주소를 검색하고 추가할 수 있습니다.</i>" },
-      { t: "변수를 쓰면 목록 표가 달라집니다",
+      { t: "변수를 쓰면 목록 표가 달라집니다", hi: ["전화번호"],
         d: "본문에 변수가 없으면 목록은 <b>수신 번호 · 이름 · 전화번호</b> 3열입니다. 변수를 쓰면 여기에 <b>변수1 ~ 변수4</b> 열이 더 생기고, 수신자마다 값을 채워야 합니다." },
-      { t: "커스텀 변수 설정 안내",
-        d: "<i>작성한 메시지의 특정 부분 (고객명 등)을 수신자에 맞게 개별적으로 변경하여 발송하는 서비스 입니다. 입력할 항목은 발송 정보 입력시 [커스텀 수신 정보 업로드]를 하거나 개별적으로 [수신자 추가]로 등록해야 합니다.</i>" },
       { t: "변수 길이는 ‘치환 뒤’로 따집니다",
-        d: "<i>{{변수}} 항목을 입력하고 byte 이하로 입력되었더라도 실제 커스텀 수신 정보의 항목이 길어 byte 가 초과될 경우 메시지 발송이 불가합니다.</i> 본문만 짧으면 되는 게 아니라, <b>가장 긴 수신자 값으로 치환했을 때</b>를 기준으로 봐야 합니다." },
+        d: "커스텀 변수 설정 안내 — <i>{{변수}} 항목을 입력하고 byte 이하로 입력되었더라도 실제 커스텀 수신 정보의 항목이 길어 byte 가 초과될 경우 메시지 발송이 불가합니다.</i> 본문만 짧으면 되는 게 아니라 <b>가장 긴 수신자 값으로 치환했을 때</b>를 기준으로 봐야 합니다." },
     ] },
 ];
 
-/* 현재 단계의 상세 설명 — 실제 화면에서 확인한 항목별 내용 */
-function HzDetail({ step }) {
-  if (!step.detail && !step.table) return null;
-  return (
-    <div className="hz-detail">
-      <div className="hz-detail-tt">
-        <Icon name="info" size={14} />
-        <b>{step.title}</b> — 화면에서 실제로 어떻게 되나
-      </div>
-      {step.table && (
-        <div className="cap-table-wrap hz-detail-tbl">
-          <table className="cap-table">
-            <thead><tr>{step.table.head.map((h, k) => <th key={k}>{h}</th>)}</tr></thead>
-            <tbody>
-              {step.table.rows.map((r, k) => (
-                <tr key={k}>{r.map((c, j) => <td key={j} dangerouslySetInnerHTML={{ __html: c }} />)}</tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {step.detail && (
-        <dl className="hz-dl">
-          {step.detail.map((d, k) => (
-            <React.Fragment key={k}>
-              <dt>{d.t}</dt>
-              <dd dangerouslySetInnerHTML={{ __html: d.d }} />
-            </React.Fragment>
-          ))}
-        </dl>
-      )}
-    </div>
-  );
+/* ── 가이드 팝업 ───────────────────────────────────────────
+   한 팝업 안에서 그 단계의 세부 항목을 순서대로 짚어준다.
+   · 설명은 항상 맨 위에 보이고
+   · 아래 화면에서 지금 설명 중인 영역만 강조(나머지는 흐리게)
+   · 화면을 누르면 다음 항목 — 스크롤은 만들지 않는다(폭·높이 모두 맞춰 축소)
+   ------------------------------------------------------------ */
+
+/* hi[] 키워드로 강조할 요소를 찾는다. 제목칸(th·.tit)을 먼저 보고,
+   없으면 버튼·라벨에서 찾는다 — '발송량'이 '발송량 현황 조회' 버튼에
+   먼저 걸리는 것을 막기 위함. */
+function hzTargets(root, hi) {
+  if (!root || !hi || !hi.length) return [];
+  const strong = root.querySelectorAll("th, .tit, .card-header h2");
+  const weak = root.querySelectorAll("button, label, p");
+  const out = [];
+  hi.forEach((q) => {
+    let node = null;
+    for (let i = 0; i < strong.length; i++) {
+      if ((strong[i].textContent || "").indexOf(q) >= 0) { node = strong[i]; break; }
+    }
+    if (!node) {
+      for (let i = 0; i < weak.length; i++) {
+        if ((weak[i].textContent || "").indexOf(q) >= 0) { node = weak[i]; break; }
+      }
+    }
+    if (!node) return;
+    const box = node.tagName === "BUTTON"
+      ? node
+      : (node.closest("tr, .row, .message-preview, .check-group, .card-header") || node.closest(".card") || node);
+    if (out.indexOf(box) < 0) out.push(box);
+  });
+  return out;
 }
 
-/* 선택한 영역만 원래 크기로 크게 보는 팝업 */
-function HzZoom({ step, idx, onClose, onGo }) {
+/* 강조 대상엔 .hz-hi, 나머지 행엔 .hz-lo (조상 opacity를 쓰면 자식이 되살아나지
+   못하므로 행 단위로 따로 칠한다) */
+function hzPaint(root, targets) {
+  if (!root) return;
+  root.querySelectorAll(".hz-hi, .hz-lo").forEach((e) => e.classList.remove("hz-hi", "hz-lo"));
+  if (!targets.length) return;
+  targets.forEach((t) => t.classList.add("hz-hi"));
+  root.querySelectorAll("tr, .row, .check-group, .card-header, .message-preview").forEach((e) => {
+    const near = targets.some((t) => t === e || t.contains(e) || e.contains(t));
+    if (!near) e.classList.add("hz-lo");
+  });
+}
+
+function HzTour({ stepIdx, sub, onMove, onClose }) {
+  const step = HZ_STEPS[stepIdx];
+  const items = step.detail || [];
+  const cur = items[sub] || {};
+  const ui = window.HZ_UI || { parts: {} };
+
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
-  const [scale, setScale] = React.useState(1);
-  const [h, setH] = React.useState(0);
+  const [fit, setFit] = React.useState({ scale: 1, w: HZ_NATURAL_W, h: 0 });
 
+  const atFirst = stepIdx === 0 && sub === 0;
+  const atLast = stepIdx === HZ_STEPS.length - 1 && sub === items.length - 1;
+
+  /* 폭·높이 모두에 맞춰 축소 → 팝업 안에 스크롤이 생기지 않는다 */
   React.useLayoutEffect(() => {
-    function fit() {
-      const r = hzFit(boxRef.current, pageRef.current);
-      if (!r) return;
-      setScale(r.scale); setH(r.height);
+    function measure() {
+      const box = boxRef.current, page = pageRef.current;
+      if (!box || !page) return;
+      page.style.transform = "none";
+      const nw = Math.max(page.scrollWidth, HZ_NATURAL_W);
+      const nh = page.scrollHeight;
+      const cs = getComputedStyle(box);
+      const availW = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+      const availH = box.clientHeight - parseFloat(cs.paddingTop || 0) - parseFloat(cs.paddingBottom || 0);
+      const s = nh > 0 ? Math.min(1, availW / nw, availH / nh) : 1;
+      setFit({ scale: s, w: nw, h: nh });
+      page.style.transform = "scale(" + s + ")";
     }
-    fit();
-    const t = setTimeout(fit, 250);
-    window.addEventListener("resize", fit);
-    return () => { clearTimeout(t); window.removeEventListener("resize", fit); };
-  }, [step.part]);
+    measure();
+    const t = setTimeout(measure, 220);
+    window.addEventListener("resize", measure);
+    return () => { clearTimeout(t); window.removeEventListener("resize", measure); };
+  }, [step.part, sub, cur.t]);
+
+  /* 강조는 마크업이 붙은 뒤에 다시 칠한다 */
+  React.useLayoutEffect(() => {
+    hzPaint(pageRef.current, hzTargets(pageRef.current, cur.hi));
+  }, [step.part, sub, cur.hi]);
 
   React.useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onGo(idx + 1);
-      if (e.key === "ArrowLeft") onGo(idx - 1);
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); onMove(1); }
+      if (e.key === "ArrowLeft") onMove(-1);
     }
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, [onClose, onGo, idx]);
+  }, [onClose, onMove]);
 
-  const ui = window.HZ_UI || { parts: {} };
-  /* 본문(.page)에 fade-up 애니메이션의 transform이 남아 있어 그 안에서는
-     position:fixed 가 화면 기준으로 잡히지 않는다 → body로 포털 렌더 */
   return ReactDOM.createPortal(
     <div className="peek-back" onClick={onClose}>
-      <div className="peek hz-zoom" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+      <div className="peek hz-tour" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="peek-head">
           <div className="peek-tt">
-            <span className="peek-badge">{idx + 1} / {HZ_STEPS.length}</span>
+            <span className="peek-badge">{stepIdx + 1} / {HZ_STEPS.length}</span>
             <b>{step.title}</b>
           </div>
           <div className="peek-acts">
-            <button className="peek-btn" disabled={idx === 0} onClick={() => onGo(idx - 1)}>← 이전</button>
-            <button className="peek-btn primary" disabled={idx === HZ_STEPS.length - 1} onClick={() => onGo(idx + 1)}>다음 →</button>
+            <button className="peek-btn" disabled={atFirst} onClick={() => onMove(-1)}>← 이전</button>
+            <button className="peek-btn primary" disabled={atLast} onClick={() => onMove(1)}>다음 →</button>
             <button className="peek-x" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} /></button>
           </div>
         </div>
-        <div className="hz-zoom-desc">
-          <span dangerouslySetInnerHTML={{ __html: step.desc }} />
-          {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
+
+        {/* 설명 — 언제나 맨 위에 보인다 */}
+        <div className="hz-say">
+          <span className="hz-say-n">{sub + 1}</span>
+          <div className="hz-say-tx">
+            <b>{cur.t}</b>
+            <span dangerouslySetInnerHTML={{ __html: cur.d || "" }} />
+          </div>
         </div>
-        <div className="peek-body hz-zoom-body">
-          <div className="hz-fit" ref={boxRef} style={{ height: h || undefined }}>
-            <div className="hz-real hz-page" ref={pageRef}
-                 style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}
+        {cur.table && (
+          <div className="cap-table-wrap hz-say-tbl">
+            <table className="cap-table">
+              <thead><tr>{cur.table.head.map((h, k) => <th key={k}>{h}</th>)}</tr></thead>
+              <tbody>
+                {cur.table.rows.map((r, k) => (
+                  <tr key={k}>{r.map((c, j) => <td key={j}>{c}</td>)}</tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 화면 — 강조된 곳이 지금 설명 중인 영역 */}
+        <div className="hz-tour-stage" ref={boxRef} onClick={() => onMove(1)} title="누르면 다음으로 넘어갑니다">
+          <div className="hz-tour-clip" style={{ width: fit.w * fit.scale, height: fit.h * fit.scale }}>
+            <div className="hz-real hz-tour-page" ref={pageRef}
+                 style={{ width: HZ_NATURAL_W, transform: "scale(" + fit.scale + ")" }}
                  dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
           </div>
-          <HzDetail step={step} />
+        </div>
+
+        <div className="hz-tour-foot">
+          <span className="hz-tour-dots">
+            {items.map((_, k) => (
+              <i key={k} className={k === sub ? "on" : (k < sub ? "done" : "")}
+                 onClick={() => onMove(k - sub)} title={items[k].t} />
+            ))}
+          </span>
+          <span className="hz-tour-hint">화면을 누르면 다음으로 · ESC 닫기</span>
         </div>
       </div>
     </div>,
@@ -2199,7 +2251,7 @@ function HzZoom({ step, idx, onClose, onGo }) {
 function HermesSendFlow() {
   const [i, setI] = React.useState(0);
   const [open, setOpen] = React.useState(false);   // 제목 드롭다운
-  const [zoom, setZoom] = React.useState(false);   // 확대 팝업
+  const [tour, setTour] = React.useState(null);    // 가이드 팝업 {sub}
   const ui = window.HZ_UI || { css: "", parts: {} };
   const step = HZ_STEPS[i];
 
@@ -2254,6 +2306,17 @@ function HermesSendFlow() {
     }, 40);
   }
 
+  /* 가이드 이동 — 항목 끝에 닿으면 다음(이전) 단계로 자연스럽게 넘어간다 */
+  function tourMove(d) {
+    if (!tour) return;
+    const items = (k) => (HZ_STEPS[k].detail || []).length;
+    let k = i, n = tour.sub + d;
+    while (n >= items(k)) { if (k >= HZ_STEPS.length - 1) { n = items(k) - 1; break; } n -= items(k); k += 1; }
+    while (n < 0) { if (k <= 0) { n = 0; break; } k -= 1; n += items(k); }
+    if (k !== i) setI(k);
+    setTour({ sub: n });
+  }
+
   return (
     <div className="hz">
       <div className="hz-bar"><div className="hz-bar-fill" style={{ width: ((i + 1) / HZ_STEPS.length) * 100 + "%" }} /></div>
@@ -2277,7 +2340,7 @@ function HermesSendFlow() {
             )}
           </div>
           <div className="hz-head-acts">
-            <button className="hz-navbtn sm" onClick={() => setZoom(true)}><Icon name="search" size={13} /> 크게 보기</button>
+            <button className="hz-navbtn sm gd" onClick={() => setTour({ sub: 0 })}><Icon name="book" size={13} /> 가이드 보기</button>
             <button className="hz-navbtn sm" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
             <button className="hz-navbtn sm pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
           </div>
@@ -2292,7 +2355,7 @@ function HermesSendFlow() {
         <div className="hz-stage-bar">
           <span className="hz-dots"><i /><i /><i /></span>
           <span className="hz-path">rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송</span>
-          <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 크게 볼 수 있습니다</span>
+          <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 가이드가 열립니다</span>
         </div>
         <div className="hz-fit" ref={boxRef} style={{ height: boxH || undefined }}>
           <div className="hz-real hz-page" ref={pageRef} style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}>
@@ -2305,7 +2368,7 @@ function HermesSendFlow() {
                 key={s.part}
                 className={"hz-part" + (k === i ? " on" : "")}
                 data-part={s.part}
-                onClick={() => { if (k === i) setZoom(true); else go(k); }}
+                onClick={() => { if (k === i) setTour({ sub: 0 }); else go(k); }}
                 dangerouslySetInnerHTML={{ __html: ui.parts[s.part] || "" }}
               />
             ))}
@@ -2317,9 +2380,8 @@ function HermesSendFlow() {
         </div>
       </div>
 
-      <HzDetail step={step} />
 
-      {zoom && <HzZoom step={step} idx={i} onClose={() => setZoom(false)} onGo={(k) => { if (k >= 0 && k < HZ_STEPS.length) setI(k); }} />}
+      {tour && <HzTour stepIdx={i} sub={tour.sub} onMove={tourMove} onClose={() => setTour(null)} />}
     </div>
   );
 }
