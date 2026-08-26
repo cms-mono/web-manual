@@ -1951,12 +1951,14 @@ Object.assign(window, {
 });
 
 /* ============================================================
-   헤르메스 발송 가이드 — 실제 화면(HTML+CSS) 위에서 한 단계씩
+   헤르메스 발송 가이드 — 전체 화면을 띄우고 단계별로 스포트라이트
    ------------------------------------------------------------
-   content/hermes/_ui.js 에 담긴 rcs.hermes.kt.com 의 실제 마크업과
-   실제 CSS를 그대로 렌더하고, 지금 채워야 할 영역만 강조한다.
-   단계는 '화면에서 실제로 채우는 순서'(브랜드 → 메시지 종류 → …)를 따른다.
+   content/hermes/_ui.js 의 실제 마크업·CSS로 '메시지 조회/생성/발송'
+   화면을 통째로 그린 뒤, 선택한 단계의 영역만 밝게 두고 나머지는 음영 처리.
+   화면은 컨테이너 폭에 맞춰 비율 그대로 축소해 가로 스크롤을 없앤다.
    ============================================================ */
+const HZ_NATURAL_W = 1100;   // 헤르메스 본문 기준 폭(px)
+
 const HZ_STEPS = [
   { part: "brand",    title: "브랜드 · 발신번호 선택",
     desc: "<b>[조회]</b>를 눌러 팝업에서 <b>브랜드 → 발신번호</b> 순으로 고릅니다. 발신번호는 대표번호가 자동 선택됩니다.",
@@ -1965,7 +1967,7 @@ const HZ_STEPS = [
     desc: "<b>[조회]</b>로 <b>메시지 베이스</b>(단문 · 장문 · 이미지 · <b>템플릿</b>)를 고릅니다. 종류를 먼저 골라야 아래 입력란이 열립니다.",
     tip: "미리 만들어 둔 템플릿을 쓰려면 여기서 템플릿을 선택하세요." },
   { part: "common",   title: "공통 정보 · 제목 · 내용",
-    desc: "광고 표시 여부·수신거부번호·본문 복사·만료 옵션을 정하고, 제목과 내용을 씁니다. 우측 <b>미리보기</b>에 즉시 반영됩니다.",
+    desc: "광고 표시 여부·수신거부번호·본문 복사·만료 옵션을 정하고 제목과 내용을 씁니다. 우측 <b>미리보기</b>에 즉시 반영됩니다.",
     tip: "광고성이면 <b>'(광고)' 표시 사용</b>과 <b>무료 수신거부번호</b>가 필수입니다. 변수는 <code>{{변수1}}</code> 형식이며 공백·오타가 있으면 치환되지 않습니다." },
   { part: "fallback", title: "발송 실패 시 문자 전송 (Fallback)",
     desc: "RCS 발송이 실패했을 때 SMS/LMS/MMS로 대신 보낼지 정합니다.",
@@ -1985,7 +1987,11 @@ function HermesSendFlow() {
   const [i, setI] = React.useState(0);
   const ui = window.HZ_UI || { css: "", parts: {} };
   const step = HZ_STEPS[i];
-  const html = ui.parts[step.part] || "";
+
+  const boxRef = React.useRef(null);   // 축소 결과를 담을 바깥 상자
+  const pageRef = React.useRef(null);  // 원본 크기 화면
+  const [scale, setScale] = React.useState(1);
+  const [boxH, setBoxH] = React.useState(0);
 
   // 실제 CSS는 한 번만 주입 (스코프: .hz-real)
   React.useEffect(() => {
@@ -1996,53 +2002,93 @@ function HermesSendFlow() {
     document.head.appendChild(el);
   }, [ui.css]);
 
+  // 컨테이너 폭에 맞춰 비율 그대로 축소 (가로 스크롤 없이 한눈에)
+  React.useLayoutEffect(() => {
+    function fit() {
+      const box = boxRef.current, page = pageRef.current;
+      if (!box || !page) return;
+      const s = Math.min(1, box.clientWidth / HZ_NATURAL_W);
+      setScale(s);
+      setBoxH(page.scrollHeight * s);
+    }
+    fit();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(fit) : null;
+    if (ro && boxRef.current) ro.observe(boxRef.current);
+    window.addEventListener("resize", fit);
+    const t = setTimeout(fit, 300); // 폰트 로드 후 높이 보정
+    return () => { if (ro) ro.disconnect(); window.removeEventListener("resize", fit); clearTimeout(t); };
+  }, [ui.parts]);
+
+  // 단계 변경 시 해당 영역이 보이도록 스크롤
+  function go(k) {
+    setI(k);
+    setTimeout(() => {
+      const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].part + '"]');
+      if (!el || !boxRef.current) return;
+      const y = boxRef.current.getBoundingClientRect().top + window.scrollY + el.offsetTop * scale - 110;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }, 40);
+  }
+
   return (
     <div className="hz">
-      {/* 진행바 */}
-      <div className="hz-bar">
-        <div className="hz-bar-fill" style={{ width: ((i + 1) / HZ_STEPS.length) * 100 + "%" }} />
-      </div>
+      <div className="hz-bar"><div className="hz-bar-fill" style={{ width: ((i + 1) / HZ_STEPS.length) * 100 + "%" }} /></div>
       <div className="hz-chips">
         {HZ_STEPS.map((s, k) => (
-          <button key={s.part} className={"hz-chip" + (k === i ? " on" : "") + (k < i ? " done" : "")} onClick={() => setI(k)}>
+          <button key={s.part} className={"hz-chip" + (k === i ? " on" : "") + (k < i ? " done" : "")} onClick={() => go(k)}>
             <span className="hz-chip-n">{k < i ? <Icon name="check" size={11} /> : k + 1}</span>
             <span className="hz-chip-t">{s.title}</span>
           </button>
         ))}
       </div>
 
-      {/* 설명 */}
+      {/* 현재 단계 설명 — 스크롤해도 따라오도록 상단 고정 */}
       <div className="hz-head">
         <span className="hz-head-n">{i + 1}</span>
         <div className="hz-head-tx">
           <b>{step.title}</b>
           <span dangerouslySetInnerHTML={{ __html: step.desc }} />
+          {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
         </div>
       </div>
 
-      {/* 실제 화면 */}
       <div className="hz-stage">
         <div className="hz-stage-bar">
           <span className="hz-dots"><i /><i /><i /></span>
           <span className="hz-path">rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송</span>
-          <span className="hz-live">실제 화면</span>
+          <span className="hz-live">실제 화면 {Math.round(scale * 100)}%</span>
         </div>
-        <div className="hz-stage-body">
-          <div className="hz-real" dangerouslySetInnerHTML={{ __html: html }} />
+        <div className="hz-fit" ref={boxRef} style={{ height: boxH ? boxH + 32 : undefined }}>
+          <div
+            className="hz-real hz-page"
+            ref={pageRef}
+            style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}
+          >
+            <div className="hz-tabrow">
+              <span className="hz-tabon">메시지 생성/상세조회/발송</span>
+              <span className="hz-taboff">메시지 조회/삭제</span>
+            </div>
+            {HZ_STEPS.map((s, k) => (
+              <div
+                key={s.part}
+                className={"hz-part" + (k === i ? " on" : "")}
+                data-part={s.part}
+                onClick={() => go(k)}
+                dangerouslySetInnerHTML={{ __html: ui.parts[s.part] || "" }}
+              />
+            ))}
+            <div className="hz-sendrow">
+              <span className="hz-chk">✓ 광고성 문자 전송 시 표기 의무를 준수하여 메시지를 작성하였습니다.</span>
+              <span className="hz-sendbtns"><b>목록</b><b className="pri">발송</b></span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {step.tip && (
-        <div className="cap-note hz-tip">
-          <span className="ni"><Icon name="info" size={15} /></span>
-          <span dangerouslySetInnerHTML={{ __html: step.tip }} />
-        </div>
-      )}
-
       <div className="hz-nav">
-        <button className="hz-navbtn" disabled={i === 0} onClick={() => setI(i - 1)}>← 이전</button>
+        <button className="hz-navbtn" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
         <span className="hz-nav-pos">{i + 1} / {HZ_STEPS.length}</span>
-        <button className="hz-navbtn pri" disabled={i === HZ_STEPS.length - 1} onClick={() => setI(i + 1)}>다음 →</button>
+        <button className="hz-navbtn pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
       </div>
     </div>
   );

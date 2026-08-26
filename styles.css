@@ -1558,14 +1558,14 @@ mark.search-hit {
 .svc-sec-sites .sec-head h2 { font-size: 17px; color: var(--text-2); }
 
 /* ==================== 헤르메스 발송 가이드 ====================
-   실제 헤르메스 마크업(.hz-real)을 그대로 렌더하고 그 위에 단계 UI를 얹는다.
-   .hz-real 내부는 헤르메스 CSS가 지배하므로 여기서는 최소 보정만 한다. */
+   실제 헤르메스 화면(.hz-real)을 통째로 띄우고, 선택한 단계만 밝게 둔다.
+   화면은 컨테이너 폭에 맞춰 비율 그대로 축소(가로 스크롤 없음). */
 .hz { margin-top: 4px; }
 
-/* 진행바 */
+/* 진행바 · 단계 칩 */
 .hz-bar { height: 4px; border-radius: 999px; background: var(--bg-sunken); overflow: hidden; }
 .hz-bar-fill { height: 100%; background: var(--accent); transition: width .25s ease; }
-.hz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 16px; }
+.hz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
 .hz-chip {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
   border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
@@ -1580,17 +1580,22 @@ mark.search-hit {
 }
 .hz-chip.on .hz-chip-n { background: var(--accent); color: #fff; }
 
-/* 단계 설명 */
-.hz-head { display: flex; gap: 11px; margin-bottom: 12px; }
+/* 현재 단계 설명 — 스크롤해도 상단에 붙어 따라온다 */
+.hz-head {
+  display: flex; gap: 11px; margin-bottom: 12px; padding: 12px 14px;
+  border: 1px solid var(--accent); border-radius: 12px; background: var(--accent-soft);
+  position: sticky; top: calc(var(--header-h) + 8px); z-index: 5;
+}
 .hz-head-n {
   flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
   display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800;
 }
-.hz-head-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.hz-head-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .hz-head-tx b { font-size: 15px; font-weight: 800; color: var(--text); }
 .hz-head-tx span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.hz-head-tx em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
 
-/* 실제 화면 프레임 */
+/* 화면 프레임 */
 .hz-stage { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
 .hz-stage-bar {
   display: flex; align-items: center; gap: 9px; padding: 8px 12px;
@@ -1603,11 +1608,42 @@ mark.search-hit {
   flex-shrink: 0; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
   background: var(--accent-soft); color: var(--accent-text);
 }
-/* 헤르메스는 밝은 테마 전용 화면이라, 다크모드에서도 원래 색으로 보여준다 */
-.hz-stage-body { padding: 16px; background: #fff; overflow-x: auto; }
-.hz-real { min-width: 900px; font-family: "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif; font-size: 14px; color: #444; }
+/* 헤르메스는 밝은 테마 전용 화면이라 다크모드에서도 원래 색으로 보여준다 */
+.hz-fit { position: relative; overflow: hidden; background: #fff; padding: 16px; }
+.hz-page {
+  transform-origin: top left;
+  font-family: "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif;
+  font-size: 14px; color: #444;
+}
 
-/* 원본 CSS가 참조하는 스프라이트 이미지는 가져올 수 없어 아이콘을 CSS로 대체 */
+/* 상단 탭(장식) */
+.hz-tabrow { display: flex; gap: 4px; border-bottom: 1px solid #dadbdd; margin-bottom: 4px; }
+.hz-tabon, .hz-taboff { padding: 9px 16px; font-size: 13px; font-weight: 500; }
+.hz-tabon { color: rgb(27,174,197); border-bottom: 2px solid rgb(27,174,197); }
+.hz-taboff { color: #999; }
+
+/* 스포트라이트 — 선택한 영역만 또렷하게 */
+.hz-part { position: relative; cursor: pointer; border-radius: 8px; transition: opacity .2s, filter .2s; }
+.hz-part:not(.on) { opacity: .3; filter: saturate(.25); }
+.hz-part:not(.on):hover { opacity: .55; }
+.hz-part.on { opacity: 1; }
+.hz-part.on::after {
+  content: ""; position: absolute; inset: -8px; border-radius: 10px;
+  border: 2px solid rgb(79,70,229); box-shadow: 0 0 0 9999px rgba(15,23,42,.06);
+  pointer-events: none;
+}
+
+/* 하단 발송 버튼(장식) */
+.hz-sendrow { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; opacity: .3; }
+.hz-chk { font-size: 13px; color: #444; }
+.hz-sendbtns { display: inline-flex; gap: 7px; }
+.hz-sendbtns b {
+  display: inline-block; width: 117px; height: 30px; line-height: 28px; text-align: center;
+  border: 1px solid #dadbdd; border-radius: 4px; font-size: 13px; font-weight: 400; color: #444; background: #fff;
+}
+.hz-sendbtns b.pri { background: rgb(27,174,197); border-color: rgb(27,174,197); color: #fff; }
+
+/* 원본 CSS가 참조하는 스프라이트는 가져올 수 없어 아이콘을 CSS로 대체 */
 .hz-real input[type="radio"] + label::before {
   content: ""; display: inline-block; position: absolute; top: 50%; left: 0;
   width: 16px; height: 16px; margin-top: -8px; border-radius: 50%;
@@ -1621,8 +1657,6 @@ mark.search-hit {
 }
 .hz-real .label-tooltip i::after { content: "?"; }
 .hz-real caption { display: none; }
-
-.hz-tip { margin-top: 12px; }
 
 /* 단계 이동 */
 .hz-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
