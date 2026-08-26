@@ -1557,135 +1557,72 @@ mark.search-hit {
 .svc-sec-sites { margin-top: 8px; }
 .svc-sec-sites .sec-head h2 { font-size: 17px; color: var(--text-2); }
 
-/* ==================== 헤르메스 발송 가이드 (3단계 · 화면 재현) ====================
-   캡처 대신 화면을 우리 마크업으로 그려, 다크모드에서도 깨지지 않고
-   설명 중인 항목에 번호를 붙일 수 있게 한다. */
+/* ==================== 헤르메스 발송 가이드 ====================
+   실제 헤르메스 마크업(.hz-real)을 그대로 렌더하고 그 위에 단계 UI를 얹는다.
+   .hz-real 내부는 헤르메스 CSS가 지배하므로 여기서는 최소 보정만 한다. */
 .hz { margin-top: 4px; }
 
 /* 진행바 */
-.hz-steps { display: flex; align-items: stretch; gap: 6px; margin-bottom: 14px; }
-.hz-step {
-  flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0;
-  padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
-  background: var(--surface); font-family: inherit; text-align: left; cursor: pointer;
-  transition: border-color .14s, background .14s;
+.hz-bar { height: 4px; border-radius: 999px; background: var(--bg-sunken); overflow: hidden; }
+.hz-bar-fill { height: 100%; background: var(--accent); transition: width .25s ease; }
+.hz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 16px; }
+.hz-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
+  font-family: inherit; font-size: 12px; font-weight: 700; color: var(--text-3); cursor: pointer;
 }
-.hz-step:hover { border-color: var(--border-strong); }
-.hz-step.on { border-color: var(--accent); background: var(--accent-soft); }
-.hz-step.done .hz-step-n { background: var(--accent); color: #fff; }
-.hz-step-n {
-  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--bg-sunken); color: var(--text-2); font-size: 13px; font-weight: 800;
+.hz-chip:hover { border-color: var(--border-strong); color: var(--text-2); }
+.hz-chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); }
+.hz-chip.done .hz-chip-n { background: var(--accent); color: #fff; }
+.hz-chip-n {
+  width: 17px; height: 17px; border-radius: 50%; background: var(--bg-sunken); color: var(--text-2);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;
 }
-.hz-step.on .hz-step-n { background: var(--accent); color: #fff; }
-.hz-step-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.hz-step-tx b { font-size: 13.5px; font-weight: 800; color: var(--text); white-space: nowrap; }
-.hz-step-tx em { font-style: normal; font-size: 11.5px; color: var(--text-3); }
-.hz-step-line { align-self: center; width: 14px; height: 2px; background: var(--border); flex-shrink: 0; }
-@media (max-width: 820px) {
-  .hz-steps { flex-direction: column; }
-  .hz-step-line { display: none; }
-}
+.hz-chip.on .hz-chip-n { background: var(--accent); color: #fff; }
 
-.hz-menu {
-  display: flex; align-items: center; gap: 7px; padding: 9px 13px; margin-bottom: 14px;
-  border-radius: 10px; background: var(--bg-sunken); font-size: 12.5px; color: var(--text-2);
+/* 단계 설명 */
+.hz-head { display: flex; gap: 11px; margin-bottom: 12px; }
+.hz-head-n {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800;
 }
-.hz-menu svg { color: var(--text-3); }
+.hz-head-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.hz-head-tx b { font-size: 15px; font-weight: 800; color: var(--text); }
+.hz-head-tx span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 
-/* 화면 재현 + 설명 2단 */
-.hz-split { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-@media (max-width: 1000px) { .hz-split { grid-template-columns: 1fr; } }
-
-.hz-win { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
-.hz-win-bar {
+/* 실제 화면 프레임 */
+.hz-stage { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+.hz-stage-bar {
   display: flex; align-items: center; gap: 9px; padding: 8px 12px;
   background: var(--surface-2); border-bottom: 1px solid var(--border);
 }
 .hz-dots { display: inline-flex; gap: 4px; }
 .hz-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); display: block; }
-.hz-path { font-size: 11px; color: var(--text-3); font-family: var(--mono, monospace); }
-.hz-win-body { padding: 12px; max-height: 620px; overflow: auto; }
+.hz-path { flex: 1; font-size: 11px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hz-live {
+  flex-shrink: 0; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent-text);
+}
+/* 헤르메스는 밝은 테마 전용 화면이라, 다크모드에서도 원래 색으로 보여준다 */
+.hz-stage-body { padding: 16px; background: #fff; overflow-x: auto; }
+.hz-real { min-width: 900px; font-family: "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif; font-size: 14px; color: #444; }
 
-.hz-tabs { display: flex; gap: 4px; position: relative; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-.hz-tab {
-  padding: 7px 12px; font-size: 12px; font-weight: 700; color: var(--text-3);
-  border-bottom: 2px solid transparent; white-space: nowrap;
+/* 원본 CSS가 참조하는 스프라이트 이미지는 가져올 수 없어 아이콘을 CSS로 대체 */
+.hz-real input[type="radio"] + label::before {
+  content: ""; display: inline-block; position: absolute; top: 50%; left: 0;
+  width: 16px; height: 16px; margin-top: -8px; border-radius: 50%;
+  border: 1.5px solid #c8c8c8; background: #fff; box-sizing: border-box;
 }
-.hz-tab.on { color: var(--accent-text); border-bottom-color: var(--accent); }
+.hz-real input[type="radio"]:checked + label::before { border: 5px solid rgb(27,174,197); }
+.hz-real .label-tooltip i {
+  display: inline-block; width: 14px; height: 14px; margin: 0 4px; vertical-align: middle;
+  border-radius: 50%; border: 1px solid #bbb; color: #888; font-size: 9px; line-height: 12px;
+  text-align: center; font-style: normal;
+}
+.hz-real .label-tooltip i::after { content: "?"; }
+.hz-real caption { display: none; }
 
-.hz-sec { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
-.hz-sec-tt {
-  padding: 7px 11px; font-size: 11.5px; font-weight: 800; color: var(--text-2);
-  background: var(--bg-sunken); border-bottom: 1px solid var(--border);
-}
-.hz-sec-body { padding: 4px 0; }
-.hz-row { display: flex; align-items: center; gap: 10px; padding: 7px 11px; }
-.hz-row + .hz-row { border-top: 1px dashed var(--border); }
-.hz-row.mark { background: var(--accent-soft); }
-.hz-label {
-  flex: 0 0 132px; display: flex; align-items: center; gap: 6px;
-  font-size: 11.5px; font-weight: 700; color: var(--text-2); line-height: 1.3;
-}
-.hz-req { color: #e11d48; margin-left: 1px; }
-.hz-ctrl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
-.hz-input {
-  display: inline-block; padding: 5px 9px; border: 1px solid var(--border-strong); border-radius: 6px;
-  background: var(--bg); font-size: 11px; color: var(--text-3); white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis;
-}
-.hz-input.ro { background: var(--bg-sunken); color: var(--text-2); }
-.hz-area {
-  display: block; width: 100%; min-height: 46px; padding: 7px 9px;
-  border: 1px solid var(--border-strong); border-radius: 6px; background: var(--bg);
-  font-size: 11px; color: var(--text-3);
-}
-.hz-btn {
-  display: inline-block; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-strong);
-  background: var(--surface-2); font-size: 11px; font-weight: 700; color: var(--text-2); white-space: nowrap;
-}
-.hz-btn.pri { background: var(--accent); border-color: var(--accent); color: #fff; }
-.hz-btn.sm { padding: 3px 8px; font-size: 10.5px; }
-.hz-radios { display: inline-flex; gap: 10px; flex-wrap: wrap; }
-.hz-radio { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-3); }
-.hz-radio i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--border-strong); display: inline-block; }
-.hz-radio.on { color: var(--accent-text); font-weight: 700; }
-.hz-radio.on i { border-color: var(--accent); border-width: 3.5px; }
-.hz-tilde { font-size: 11px; color: var(--text-3); }
-
-.hz-toolbar { display: flex; align-items: center; gap: 6px; padding: 8px 11px; flex-wrap: wrap; }
-.hz-table { border-top: 1px solid var(--border); font-size: 11px; }
-.hz-tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 7px 11px; }
-.hz-tr + .hz-tr { border-top: 1px dashed var(--border); }
-.hz-th { background: var(--bg-sunken); font-weight: 800; color: var(--text-2); }
-.hz-tr span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-3); }
-.hz-empty { display: block; text-align: center; color: var(--text-3); padding: 14px; }
-.hz-ok { color: #0f766e; font-weight: 700; }
-.hz-warn { color: #b45309; font-weight: 700; }
-.hz-foot { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 10px 4px 2px; }
-
-/* 번호 뱃지 */
-.hz-badge {
-  flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--accent); color: #fff; font-size: 10.5px; font-weight: 800;
-}
-.hz-badge-float { position: absolute; right: 4px; top: 4px; }
-
-/* 따라하기 목록 */
-.hz-acts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.hz-acts li {
-  display: flex; gap: 10px; padding: 11px 12px; border-radius: 10px;
-  border: 1px solid transparent; transition: background .12s;
-}
-.hz-acts li:hover { background: var(--bg-soft); border-color: var(--border); }
-.hz-acts li.sub { padding-left: 12px; }
-.hz-dot { flex-shrink: 0; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; }
-.hz-dot::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--border-strong); }
-.hz-act-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.hz-act-tx b { font-size: 13px; font-weight: 800; color: var(--text); }
-.hz-act-tx span { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+.hz-tip { margin-top: 12px; }
 
 /* 단계 이동 */
 .hz-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
@@ -1697,15 +1634,3 @@ mark.search-hit {
 .hz-navbtn.pri:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
 .hz-navbtn:disabled { opacity: .4; cursor: default; }
 .hz-nav-pos { font-size: 12px; color: var(--text-3); font-weight: 700; }
-
-/* 템플릿 갤러리 */
-.hz-tplgroup { margin-bottom: 12px; }
-.hz-tplgroup-tt { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 800; color: var(--text-2); margin-bottom: 7px; }
-.hz-count { font-size: 10px; font-weight: 700; color: var(--text-3); background: var(--bg-sunken); padding: 1px 6px; border-radius: 999px; }
-.hz-tplgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 8px; }
-.hz-tplcard {
-  border: 1px solid var(--border); border-radius: 8px; padding: 8px; text-align: center;
-  display: flex; flex-direction: column; gap: 6px; align-items: center; background: var(--surface);
-}
-.hz-tplthumb { width: 100%; height: 46px; border-radius: 5px; background: var(--bg-sunken); }
-.hz-tplname { font-size: 10.5px; font-weight: 700; color: var(--text-2); line-height: 1.3; }
