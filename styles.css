@@ -1671,8 +1671,7 @@ mark.search-hit {
 }
 
 /* 하단 발송 버튼(장식) */
-.hz-sendrow { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; opacity: .3; }
-.hz-chk { font-size: 13px; color: #444; }
+.hz-sendrow { display: flex; align-items: center; justify-content: flex-end; margin-top: 16px; opacity: .3; }
 .hz-sendbtns { display: inline-flex; gap: 7px; }
 .hz-sendbtns b {
   display: inline-block; width: 117px; height: 30px; line-height: 28px; text-align: center;
@@ -1704,6 +1703,39 @@ mark.search-hit {
 .hz-zoom-desc span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
 .hz-zoom-desc em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
 .hz-zoom-body { padding: 0; background: #fff; }
+
+/* 단계별 상세 설명 — 화면 아래(본문)와 확대 팝업 안 양쪽에서 쓴다 */
+.hz-detail {
+  margin-top: 14px; padding: 15px 17px;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2);
+}
+.hz-zoom-body .hz-detail { margin: 0; border: none; border-top: 1px solid var(--border); border-radius: 0; }
+.hz-detail-tt {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 11px;
+  font-size: 12.5px; font-weight: 700; color: var(--text-3);
+}
+.hz-detail-tt b { color: var(--text); font-weight: 800; }
+.hz-detail-tbl { margin-bottom: 14px; background: var(--surface); }
+.hz-dl { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 3px 18px; }
+.hz-dl dt {
+  font-size: 13px; font-weight: 700; color: var(--text); padding: 7px 0;
+  word-break: keep-all; overflow-wrap: anywhere;
+}
+.hz-dl dd {
+  font-size: 13px; color: var(--text-2); line-height: 1.72; padding: 7px 0;
+  border-bottom: 1px solid var(--border); word-break: keep-all; overflow-wrap: anywhere;
+}
+.hz-dl dt { border-bottom: 1px solid var(--border); }
+.hz-dl dt:last-of-type, .hz-dl dd:last-of-type { border-bottom: none; }
+.hz-dl dd i { font-style: normal; color: var(--text-3); }
+.hz-dl dd code {
+  font-family: var(--mono-font); font-size: 12px; background: var(--bg-sunken);
+  padding: 1px 5px; border-radius: 4px; color: var(--text);
+}
+@media (max-width: 860px) {
+  .hz-dl { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hz-dl dt { border-bottom: none; padding-bottom: 0; }
+}
 
 /* 단계 이동 버튼 */
 .hz-navbtn {
