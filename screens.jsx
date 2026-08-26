@@ -1517,6 +1517,7 @@ function CapStep({ step, n, id, agentId, serviceId, featureId, noLink }) {
         {step.codeTabs && <CodeTabs tabs={step.codeTabs} />}
         {step.widget === "queryGen" && <QueryGenerator />}
         {step.widget === "mstgExamples" && <MstgExamples />}
+        {step.widget === "hermesFlow" && <HermesSendFlow />}
         {step.shot && <Shot shot={step.shot} />}
         {step.note && (
           <div className="cap-note">
@@ -1948,3 +1949,226 @@ Object.assign(window, {
   RightNav,
   scrollToId,
 });
+
+/* ============================================================
+   헤르메스 발송 가이드 — 3단계 진행바 + 실제 화면 재현(replica)
+   ------------------------------------------------------------
+   캡처 이미지 대신 화면 구조를 우리 마크업으로 다시 그린다.
+     · 라벨·필드·순서·문구는 실제 화면(rcs.hermes.kt.com)에서 추출
+     · 다크모드 대응, 계정정보 없음, 설명 중인 항목에 번호 뱃지
+   ============================================================ */
+const HZ_STAGES = [
+  { id: "tpl",    n: 1, title: "템플릿 생성",    sub: "보낼 메시지 서식을 먼저 만든다",  menu: "템플릿 관리 › 템플릿 생성" },
+  { id: "send",   n: 2, title: "메시지 발송",    sub: "브랜드·수신자를 지정해 보낸다",    menu: "메시지발송(웹) › 메시지 조회/생성/발송" },
+  { id: "result", n: 3, title: "발송 결과 조회", sub: "보낸 결과와 실패 사유를 확인한다", menu: "메시지발송(웹) › 포탈 메시지 결과" },
+];
+
+/* --- 재현용 기본 조각 --- */
+function HzWin({ path, children }) {
+  return (
+    <div className="hz-win">
+      <div className="hz-win-bar"><span className="hz-dots"><i /><i /><i /></span><span className="hz-path">{path}</span></div>
+      <div className="hz-win-body">{children}</div>
+    </div>
+  );
+}
+function HzSec({ title, children }) {
+  return <div className="hz-sec">{title && <div className="hz-sec-tt">{title}</div>}<div className="hz-sec-body">{children}</div></div>;
+}
+function HzRow({ label, req, mark, children }) {
+  return (
+    <div className={"hz-row" + (mark ? " mark" : "")}>
+      <div className="hz-label">
+        {mark && <span className="hz-badge">{mark}</span>}
+        {label}{req && <span className="hz-req">*</span>}
+      </div>
+      <div className="hz-ctrl">{children}</div>
+    </div>
+  );
+}
+function HzInput({ ph, w, ro }) { return <span className={"hz-input" + (ro ? " ro" : "")} style={w ? { width: w } : null}>{ph}</span>; }
+function HzBtn({ children, kind }) { return <span className={"hz-btn" + (kind ? " " + kind : "")}>{children}</span>; }
+function HzRadio({ opts, on }) {
+  return <span className="hz-radios">{opts.map((o) => (
+    <span key={o} className={"hz-radio" + (o === on ? " on" : "")}><i />{o}</span>
+  ))}</span>;
+}
+
+/* --- 단계별 화면 재현 --- */
+function HzTemplateScreen() {
+  const groups = [
+    { g: "이미지 템플릿", items: ["이미지 & 타이틀 강조형", "이미지 강조형", "썸네일형 세로", "썸네일형 가로", "SNS형 (하단버튼)", "SNS형 (중간버튼)", "아이템 상세형", "슬라이드형"] },
+    { g: "LMS 템플릿", items: ["기본형", "기본형 타이틀 강조", "명세서 아이템 강조", "문단형"] },
+    { g: "텍스트 템플릿", items: ["기본형 아이템 강조", "테이블 아이템 강조", "타이틀 선택형 서술", "타이틀 선택형 스타일", "타이틀 자유형 서술", "타이틀 자유형 스타일"] },
+  ];
+  return (
+    <HzWin path="rcs.hermes.kt.com › 템플릿 관리 › 템플릿 생성">
+      <div className="hz-tabs">
+        {["전체", "이미지템플릿", "LMS템플릿", "텍스트템플릿"].map((t, i) => (
+          <span key={t} className={"hz-tab" + (i === 0 ? " on" : "")}>{t}</span>
+        ))}
+        <span className="hz-badge hz-badge-float">1</span>
+      </div>
+      {groups.map((g) => (
+        <div className="hz-tplgroup" key={g.g}>
+          <div className="hz-tplgroup-tt">{g.g}<span className="hz-count">{g.items.length}종</span></div>
+          <div className="hz-tplgrid">
+            {g.items.map((it) => (
+              <div className="hz-tplcard" key={it}>
+                <div className="hz-tplthumb" />
+                <div className="hz-tplname">{it}</div>
+                <span className="hz-btn sm">템플릿 만들기</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </HzWin>
+  );
+}
+
+function HzSendScreen() {
+  return (
+    <HzWin path="rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송">
+      <div className="hz-tabs">
+        <span className="hz-tab on">메시지 생성/상세조회/발송</span>
+        <span className="hz-tab">메시지 조회/삭제</span>
+      </div>
+      <HzSec title="브랜드/발신번호 선택">
+        <HzRow label="브랜드 선택" req mark="1"><HzInput ph="" w={180} /><HzBtn>조회</HzBtn></HzRow>
+        <HzRow label="발신 번호" req><HzInput ph="" w={180} /><HzBtn>조회</HzBtn></HzRow>
+      </HzSec>
+      <HzSec title="메시지 세팅">
+        <HzRow label="메시지 종류" req mark="2"><HzInput ph="기본 RCS" w={180} ro /><HzBtn>조회</HzBtn></HzRow>
+      </HzSec>
+      <HzSec title="메시지 공통 정보">
+        <HzRow label="'(광고)'표시 여부" req mark="3"><HzRadio opts={["사용", "미사용"]} on="사용" /></HzRow>
+        <HzRow label="무료 수신거부번호등록" req><HzInput ph="예) 08012345678" w={200} /></HzRow>
+        <HzRow label="본문 복사" req><HzRadio opts={["허용", "비허용"]} on="허용" /></HzRow>
+        <HzRow label="만료 옵션" req><HzRadio opts={["40초", "3분10초", "1시간10초", "1일10초"]} on="40초" /></HzRow>
+      </HzSec>
+      <HzSec title="제목 / 내용">
+        <HzRow label="메시지 제목" mark="4"><HzInput ph="제목을 입력해주세요." w={220} /></HzRow>
+        <HzRow label="메시지 내용"><span className="hz-area">내용을 입력해주세요.</span></HzRow>
+        <HzRow label="액션 버튼 설정"><HzRadio opts={["미사용", "1개", "2개", "3개"]} on="미사용" /></HzRow>
+      </HzSec>
+      <HzSec title="RCS 발송 실패 시 SMS/LMS/MMS 전송(FALLBACK)">
+        <HzRow label="사용 여부" req mark="5"><HzRadio opts={["사용", "미사용"]} on="미사용" /></HzRow>
+      </HzSec>
+      <HzSec title="메시지 이름">
+        <HzRow label="메시지 이름" mark="6"><HzInput ph="메시지 이름을 입력하세요." w={200} /><HzBtn kind="pri">메시지 저장</HzBtn></HzRow>
+      </HzSec>
+      <HzSec title="발송 정보">
+        <HzRow label="발송 형태" mark="7"><HzRadio opts={["즉시 발송", "예약 발송"]} on="즉시 발송" /><HzBtn>발송량 현황 조회</HzBtn></HzRow>
+        <HzRow label="발송량"><HzRadio opts={["단건/20건이하", "대용량(1회 10만건)"]} on="단건/20건이하" /></HzRow>
+        <HzRow label="발송그룹ID"><HzInput ph="최대 20byte" w={150} /><HzBtn>복사하기</HzBtn><HzBtn>중복검사</HzBtn></HzRow>
+      </HzSec>
+      <HzSec title="목록">
+        <div className="hz-toolbar">
+          <span className="hz-badge">8</span>
+          <HzBtn>수신자 추가</HzBtn><HzBtn>커스텀 수신 정보 업로드</HzBtn><HzBtn>주소록 불러오기</HzBtn>
+        </div>
+        <div className="hz-table">
+          <div className="hz-tr hz-th"><span>수신 번호</span><span>이름</span><span>전화번호</span><span>변수1~4</span></div>
+          <div className="hz-tr hz-empty">수신자를 추가해 주세요.</div>
+        </div>
+      </HzSec>
+      <div className="hz-foot"><span className="hz-badge">9</span><HzBtn>목록</HzBtn><HzBtn kind="pri">발송</HzBtn></div>
+    </HzWin>
+  );
+}
+
+function HzResultScreen() {
+  return (
+    <HzWin path="rcs.hermes.kt.com › 메시지발송(웹) › 포탈 메시지 결과">
+      <div className="hz-tabs">
+        <span className="hz-tab on">처리 완료</span>
+        <span className="hz-tab">처리 중 / 예약 내역 취소</span>
+        <span className="hz-badge hz-badge-float">1</span>
+      </div>
+      <HzSec>
+        <HzRow label="구분" mark="2">
+          <HzInput ph="발신번호" w={120} /><HzInput ph="수신번호" w={120} /><HzInput ph="MSG ID" w={110} />
+        </HzRow>
+        <HzRow label="발송시각">
+          <HzInput ph="2026-08-26 10:00" w={140} /><span className="hz-tilde">~</span><HzInput ph="10:10" w={90} /><HzBtn kind="pri">조회</HzBtn>
+        </HzRow>
+      </HzSec>
+      <HzSec title="조회 결과">
+        <div className="hz-table">
+          <div className="hz-tr hz-th"><span>수신번호</span><span>채널</span><span>상태</span><span>결과코드</span></div>
+          <div className="hz-tr"><span>010****1234</span><span>RCS</span><span className="hz-ok">처리완료</span><span>—</span></div>
+          <div className="hz-tr"><span>010****5678</span><span>RCS→LMS</span><span className="hz-warn">발송불가</span><span>E0xxxx</span></div>
+        </div>
+        <div className="hz-toolbar"><span className="hz-badge">4</span><HzBtn>에러코드</HzBtn><HzBtn>마스킹 해제</HzBtn></div>
+      </HzSec>
+    </HzWin>
+  );
+}
+
+/* --- 단계별 따라하기 설명 (번호 = 화면 속 뱃지) --- */
+const HZ_ACTIONS = {
+  tpl: [
+    ["1", "유형 고르기", "상단 필터로 <b>이미지 / LMS / 텍스트</b> 템플릿을 좁힌 뒤, 원하는 형태의 <b>[템플릿 만들기]</b>를 누릅니다."],
+    ["", "내용 작성", "제목·본문·버튼을 채웁니다. 수신자마다 달라지는 값은 <b>변수</b>로 넣어두면 발송할 때 치환됩니다."],
+    ["", "승인 요청", "저장하면 검수를 거쳐 승인된 뒤에 발송에서 고를 수 있습니다. 상태는 <b>템플릿 조회</b>에서 확인하세요."],
+  ],
+  send: [
+    ["1", "브랜드 · 발신번호", "<b>[조회]</b>로 팝업을 열어 <b>브랜드 → 발신번호</b> 순으로 고릅니다. 발신번호는 대표번호가 자동 선택됩니다."],
+    ["2", "메시지 종류", "<b>[조회]</b>로 메시지 베이스(단문·장문·이미지·<b>템플릿</b>)를 고릅니다. 1단계에서 만든 템플릿을 여기서 선택합니다."],
+    ["3", "공통 정보", "광고 표시·수신거부번호·본문 복사·만료 옵션. <b>광고성이면 (광고) 표시와 무료 수신거부번호가 필수</b>입니다."],
+    ["4", "제목 · 내용 · 버튼", "본문을 쓰고 필요하면 액션 버튼을 최대 3개까지 붙입니다. 우측 미리보기로 실제 표시를 확인하세요."],
+    ["5", "Fallback", "RCS 실패 시 문자로 대신 보낼지 정합니다. <b>SMS 90byte · LMS 2,000byte</b>, 이모지는 넣을 수 없습니다."],
+    ["6", "메시지 저장", "이름을 붙여 저장하면 다음에 재사용할 수 있습니다. 저장 없이 발송하면 저장 여부를 다시 묻습니다."],
+    ["7", "발송 형태 · 발송량", "즉시/예약을 고르고 <b>[발송량 현황 조회]</b>로 가능한 시간대를 확인합니다. 대용량은 1회 10만건까지."],
+    ["8", "수신자 추가", "직접 추가하거나 <b>주소록 불러오기</b>로 가져옵니다. 템플릿 변수를 썼다면 <b>커스텀 수신 정보 업로드</b>로 값을 함께 올립니다."],
+    ["9", "발송", "광고성이면 <b>표기 의무 준수 체크</b> 후 <b>[발송]</b>. 보내기 전 <b>테스트 발송</b>으로 담당자에게 먼저 확인하세요."],
+  ],
+  result: [
+    ["1", "탭 고르기", "<b>처리 완료</b>는 끝난 건, <b>처리 중 / 예약 내역 취소</b>는 진행 중이거나 예약된 건입니다."],
+    ["2", "조건 검색", "발신·수신번호나 MSG ID로 찾습니다. <b>기본 검색 범위가 현재 시각 ±5분</b>이라 지난 건은 시간을 넓혀야 합니다."],
+    ["3", "결과 확인", "<b>처리완료 / 중복처리 / 발송불가</b>로 나뉩니다. Fallback이 동작했다면 최종 채널이 문자로 표시됩니다."],
+    ["4", "실패 원인 보기", "<b>에러코드</b>로 실패 사유를, <b>마스킹 해제</b>로 전체 수신번호를 확인합니다."],
+  ],
+};
+
+function HermesSendFlow() {
+  const [cur, setCur] = React.useState(0);
+  const st = HZ_STAGES[cur];
+  const Screen = [HzTemplateScreen, HzSendScreen, HzResultScreen][cur];
+  return (
+    <div className="hz">
+      <div className="hz-steps">
+        {HZ_STAGES.map((s, i) => (
+          <React.Fragment key={s.id}>
+            <button className={"hz-step" + (i === cur ? " on" : "") + (i < cur ? " done" : "")} onClick={() => setCur(i)}>
+              <span className="hz-step-n">{i < cur ? <Icon name="check" size={13} /> : s.n}</span>
+              <span className="hz-step-tx"><b>{s.title}</b><em>{s.sub}</em></span>
+            </button>
+            {i < HZ_STAGES.length - 1 && <span className="hz-step-line" />}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="hz-menu"><Icon name="compass" size={14} /> 메뉴 위치 — <b>{st.menu}</b></div>
+
+      <div className="hz-split">
+        <div className="hz-screen"><Screen /></div>
+        <ol className="hz-acts">
+          {HZ_ACTIONS[st.id].map((a, i) => (
+            <li key={i} className={a[0] ? "" : "sub"}>
+              {a[0] ? <span className="hz-badge">{a[0]}</span> : <span className="hz-dot" />}
+              <span className="hz-act-tx"><b>{a[1]}</b><span dangerouslySetInnerHTML={{ __html: a[2] }} /></span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="hz-nav">
+        <button className="hz-navbtn" disabled={cur === 0} onClick={() => setCur(cur - 1)}>← 이전 단계</button>
+        <span className="hz-nav-pos">{cur + 1} / {HZ_STAGES.length}</span>
+        <button className="hz-navbtn pri" disabled={cur === HZ_STAGES.length - 1} onClick={() => setCur(cur + 1)}>다음 단계 →</button>
+      </div>
+    </div>
+  );
+}
