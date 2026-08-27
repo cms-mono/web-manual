@@ -1748,6 +1748,7 @@ mark.search-hit {
 .hz-say-tx b { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
 .hz-say-tx span { font-size: 13.5px; color: var(--text-2); line-height: 1.68; }
 .hz-say-tx i { font-style: normal; color: var(--text-3); }
+.hz-say-tx .hz-ex { color: var(--accent-text); font-weight: 800; }
 .hz-say-tx code {
   font-family: var(--mono-font); font-size: 12px; background: var(--surface);
   border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--text);
@@ -1762,6 +1763,26 @@ mark.search-hit {
   display: flex; align-items: center; justify-content: center;
 }
 .hz-tour-view { position: relative; overflow: hidden; flex: 0 0 auto; }
+
+/* 실제 팝업을 화면 위에 얹어 보여준다 */
+.hz-pop-layer {
+  position: absolute; inset: 0; z-index: 4; display: grid; place-items: center;
+  background: rgba(15, 23, 42, .42); padding: 12px;
+}
+.hz-pop {
+  background: #fff; border-radius: 6px; padding: 26px 28px;
+  box-shadow: 0 18px 48px rgba(0,0,0,.32);
+  max-width: 100%; overflow: hidden;
+}
+/* 스프라이트를 못 가져와 체크박스가 빈칸으로 보이던 것을 CSS로 대체 */
+.hz-real input[type="checkbox"] + label::before {
+  content: ""; display: inline-block; width: 15px; height: 15px; margin-right: 5px;
+  border: 1.5px solid #c8c8c8; border-radius: 3px; background: #fff;
+  vertical-align: -3px; box-sizing: border-box;
+}
+.hz-real input[type="checkbox"]:checked + label::before {
+  border-color: rgb(27,174,197); background: rgb(27,174,197);
+}
 
 /* 좌우 이동 화살표 — 누르는 영역이 어디인지 눈에 보이게 */
 .hz-tour-arrow {
