@@ -1975,7 +1975,7 @@ function hzFit(box, page) {
 /* 각 단계의 detail[] 은 헤르메스 실제 화면(2026-08-26 확인)에서 옮긴 것.
    화면 문구를 그대로 인용한 부분은 <i>…</i> 로 표시했다.
    hi[] = 가이드 팝업에서 강조할 영역을 찾는 키워드(화면 안의 th·제목·버튼 문구). */
-const HZ_STEPS = [
+const HZ_SRC = [
   { part: "brand",    title: "브랜드 · 발신번호 선택",
     desc: "<b>[조회]</b>를 눌러 팝업에서 <b>브랜드 \u2192 발신번호</b> 순으로 고릅니다. 발신번호는 대표번호가 자동 선택됩니다.",
     tip: "목록에 브랜드·발신번호가 없다면 RBC 등록·승인이 끝나지 않은 것입니다.",
@@ -1992,6 +1992,14 @@ const HZ_STEPS = [
         d: "브랜드는 있는데 발신번호만 안 나오는 경우입니다. 그 브랜드에 <b>대화방을 등록</b>했는지, 그리고 <b>승인이 완료</b>되었는지 확인합니다." },
       { t: "\u2465 대화방이 등록·승인되면 이렇게 나옵니다", hi: ["발신 번호"], pop: "number",
         d: "제목은 <b>\u2018발신번호를 선택해주세요\u2019</b>. <b>브랜드를 먼저 골라야</b> 목록이 채워지고, 그 브랜드에 등록된 <b>대화방(발신번호)</b>만 나옵니다.<br><b class=\"hz-ex\">이 화면에서는</b> <code>(주) 모노커뮤니케이션즈 / 15777223</code> 을 골랐습니다." },
+      { t: "\u2466 번호 형식과 bot- 코드는 무엇이 다른가", hi: ["발신 번호"], pop: "number",
+        d: "목록에 <code>15777223</code> 같은 <b>전화번호 형식</b>과 <code>bot-8ajyibnbkbn</code> 같은 <b>코드 형식</b>이 섞여 있습니다. 어느 쪽이든 발송에는 똑같이 쓰이고, 차이는 <b>RBC에서 대화방을 등록할 때 고른 \u2018대화방 유형\u2019</b>에서 갈립니다." },
+      { t: "\u2467 대화방 유형 두 가지",
+        d: "<b>발신번호</b>로 등록하면 문자를 보내는 번호 그 자체가 대화방이 되어 <b>ID가 번호 그대로</b>입니다.<br><b>양방향 ID</b>로 등록하면 하나의 발신번호 아래 <b>여러 ID를 만들어</b> 대화방명과 대화방 메뉴를 다르게 노출할 수 있고, 번호 대신 발급된 코드가 ID가 되어 <code>bot-</code>으로 시작합니다.<br>같은 번호를 쓰면서 부서·브랜드별로 이름을 달리 보여주고 싶을 때 양방향 ID를 씁니다.",
+        table: { head: ["대화방 유형", "목록에 보이는 ID", "쓰는 상황"], rows: [
+          ["발신번호", "15777223 · 023337223", "번호 하나에 대화방 하나. 가장 일반적인 형태"],
+          ["양방향 ID", "bot-8ajyibnbkbn", "번호 하나에 여러 대화방. 대화방명·메뉴를 따로 노출"],
+        ] } },
     ] },
 
   { part: "msgtype",  title: "메시지 종류 선택",
@@ -2097,7 +2105,53 @@ const HZ_STEPS = [
       { t: "변수 길이는 ‘치환 뒤’로 따집니다",
         d: "커스텀 변수 설정 안내 — <i>{{변수}} 항목을 입력하고 byte 이하로 입력되었더라도 실제 커스텀 수신 정보의 항목이 길어 byte 가 초과될 경우 메시지 발송이 불가합니다.</i> 본문만 짧으면 되는 게 아니라 <b>가장 긴 수신자 값으로 치환했을 때</b>를 기준으로 봐야 합니다." },
     ] },
+
+  /* 마지막 단계 — 화면 맨 아래 [발송] */
+  { part: "send", title: "발송",
+    desc: "입력한 내용과 동의 항목을 확인한 뒤 <b>[발송]</b>을 누르면 전송됩니다.",
+    tip: "빨간 안내가 하나라도 남아 있으면 발송되지 않습니다.",
+    detail: [
+      { t: "\u2460 보내기 전 마지막 확인", hi: ["광고성 문자 전송 시"],
+        d: "메시지 저장 아래의 <b>\u2018광고성 문자 전송 시 표기 의무를 준수하여 메시지를 작성하였습니다\u2019</b> 체크를 확인합니다. 광고성 메시지라면 <code>(광고)</code> 표시와 무료 수신거부번호가 함께 들어가 있어야 합니다." },
+      { t: "\u2461 [발송] 누르기",
+        d: "화면 맨 아래 <b>[발송]</b>을 누르면 전송됩니다. <b>발송량 현황 조회 필요</b>·<b>발송그룹ID 중복검사필요</b> 같은 빨간 안내가 남아 있으면 넘어가지 않으니 위로 올라가 마저 처리합니다.<br><b>[목록]</b>을 누르면 저장한 메시지 목록으로 돌아갑니다." },
+    ] },
 ];
+
+/* ── 기획안(2026-08-27)에 맞춰 6단계로 묶는다 ──
+   화면 순서(위 7덩어리)는 그대로 두고 '메시지 작성'만 공통정보·Fallback·메시지 저장을
+   한 단계로 합쳤다. 하위 항목은 하나도 줄이지 않고 순서대로 이어 붙는다. */
+const HZ_GROUPS = [
+  { title: "브랜드 · 발신번호 선택", kind: "공통",  from: ["brand"] },
+  { title: "메시지 종류 선택",       kind: "유형별", from: ["msgtype"] },
+  { title: "메시지 작성",            kind: "유형별", from: ["common", "fallback", "name"],
+    desc: "공통 정보와 제목·내용을 채우고, 대체 발송(Fallback)과 메시지 저장까지 이 단계에서 끝냅니다.",
+    tip: "<b>'(광고)' 표시 여부</b>와 <b>무료 수신거부번호</b>는 필수 항목(*)입니다." },
+  { title: "발송 정보",              kind: "공통",  from: ["sendinfo"] },
+  { title: "수신자 추가",            kind: "공통",  from: ["recv"] },
+  { title: "발송",                   kind: "공통",  from: ["send"] },
+];
+
+const HZ_SRC_MAP = {};
+HZ_SRC.forEach((x) => { HZ_SRC_MAP[x.part] = x; });
+
+const HZ_STEPS = HZ_GROUPS.map((g) => {
+  const srcs = g.from.map((k) => HZ_SRC_MAP[k]).filter(Boolean);
+  return {
+    parts: g.from,
+    title: g.title,
+    kind: g.kind,
+    desc: g.desc || (srcs[0] ? srcs[0].desc : ""),
+    tip: g.tip || (srcs[0] ? srcs[0].tip : ""),
+    detail: srcs.reduce((a, x) => a.concat(x.detail || []), []),
+  };
+});
+
+/* 한 단계가 여러 덩어리를 묶을 수 있으므로 항상 이어 붙여 쓴다 */
+function hzHtml(step) {
+  const ui = window.HZ_UI || { parts: {} };
+  return (step.parts || []).map((k) => ui.parts[k] || "").join("");
+}
 
 /* 팝업이 겹쳐 뜰 수 있으므로 본문 스크롤 잠금은 참조 카운트로 관리한다.
    각자 이전값을 저장했다 되돌리면, 나중에 열린 팝업이 '이전값 = hidden'을
@@ -2298,7 +2352,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
     page.style.zoom = String(s);
     setZ({ scale: s });
   }, []);
-  useHzRemeasure(measure, [step.part]);
+  useHzRemeasure(measure, [step.parts]);
 
   /* 가이드 팝업이 위에 겹쳐 있으면 키 입력은 그쪽이 맡는다.
      둘 다 듣고 있으면 방향키 한 번에 '단계 이동'(여기)과 '항목 이동'(가이드)이
@@ -2339,7 +2393,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
           <div className="hz-fit auto" ref={boxRef}>
             <div className="hz-real hz-page" ref={pageRef}
                  style={{ zoom: z.scale, width: HZ_NATURAL_W }}
-                 dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
+                 dangerouslySetInnerHTML={{ __html: hzHtml(step) }} />
           </div>
         </div>
       </div>
@@ -2370,7 +2424,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   const atLast = stepIdx === HZ_STEPS.length - 1 && sub === items.length - 1;
 
   const fullHtml = React.useMemo(
-    () => HZ_STEPS.map((s) => ui.parts[s.part] || "").join(""),
+    () => HZ_STEPS.map((s) => hzHtml(s)).join(""),
     [ui]
   );
 
@@ -2507,7 +2561,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
         <div className="peek-head">
           <div className="peek-tt">
             <span className="peek-badge">{stepIdx + 1} / {HZ_STEPS.length}</span>
-            <b>{step.title}</b>
+            <b>{step.title}</b><span className="hz-kind">{step.kind}</span>
           </div>
           <div className="peek-acts">
             <button className="peek-btn" disabled={atFirst} onClick={() => onMove(-1)}>← 이전</button>
@@ -2631,7 +2685,7 @@ function HermesSendFlow() {
     if (k < 0 || k >= HZ_STEPS.length) return;
     setI(k); setOpen(false);
     setTimeout(() => {
-      const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].part + '"]');
+      const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].parts[0] + '"]');
       if (el) hzReveal(el, headRef.current);
     }, 40);
   }
@@ -2656,13 +2710,13 @@ function HermesSendFlow() {
           <span className="hz-head-n">{i + 1}</span>
           <div className="hz-pick">
             <button className={"hz-pick-btn" + (open ? " on" : "")} onClick={() => setOpen(!open)}>
-              {step.title}<Icon name="chevron" size={14} className="hz-pick-arr" />
+              {step.title}<span className="hz-kind">{step.kind}</span><Icon name="chevron" size={14} className="hz-pick-arr" />
             </button>
             {open && (
               <div className="hz-pick-menu">
                 {HZ_STEPS.map((s, k) => (
                   <button key={s.part} className={"hz-pick-item" + (k === i ? " on" : "")} onClick={() => go(k)}>
-                    <span className="hz-pick-n">{k + 1}</span>{s.title}
+                    <span className="hz-pick-n">{k + 1}</span>{s.title}<span className="hz-kind">{s.kind}</span>
                   </button>
                 ))}
               </div>
@@ -2697,15 +2751,11 @@ function HermesSendFlow() {
               <div
                 key={s.part}
                 className={"hz-part" + (k === i ? " on" : "")}
-                data-part={s.part}
+                data-part={s.parts[0]}
                 onClick={() => { if (k === i) setZoom(true); else go(k); }}
-                dangerouslySetInnerHTML={{ __html: ui.parts[s.part] || "" }}
+                dangerouslySetInnerHTML={{ __html: hzHtml(s) }}
               />
             ))}
-            {/* 광고성 표기 의무 체크는 실제 화면과 같이 '메시지 저장'(name 파트) 안에 있다 */}
-            <div className="hz-sendrow">
-              <span className="hz-sendbtns"><b>목록</b><b className="pri">발송</b></span>
-            </div>
           </div>
         </div>
       </div>

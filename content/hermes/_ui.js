@@ -30,5 +30,7 @@
 
   PARTS.recv = `<div class="info-wrap mg-t10"><div class="card table-type"><div class="card-header"><h2>목록 <span class="list-total">Total 2</span></h2><div class="btn-area"><button type="button" class="btn btn-xs2 btn-gray btn-select">수신자 추가</button><button type="button" class="btn btn-xs2 btn-gray btn-select">커스텀 수신 정보 업로드</button><button type="button" class="btn btn-xs2 btn-gray btn-select">주소록 불러오기</button></div></div><div class="card-body"><div class="table-wrap"><table class="table-data"><caption>수신 번호</caption><colgroup><col style="width: 5%;"><col style="width: 15%;"><col style="width: 20%;"><col style="width: 15%;"></colgroup><thead><tr class="notice important"><th></th><th>이름</th><th>전화번호</th><th>변수1</th></tr></thead><tbody><tr><td>1</td><td>홍길동</td><td>010-1234-5678</td><td>홍길동</td></tr><tr><td>2</td><td>김영희</td><td>010-2345-6789</td><td>김영희</td></tr></tbody></table></div></div></div></div>`;
 
+  PARTS.send = `<div class="info-wrap mg-t10"><div class="btn-area pd-t40 align-c" style="display:flex;justify-content:center;gap:7px;padding-top:24px;"><button type="button" class="btn btn-sm">목록</button><button type="button" class="btn btn-sm btn-primary">발송</button></div></div>`;
+
   window.HZ_UI = { css: CSS, parts: PARTS };
 })();
