@@ -1794,10 +1794,17 @@ mark.search-hit {
 .hz-tour-arrow.left { left: 14px; }
 .hz-tour-arrow.right { right: 14px; }
 .hz-tour-arrow.left svg { transform: rotate(180deg); }
-.hz-tour-arrow:hover:not(:disabled) { opacity: 1; background: var(--accent); border-color: var(--accent); color: #fff; }
+/* 커서가 그쪽 구역에 있으면 불이 들어온다(버튼 위가 아니어도) */
+.hz-tour-arrow:hover:not(:disabled),
+.hz-tour-arrow.lit:not(:disabled) { opacity: 1; background: var(--accent); border-color: var(--accent); color: #fff; }
 .hz-tour-arrow:disabled { opacity: .18; cursor: default; }
-/* 화면 위에 마우스를 올리면 화살표가 또렷해진다 */
-.hz-tour-stage:hover .hz-tour-arrow:not(:disabled) { opacity: .85; }
+/* 화면 위에 마우스를 올리면 양쪽 화살표가 은은하게 보인다 */
+.hz-tour-stage:hover .hz-tour-arrow:not(:disabled) { opacity: .8; }
+
+/* 구역별 커서 — 넘어가는 곳인지 아닌지 손끝으로 알 수 있게 */
+.hz-tour-stage.zone-left { cursor: w-resize; }
+.hz-tour-stage.zone-right { cursor: e-resize; }
+.hz-tour-stage.zone-mid { cursor: default; }
 .hz-tour-page {
   position: absolute; transform-origin: top left;
   display: flow-root;   /* 자식 margin이 새어 나가 높이가 잘못 잡히는 것을 막는다 */

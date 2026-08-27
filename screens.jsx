@@ -2363,6 +2363,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   const pageRef = React.useRef(null);
   const popRef = React.useRef(null);
   const [popZoom, setPopZoom] = React.useState(1);
+  const [zone, setZone] = React.useState(null);   // 'left' | 'right' | null(가운데)
   const [v, setV] = React.useState({ scale: 1, tx: 0, ty: 0, w: HZ_NATURAL_W, h: 0, up: false, down: false });
 
   const atFirst = stepIdx === 0 && sub === 0;
@@ -2440,12 +2441,22 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onMove]);
 
-  /* 화면 가운데를 기준으로 왼쪽은 이전, 오른쪽은 다음 */
-  function onStageClick(e) {
+  /* 좌 35% = 이전, 우 35% = 다음, 가운데 30% = 아무 일도 안 함
+     (화면을 자세히 보려고 가운데를 눌렀다가 넘어가 버리는 일을 막는다) */
+  function zoneOf(e) {
     const box = boxRef.current;
-    if (!box) return onMove(1);
+    if (!box) return null;
     const r = box.getBoundingClientRect();
-    onMove(e.clientX < r.left + r.width / 2 ? -1 : 1);
+    const f = (e.clientX - r.left) / r.width;
+    if (f < 0.35) return "left";
+    if (f > 0.65) return "right";
+    return null;
+  }
+  function onStageMove(e) { const z = zoneOf(e); if (z !== zone) setZone(z); }
+  function onStageClick(e) {
+    const z = zoneOf(e);
+    if (z === "left") onMove(-1);
+    else if (z === "right") onMove(1);
   }
 
   return ReactDOM.createPortal(
@@ -2486,12 +2497,13 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
 
         {/* 화면 전체 — 강조된 곳으로 옮겨서 보여준다(스크롤 없음)
             왼쪽 절반을 누르면 이전, 오른쪽 절반을 누르면 다음 */}
-        <div className="hz-tour-stage" ref={boxRef} onClick={onStageClick}>
-          <button type="button" className="hz-tour-arrow left" disabled={atFirst}
+        <div className={"hz-tour-stage" + (zone ? " zone-" + zone : " zone-mid")} ref={boxRef}
+             onClick={onStageClick} onMouseMove={onStageMove} onMouseLeave={() => setZone(null)}>
+          <button type="button" className={"hz-tour-arrow left" + (zone === "left" ? " lit" : "")} disabled={atFirst}
                   onClick={(e) => { e.stopPropagation(); onMove(-1); }} aria-label="이전 항목">
             <Icon name="chevron" size={22} />
           </button>
-          <button type="button" className="hz-tour-arrow right" disabled={atLast}
+          <button type="button" className={"hz-tour-arrow right" + (zone === "right" ? " lit" : "")} disabled={atLast}
                   onClick={(e) => { e.stopPropagation(); onMove(1); }} aria-label="다음 항목">
             <Icon name="chevron" size={22} />
           </button>
@@ -2517,7 +2529,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
                  onClick={(e) => { e.stopPropagation(); onMove(k - sub); }} title={items[k].t} />
             ))}
           </span>
-          <span className="hz-tour-hint">화면 왼쪽을 누르면 이전 · 오른쪽을 누르면 다음 · ESC 닫기</span>
+          <span className="hz-tour-hint">화면 좌우 끝을 누르면 이전 · 다음 (가운데는 넘어가지 않습니다) · ESC 닫기</span>
         </div>
       </div>
     </div>,
