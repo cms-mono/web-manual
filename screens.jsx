@@ -2122,14 +2122,21 @@ const HZ_SRC = [
    화면 순서(위 7덩어리)는 그대로 두고 '메시지 작성'만 공통정보·Fallback·메시지 저장을
    한 단계로 합쳤다. 하위 항목은 하나도 줄이지 않고 순서대로 이어 붙는다. */
 const HZ_GROUPS = [
-  { title: "브랜드 · 발신번호 선택", kind: "공통",  from: ["brand"] },
-  { title: "메시지 종류 선택",       kind: "유형별", from: ["msgtype"] },
+  { title: "브랜드 · 발신번호 선택", kind: "공통",  from: ["brand"],
+    set: [["브랜드", "모노커뮤니케이션즈"], ["발신번호", "(주) 모노커뮤니케이션즈 · 15777223"]] },
+  { title: "메시지 종류 선택",       kind: "유형별", from: ["msgtype"],
+    set: [["규격", "기존 RCS"], ["종류", "SMS"], ["메시지 베이스", "SS000000"]] },
   { title: "메시지 작성",            kind: "유형별", from: ["common", "fallback", "name"],
     desc: "공통 정보와 제목·내용을 채우고, 대체 발송(Fallback)과 메시지 저장까지 이 단계에서 끝냅니다.",
-    tip: "<b>'(광고)' 표시 여부</b>와 <b>무료 수신거부번호</b>는 필수 항목(*)입니다." },
-  { title: "발송 정보",              kind: "공통",  from: ["sendinfo"] },
-  { title: "수신자 추가",            kind: "공통",  from: ["recv"] },
-  { title: "발송",                   kind: "공통",  from: ["send"] },
+    tip: "<b>'(광고)' 표시 여부</b>와 <b>무료 수신거부번호</b>는 필수 항목(*)입니다.",
+    set: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["본문 복사", "허용"],
+          ["만료 옵션", "40초"], ["Fallback", "사용"], ["메시지 이름", "2026-08 안내 발송"]] },
+  { title: "발송 정보",              kind: "공통",  from: ["sendinfo"],
+    set: [["발송 형태", "즉시 발송"], ["발송량", "단건 · 20건 이하"], ["발송그룹ID", "GUIDE-20260827-01"]] },
+  { title: "수신자 추가",            kind: "공통",  from: ["recv"],
+    set: [["넣는 방법", "수신자 추가(직접 등록)"], ["인원", "2명"], ["변수1", "수신자 이름"]] },
+  { title: "발송",                   kind: "공통",  from: ["send"],
+    set: [["표기 의무 확인", "체크"], ["마지막 동작", "[발송] 누르기"]] },
 ];
 
 const HZ_SRC_MAP = {};
@@ -2141,6 +2148,7 @@ const HZ_STEPS = HZ_GROUPS.map((g) => {
     parts: g.from,
     title: g.title,
     kind: g.kind,
+    set: g.set || [],
     desc: g.desc || (srcs[0] ? srcs[0].desc : ""),
     tip: g.tip || (srcs[0] ? srcs[0].tip : ""),
     detail: srcs.reduce((a, x) => a.concat(x.detail || []), []),
@@ -2637,6 +2645,7 @@ function HermesSendFlow() {
   const [i, setI] = React.useState(0);
   const [open, setOpen] = React.useState(false);   // 제목 드롭다운
   const [zoom, setZoom] = React.useState(false);   // 확대 팝업
+  const [goalOpen, setGoalOpen] = React.useState(true);   // 완성 예시 펼침
   const [tour, setTour] = React.useState(null);    // 가이드 팝업 {sub}
   const ui = window.HZ_UI || { css: "", parts: {} };
   const step = HZ_STEPS[i];
@@ -2703,6 +2712,29 @@ function HermesSendFlow() {
 
   return (
     <div className="hz">
+      {/* 오늘 만들어볼 메시지 — 끝까지 따라 하면 나오는 결과를 먼저 보여준다 */}
+      <div className={"hz-goal" + (goalOpen ? " open" : "")}>
+        <button className="hz-goal-head" onClick={() => setGoalOpen(!goalOpen)} aria-expanded={goalOpen}>
+          <span className="hz-goal-k">오늘 만들어볼 메시지</span>
+          <b>기존 RCS · SMS로 안내 문자 한 통 보내기</b>
+          <Icon name="chevron" size={15} className="hz-goal-arr" />
+        </button>
+        {goalOpen && (
+          <div className="hz-goal-body">
+            <div className="hz-goal-tx">
+              <p>브랜드와 발신번호를 고르고, <b>수신자 이름이 들어가는 안내 문구</b>를 작성해 즉시 발송까지 해봅니다.
+                 RCS가 닿지 않는 단말에는 문자로 대신 가도록 <b>Fallback</b>도 켭니다.</p>
+              <ul>
+                <li><b>(광고)</b>와 <b>수신거부 번호</b>가 자동으로 붙는 모습</li>
+                <li><code>{"{{변수1}}"}</code> 자리에 수신자 이름이 채워지는 모습</li>
+              </ul>
+              <p className="hz-goal-note">오른쪽이 실제로 수신자에게 보이는 화면입니다.</p>
+            </div>
+            <div className="hz-real hz-goal-pv"
+                 dangerouslySetInnerHTML={{ __html: (window.HZ_UI || { parts: {} }).parts.result || "" }} />
+          </div>
+        )}
+      </div>
 
       {/* 조작 바 — 제목 드롭다운 · 설명 · 이전/다음 · 크게 보기 (스크롤해도 따라옴) */}
       <div className="hz-head" ref={headRef}>
@@ -2733,6 +2765,14 @@ function HermesSendFlow() {
           <span dangerouslySetInnerHTML={{ __html: step.desc }} />
           {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
         </div>
+        {step.set.length > 0 && (
+          <div className="hz-set">
+            <span className="hz-set-k">예시 설정값</span>
+            {step.set.map((kv, n) => (
+              <span className="hz-set-i" key={n}><i>{kv[0]}</i>{kv[1]}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="hz-stage">
