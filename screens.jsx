@@ -2712,28 +2712,32 @@ function HermesSendFlow() {
 
   return (
     <div className="hz">
-      {/* 오늘 만들어볼 메시지 — 끝까지 따라 하면 나오는 결과를 먼저 보여준다 */}
+      {/* 오늘 만들어볼 메시지 — 다 따라 했을 때 수신자 단말에 실제로 도착한 화면 */}
       <div className={"hz-goal" + (goalOpen ? " open" : "")}>
         <button className="hz-goal-head" onClick={() => setGoalOpen(!goalOpen)} aria-expanded={goalOpen}>
           <span className="hz-goal-k">오늘 만들어볼 메시지</span>
-          <b>기존 RCS · SMS로 안내 한 통 — 수신자에게 이렇게 도착합니다</b>
+          <b>다 따라 하면 수신자에게 이렇게 도착합니다</b>
           <Icon name="chevron" size={15} className="hz-goal-arr" />
         </button>
         {goalOpen && (
           <div className="hz-goal-body">
             <div className="hz-goal-tx">
-              <p>6단계를 끝내면 아래 두 가지 모습으로 도착합니다.
-                 <b>발송 화면의 미리보기에는 나오지 않는 것</b>이라 여기서 먼저 봐 둡니다.</p>
-              <ul>
-                <li><b>변수가 채워진 뒤</b> — 화면에는 <code>{"{{변수1}}"}</code> 그대로 보이지만,
-                    실제로는 수신자별 값(여기서는 이름)으로 바뀌어 나갑니다.</li>
-                <li><b>RCS가 안 될 때</b> — 화면에는 Fallback 입력란만 있고 결과는 안 보입니다.
-                    제목이 없어지고 한 덩어리 문자로 가며, 수신거부 문구도 <b>무료수신거부</b>로 바뀝니다.</li>
-              </ul>
-              <p className="hz-goal-note">수신자 예시 · 홍길동 / 변수1 = 이름</p>
+              <p>아래 6단계를 마치고 발송하면 수신자 단말에 <b>실제로 도착한 화면</b>입니다.
+                 무엇을 만드는 것인지 먼저 보고 시작하세요.</p>
+              <dl className="hz-goal-dl">
+                <dt>대화방 이름</dt>
+                <dd>브랜드가 아니라 <b>대화방(발신번호) 이름</b>으로 뜹니다 — <code>(주) 모노커뮤니케이션즈 · 1577-7223</code></dd>
+                <dt>본문</dt>
+                <dd>발송 화면에 <code>{"{{변수1}}"}</code>로 써 둔 자리가 수신자 값(<b>홍길동</b>)으로 바뀌어 나갑니다</dd>
+                <dt>맨 아래</dt>
+                <dd>입력한 무료 수신거부번호가 <b>무료 수신거부 080-1234-5678</b> 형태로 자동으로 붙습니다</dd>
+              </dl>
             </div>
-            <div className="hz-real hz-goal-pv"
-                 dangerouslySetInnerHTML={{ __html: (window.HZ_UI || { parts: {} }).parts.result || "" }} />
+            <figure className="hz-goal-shot">
+              <img src="assets/hermes/result-sms.png"
+                   alt="기존 RCS · SMS로 발송한 메시지가 수신자 단말에 도착한 화면" loading="lazy" />
+              <figcaption>기존 RCS · SMS 수신 화면</figcaption>
+            </figure>
           </div>
         )}
       </div>
