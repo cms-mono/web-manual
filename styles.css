@@ -1569,8 +1569,6 @@ mark.search-hit {
 .hz { margin-top: 4px; }
 
 /* 진행바 · 단계 칩 */
-.hz-bar { height: 4px; border-radius: 999px; background: var(--bg-sunken); overflow: hidden; }
-.hz-bar-fill { height: 100%; background: var(--accent); transition: width .25s ease; }
 .hz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
 .hz-chip {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px;
