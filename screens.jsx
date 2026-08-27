@@ -2724,13 +2724,16 @@ function HermesSendFlow() {
             <div className="hz-goal-tx">
               <p>아래 6단계를 마치고 발송하면 수신자 단말에 <b>실제로 도착한 화면</b>입니다.
                  무엇을 만드는 것인지 먼저 보고 시작하세요.</p>
+              <p className="hz-goal-note">위·아래 관련 없는 대화와 단말 상태바는 지운 화면입니다.</p>
               <dl className="hz-goal-dl">
-                <dt>대화방 이름</dt>
+                <dt>보내는 이</dt>
                 <dd>브랜드가 아니라 <b>대화방(발신번호) 이름</b>으로 뜹니다 — <code>(주) 모노커뮤니케이션즈 · 1577-7223</code></dd>
+                <dt>맨 윗줄</dt>
+                <dd><b>'(광고)' 표시</b>를 <b>사용</b>으로 두면 본문 앞에 <code>[Web발신] (광고)</code>가 자동으로 붙습니다</dd>
                 <dt>본문</dt>
                 <dd>발송 화면에 <code>{"{{변수1}}"}</code>로 써 둔 자리가 수신자 값(<b>홍길동</b>)으로 바뀌어 나갑니다</dd>
                 <dt>맨 아래</dt>
-                <dd>입력한 무료 수신거부번호가 <b>무료 수신거부 080-1234-5678</b> 형태로 자동으로 붙습니다</dd>
+                <dd>입력한 <b>무료 수신거부번호</b>가 시각과 함께 자동으로 붙습니다</dd>
               </dl>
             </div>
             <figure className="hz-goal-shot">
