@@ -2164,19 +2164,21 @@ function useHzRemeasure(measure, deps) {
 function HzZoom({ step, idx, onClose, onGo, onGuide }) {
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
-  const [z, setZ] = React.useState({ scale: 1, h: 0 });
+  const [z, setZ] = React.useState({ scale: 1 });
 
+  /* transform:scale 은 레이아웃 높이를 바꾸지 않아 바깥 상자 높이를 픽셀로
+     따로 계산해야 했고, 글꼴 차이로 그 값이 어긋나면 아래가 잘렸다.
+     CSS zoom 은 레이아웃에 반영되므로 상자가 알아서 늘어난다 → 잘릴 일이 없다. */
   const measure = React.useCallback(() => {
     const box = boxRef.current, page = pageRef.current;
     if (!box || !page) return;
-    page.style.transform = "none";
+    page.style.zoom = "1";
     const nat = Math.max(page.scrollWidth, HZ_NATURAL_W);
-    const nh = hzPageH(page);
     const cs = getComputedStyle(box);
     const avail = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
     const s = Math.min(1, avail / nat);
-    page.style.transform = "scale(" + s + ")";
-    setZ({ scale: s, h: nh * s });
+    page.style.zoom = String(s);
+    setZ({ scale: s });
   }, []);
   useHzRemeasure(measure, [step.part]);
 
@@ -2214,9 +2216,9 @@ function HzZoom({ step, idx, onClose, onGo, onGuide }) {
           <b className="hz-zoom-cta">이 화면을 항목별로 자세히 보려면 <span>가이드 보기</span>를 누르세요.</b>
         </div>
         <div className="peek-body hz-zoom-body">
-          <div className="hz-fit" ref={boxRef} style={{ height: z.h ? z.h + 32 : undefined }}>
+          <div className="hz-fit auto" ref={boxRef}>
             <div className="hz-real hz-page" ref={pageRef}
-                 style={{ transform: "scale(" + z.scale + ")", width: HZ_NATURAL_W }}
+                 style={{ zoom: z.scale, width: HZ_NATURAL_W }}
                  dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
           </div>
         </div>

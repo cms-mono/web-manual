@@ -1647,8 +1647,11 @@ mark.search-hit {
 }
 /* 헤르메스는 밝은 테마 전용 화면이라 다크모드에서도 원래 색으로 보여준다 */
 .hz-fit { position: relative; overflow: hidden; background: #fff; padding: 16px; }
+/* 확대 팝업용 — CSS zoom 이 레이아웃에 반영되므로 높이를 지정하지 않는다 */
+.hz-fit.auto { overflow: visible; height: auto; padding-bottom: 24px; }
 .hz-page {
   transform-origin: top left;
+  display: flow-root;   /* 자식 margin이 새어 나가 높이가 작게 잡히는 것을 막는다 */
   font-family: "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif;
   font-size: 14px; color: #444;
 }
