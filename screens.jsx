@@ -2414,6 +2414,14 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onMove]);
 
+  /* 화면 가운데를 기준으로 왼쪽은 이전, 오른쪽은 다음 */
+  function onStageClick(e) {
+    const box = boxRef.current;
+    if (!box) return onMove(1);
+    const r = box.getBoundingClientRect();
+    onMove(e.clientX < r.left + r.width / 2 ? -1 : 1);
+  }
+
   return ReactDOM.createPortal(
     <div className="peek-back over" onClick={onClose}>
       <div className="peek hz-tour" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
@@ -2450,8 +2458,17 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
           </div>
         )}
 
-        {/* 화면 전체 — 강조된 곳으로 옮겨서 보여준다(스크롤 없음) */}
-        <div className="hz-tour-stage" ref={boxRef} onClick={() => onMove(1)} title="누르면 다음으로 넘어갑니다">
+        {/* 화면 전체 — 강조된 곳으로 옮겨서 보여준다(스크롤 없음)
+            왼쪽 절반을 누르면 이전, 오른쪽 절반을 누르면 다음 */}
+        <div className="hz-tour-stage" ref={boxRef} onClick={onStageClick}>
+          <button type="button" className="hz-tour-arrow left" disabled={atFirst}
+                  onClick={(e) => { e.stopPropagation(); onMove(-1); }} aria-label="이전 항목">
+            <Icon name="chevron" size={22} />
+          </button>
+          <button type="button" className="hz-tour-arrow right" disabled={atLast}
+                  onClick={(e) => { e.stopPropagation(); onMove(1); }} aria-label="다음 항목">
+            <Icon name="chevron" size={22} />
+          </button>
           <div className={"hz-tour-view" + (v.up ? " up" : "") + (v.down ? " down" : "")}
                ref={viewRef} style={{ width: v.w || undefined, height: v.h || undefined }}>
             <div className="hz-real hz-tour-page" ref={pageRef}
@@ -2467,7 +2484,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
                  onClick={(e) => { e.stopPropagation(); onMove(k - sub); }} title={items[k].t} />
             ))}
           </span>
-          <span className="hz-tour-hint">전체 화면에서 해당 영역으로 이동합니다 · 화면을 누르면 다음 · ESC 닫기</span>
+          <span className="hz-tour-hint">화면 왼쪽을 누르면 이전 · 오른쪽을 누르면 다음 · ESC 닫기</span>
         </div>
       </div>
     </div>,

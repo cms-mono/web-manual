@@ -1756,11 +1756,29 @@ mark.search-hit {
 
 /* 화면 — 남은 높이를 쓰되 넘치지 않게 */
 .hz-tour-stage {
+  position: relative;   /* 좌우 화살표(absolute)의 기준 */
   flex: 1 1 0; min-height: 0; overflow: hidden;
   background: #fff; padding: 16px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
 .hz-tour-view { position: relative; overflow: hidden; flex: 0 0 auto; }
+
+/* 좌우 이동 화살표 — 누르는 영역이 어디인지 눈에 보이게 */
+.hz-tour-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+  display: grid; place-items: center; opacity: .55;
+  box-shadow: 0 4px 14px rgba(0,0,0,.14);
+  transition: opacity .14s, background .14s, color .14s;
+}
+.hz-tour-arrow.left { left: 14px; }
+.hz-tour-arrow.right { right: 14px; }
+.hz-tour-arrow.left svg { transform: rotate(180deg); }
+.hz-tour-arrow:hover:not(:disabled) { opacity: 1; background: var(--accent); border-color: var(--accent); color: #fff; }
+.hz-tour-arrow:disabled { opacity: .18; cursor: default; }
+/* 화면 위에 마우스를 올리면 화살표가 또렷해진다 */
+.hz-tour-stage:hover .hz-tour-arrow:not(:disabled) { opacity: .85; }
 .hz-tour-page {
   position: absolute; transform-origin: top left;
   display: flow-root;   /* 자식 margin이 새어 나가 높이가 잘못 잡히는 것을 막는다 */
