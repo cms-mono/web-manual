@@ -32,8 +32,10 @@
 
   PARTS.send = `<div class="info-wrap mg-t10"><div class="btn-area pd-t40 align-c" style="display:flex;justify-content:center;gap:7px;padding-top:24px;"><button type="button" class="btn btn-sm">목록</button><button type="button" class="btn btn-sm btn-primary">발송</button></div></div>`;
 
-  /* 이 가이드를 끝까지 따라 하면 나오는 결과 — 미리보기 카드만 떼어 왔다 */
-  PARTS.result = `<div class="message-preview fx-init"><div class="card table-type preview-wrap"><div class="card-header"><h2>기존 RCS · SMS</h2></div><div class="card-body"><div class="preview-area template desc"><div class="card-type"><span>[Web발신](광고)</span><div class="inner"><div class="cont"><div class="txt-area"><p class="tit">[모노커뮤니케이션즈] 안내</p><p class="txt">{{변수1}}님, 요청하신 안내 자료를 보내드립니다.<br>문의: 1577-7223<br><br>수신거부 08012345678</p></div></div></div></div></div></div></div></div>`;
+  /* 이 가이드를 끝까지 따라 하면 실제로 도착하는 모습.
+     둘 다 발송 화면의 미리보기에는 안 나오는 것이다 —
+     화면에는 {{변수1}} 이 그대로 보이고, Fallback 결과는 아예 보이지 않는다. */
+  PARTS.result = `<div class="message-preview fx-init" style="display:flex;gap:12px;"><div class="card table-type preview-wrap"><div class="card-header"><h2>RCS로 도착했을 때</h2></div><div class="card-body"><div class="preview-area template desc"><div class="card-type"><span>[Web발신](광고)</span><div class="inner"><div class="cont"><div class="txt-area"><p class="tit">[모노커뮤니케이션즈] 안내</p><p class="txt">홍길동님, 요청하신 안내 자료를 보내드립니다.<br>문의: 1577-7223<br><br>수신거부 08012345678</p></div></div></div></div></div></div></div><div class="card table-type preview-wrap"><div class="card-header"><h2>RCS가 안 되면 문자로</h2></div><div class="card-body"><div class="preview-area template desc"><div class="card-type"><span>[Web발신](광고)</span><div class="inner"><div class="cont"><div class="txt-area"><p class="txt">[모노커뮤니케이션즈] 홍길동님, 요청하신 안내 자료를 보내드립니다. 문의 1577-7223<br><br>무료수신거부 08012345678</p></div></div></div></div></div></div></div></div>`;
 
   window.HZ_UI = { css: CSS, parts: PARTS };
 })();

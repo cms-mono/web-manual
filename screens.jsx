@@ -2716,19 +2716,21 @@ function HermesSendFlow() {
       <div className={"hz-goal" + (goalOpen ? " open" : "")}>
         <button className="hz-goal-head" onClick={() => setGoalOpen(!goalOpen)} aria-expanded={goalOpen}>
           <span className="hz-goal-k">오늘 만들어볼 메시지</span>
-          <b>기존 RCS · SMS로 안내 문자 한 통 보내기</b>
+          <b>기존 RCS · SMS로 안내 한 통 — 수신자에게 이렇게 도착합니다</b>
           <Icon name="chevron" size={15} className="hz-goal-arr" />
         </button>
         {goalOpen && (
           <div className="hz-goal-body">
             <div className="hz-goal-tx">
-              <p>브랜드와 발신번호를 고르고, <b>수신자 이름이 들어가는 안내 문구</b>를 작성해 즉시 발송까지 해봅니다.
-                 RCS가 닿지 않는 단말에는 문자로 대신 가도록 <b>Fallback</b>도 켭니다.</p>
+              <p>6단계를 끝내면 아래 두 가지 모습으로 도착합니다.
+                 <b>발송 화면의 미리보기에는 나오지 않는 것</b>이라 여기서 먼저 봐 둡니다.</p>
               <ul>
-                <li><b>(광고)</b>와 <b>수신거부 번호</b>가 자동으로 붙는 모습</li>
-                <li><code>{"{{변수1}}"}</code> 자리에 수신자 이름이 채워지는 모습</li>
+                <li><b>변수가 채워진 뒤</b> — 화면에는 <code>{"{{변수1}}"}</code> 그대로 보이지만,
+                    실제로는 수신자별 값(여기서는 이름)으로 바뀌어 나갑니다.</li>
+                <li><b>RCS가 안 될 때</b> — 화면에는 Fallback 입력란만 있고 결과는 안 보입니다.
+                    제목이 없어지고 한 덩어리 문자로 가며, 수신거부 문구도 <b>무료수신거부</b>로 바뀝니다.</li>
               </ul>
-              <p className="hz-goal-note">오른쪽이 실제로 수신자에게 보이는 화면입니다.</p>
+              <p className="hz-goal-note">수신자 예시 · 홍길동 / 변수1 = 이름</p>
             </div>
             <div className="hz-real hz-goal-pv"
                  dangerouslySetInnerHTML={{ __html: (window.HZ_UI || { parts: {} }).parts.result || "" }} />
