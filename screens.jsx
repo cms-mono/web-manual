@@ -2268,7 +2268,7 @@ function useHzRemeasure(measure, deps) {
 }
 
 /* ── 확대 팝업 — 그 단계 영역만 원래 크기로 ── */
-function HzZoom({ step, idx, onClose, onGo, onGuide }) {
+function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
   useBodyScrollLock();
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
@@ -2290,7 +2290,11 @@ function HzZoom({ step, idx, onClose, onGo, onGuide }) {
   }, []);
   useHzRemeasure(measure, [step.part]);
 
+  /* 가이드 팝업이 위에 겹쳐 있으면 키 입력은 그쪽이 맡는다.
+     둘 다 듣고 있으면 방향키 한 번에 '단계 이동'(여기)과 '항목 이동'(가이드)이
+     동시에 일어나 화면이 통째로 건너뛴다. */
   React.useEffect(() => {
+    if (paused) return;
     function onKey(e) {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") onGo(idx + 1);
@@ -2298,7 +2302,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide }) {
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose, onGo, idx]);
+  }, [onClose, onGo, idx, paused]);
 
   const ui = window.HZ_UI || { parts: {} };
   return ReactDOM.createPortal(
@@ -2627,7 +2631,7 @@ function HermesSendFlow() {
 
       {zoom && <HzZoom step={step} idx={i} onClose={() => setZoom(false)}
                        onGo={(k) => { if (k >= 0 && k < HZ_STEPS.length) setI(k); }}
-                       onGuide={() => setTour({ sub: 0 })} />}
+                       onGuide={() => setTour({ sub: 0 })} paused={!!tour} />}
       {tour && <HzTour stepIdx={i} sub={tour.sub} onMove={tourMove} onClose={() => setTour(null)} />}
     </div>
   );
