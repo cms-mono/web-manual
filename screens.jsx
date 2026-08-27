@@ -1227,6 +1227,7 @@ function peekTargetOf(el) {
 }
 
 function PeekModal({ target, onClose, onNavigate }) {
+  useBodyScrollLock();
   const agent = window.HUB.AGENT_MAP[target.agentId];
   const pages = React.useMemo(
     () => (agent ? buildPages(window.MANUALS.getSections(target.agentId)) : []),
@@ -1260,9 +1261,7 @@ function PeekModal({ target, onClose, onNavigate }) {
   React.useEffect(() => {
     function onKey(e) { if (e.key === "Escape") onClose(); }
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   if (!agent) return null;
@@ -2090,6 +2089,48 @@ const HZ_STEPS = [
     ] },
 ];
 
+/* 팝업이 겹쳐 뜰 수 있으므로 본문 스크롤 잠금은 참조 카운트로 관리한다.
+   각자 이전값을 저장했다 되돌리면, 나중에 열린 팝업이 '이전값 = hidden'을
+   저장해 버려 전부 닫은 뒤에도 body가 잠긴 채로 남는다. */
+let hzLockN = 0;
+let hzLockPrev = "";
+function useBodyScrollLock() {
+  React.useEffect(() => {
+    if (hzLockN === 0) {
+      hzLockPrev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+    }
+    hzLockN += 1;
+    return () => {
+      hzLockN -= 1;
+      if (hzLockN <= 0) { hzLockN = 0; document.body.style.overflow = hzLockPrev; }
+    };
+  }, []);   // 의존성 없음 — 리렌더 때마다 잠금이 풀렸다 걸리지 않게
+}
+
+/* 고정(sticky/fixed) 요소에 가리지 않도록 대상을 화면에 드러낸다.
+   가리는 요소의 실제 위치를 그때그때 재기 때문에, 조작 바 높이가 바뀌거나
+   상단 메뉴가 접혀도 결과가 어긋나지 않는다. */
+function hzReveal(el, headEl) {
+  if (!el) return;
+  function once() {
+    const r = el.getBoundingClientRect();
+    let cover = 0;
+    [document.querySelector(".hdr"), headEl].forEach((b) => {
+      if (!b) return;
+      const pos = getComputedStyle(b).position;
+      if (pos !== "sticky" && pos !== "fixed") return;
+      cover = Math.max(cover, b.getBoundingClientRect().bottom);
+    });
+    const diff = r.top - (cover + 16);
+    if (Math.abs(diff) > 4) window.scrollBy({ top: diff, behavior: "smooth" });
+    return Math.abs(diff);
+  }
+  once();
+  setTimeout(once, 400);   // 부드러운 스크롤이 끝나고 sticky가 자리 잡은 뒤
+  setTimeout(once, 820);   // 상단 메뉴 접힘(0.28s)까지 끝난 뒤
+}
+
 /* ── 확대 팝업 · 가이드 팝업 ────────────────────────────────
    [크게 보기] → 그 단계 영역을 원래 크기로 (HzZoom)
    [가이드 보기] → 전체 화면을 띄우고 항목을 하나씩 짚어줌 (HzTour)
@@ -2162,6 +2203,7 @@ function useHzRemeasure(measure, deps) {
 
 /* ── 확대 팝업 — 그 단계 영역만 원래 크기로 ── */
 function HzZoom({ step, idx, onClose, onGo, onGuide }) {
+  useBodyScrollLock();
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
   const [z, setZ] = React.useState({ scale: 1 });
@@ -2189,9 +2231,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide }) {
       if (e.key === "ArrowLeft") onGo(idx - 1);
     }
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onGo, idx]);
 
   const ui = window.HZ_UI || { parts: {} };
@@ -2232,6 +2272,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide }) {
    화면 전체를 렌더한 뒤 강조 영역이 가운데 오도록 '옮겨서' 보여준다.
    스크롤바 없이 위아래 맥락이 살짝 보이므로 잘린 느낌이 나지 않는다. */
 function HzTour({ stepIdx, sub, onMove, onClose }) {
+  useBodyScrollLock();
   const step = HZ_STEPS[stepIdx];
   const items = step.detail || [];
   const cur = items[sub] || {};
@@ -2304,9 +2345,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
       if (e.key === "ArrowLeft") { e.preventDefault(); onMove(-1); }
     }
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onMove]);
 
   return ReactDOM.createPortal(
@@ -2414,18 +2453,16 @@ function HermesSendFlow() {
     return () => document.removeEventListener("click", onDoc);
   }, [open]);
 
-  /* 단계 이동 — sticky 조작 바에 가리지 않도록 그 높이만큼 더 띄운다 */
+  /* 단계 이동 — 고정 헤더·sticky 조작 바에 묻히지 않게.
+     높이를 미리 계산해 빼는 방식은 조작 바 높이(설명 줄 수)나 상단 메뉴
+     접힘 때문에 자꾸 어긋났다. 대신 '지금 실제로 가리고 있는 것의 아래쪽'을
+     매번 재서 그만큼만 움직이고, 자리가 잡힌 뒤 한 번 더 확인한다. */
   function go(k) {
     if (k < 0 || k >= HZ_STEPS.length) return;
     setI(k); setOpen(false);
     setTimeout(() => {
       const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].part + '"]');
-      if (!el || !boxRef.current) return;
-      const headH = headRef.current ? headRef.current.offsetHeight : 96;
-      const hdr = 64;                      // 상단 고정 헤더
-      const y = boxRef.current.getBoundingClientRect().top + window.scrollY
-              + el.offsetTop * scale - headH - hdr - 24;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      if (el) hzReveal(el, headRef.current);
     }, 40);
   }
 
