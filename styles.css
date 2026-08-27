@@ -1652,6 +1652,15 @@ mark.search-hit {
   .hz-goal-body { grid-template-columns: minmax(0,1fr); }
 }
 
+/* 완성 예시와 따라하기 사이 구분 */
+.hz-sep { display: flex; align-items: center; gap: 10px; margin: 22px 0 14px; }
+.hz-sep::before, .hz-sep::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.hz-sep span { width: 4px; height: 4px; border-radius: 50%; background: var(--border-strong); }
+.hz-lead {
+  font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 0 0 14px;
+}
+.hz-lead b { color: var(--text); font-weight: 700; }
+
 /* 조작 바 — 제목 드롭다운·설명·이전/다음. 스크롤해도 따라온다 */
 .hz-head {
   display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding: 12px 14px;

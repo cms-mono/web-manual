@@ -2742,6 +2742,13 @@ function HermesSendFlow() {
         )}
       </div>
 
+      {/* 여기부터가 따라하기 — 위의 완성 예시와 눈으로 갈라 준다 */}
+      <div className="hz-sep" aria-hidden="true"><span /></div>
+      <p className="hz-lead" dangerouslySetInnerHTML={{ __html:
+        "아래는 <b>실제 헤르메스 화면</b>입니다(입력은 되지 않습니다). " +
+        "<b>[다음]</b>으로 단계를 넘기면 채워야 할 영역이 차례로 표시되고, " +
+        "<b>[가이드 보기]</b>를 누르면 각 칸을 하나씩 짚어주는 안내가 열립니다." }} />
+
       {/* 조작 바 — 제목 드롭다운 · 설명 · 이전/다음 · 크게 보기 (스크롤해도 따라옴) */}
       <div className="hz-head" ref={headRef}>
         <div className="hz-head-top">
