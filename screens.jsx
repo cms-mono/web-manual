@@ -2110,12 +2110,35 @@ function useBodyScrollLock() {
 
 /* 고정(sticky/fixed) 요소에 가리지 않도록 대상을 화면에 드러낸다.
 
-   부드러운 스크롤은 '한 번만' 쏘고, 그 뒤에는 스크롤이 멎을 때까지 기다렸다가
-   남은 오차만 소리 없이(behavior:auto) 맞춘다. 정해진 시각에 smooth 스크롤을
-   또 쏘면 앞의 동작과 겹쳐 화면이 튄다.
-   새 호출이 들어오면 이전 작업은 즉시 취소 — 다음/이전을 연타해도
-   지나간 목표로 끌려가지 않는다. */
+   핵심은 "최종 도착 지점을 미리 정확히 계산해서 한 번에 가는 것".
+   예전에는 현재 화면 기준으로 대충 움직인 뒤 두세 번 보정했는데,
+   최상단에서는 조작 바가 아직 sticky로 붙기 전이라 기준이 엉뚱했고
+   그래서 세 번에 나눠 내려가는 것처럼 보였다.
+
+   미리 알 수 있는 값들:
+   · 조작 바가 붙었을 때 아래쪽 = CSS top(헤더+8) + 조작 바 높이
+   · 최상단에서 내려가면 상단 퀵메뉴 스페이서가 접히며 문서가 그만큼 위로 밀린다
+   둘 다 계산에 넣으면 한 번의 부드러운 스크롤로 정확히 도착한다. */
 let hzRevealJob = null;
+
+function hzTargetY(el, headEl) {
+  const docTop = el.getBoundingClientRect().top + window.scrollY;
+  const hdr = document.querySelector(".hdr");
+  const hdrH = hdr ? hdr.getBoundingClientRect().height : 64;
+
+  let cover = hdrH;
+  if (headEl) {
+    const st = parseFloat(getComputedStyle(headEl).top);
+    cover = (isNaN(st) ? hdrH + 8 : st) + headEl.getBoundingClientRect().height;
+  }
+
+  /* 최상단(스페이서가 펼쳐진 상태)에서 내려가면 그만큼 문서가 위로 올라온다 */
+  const sp = document.querySelector(".topmenu-spacer");
+  const shrink = (sp && window.scrollY < 12) ? sp.getBoundingClientRect().height : 0;
+
+  const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight - shrink);
+  return Math.max(0, Math.min(docTop - shrink - cover - 16, max));
+}
 
 function hzReveal(el, headEl) {
   if (!el) return;
@@ -2123,7 +2146,7 @@ function hzReveal(el, headEl) {
 
   let idleT = null, deadT = null, tries = 0, done = false;
 
-  function coverBottom() {
+  function gap() {
     let cover = 0;
     [document.querySelector(".hdr"), headEl].forEach((b) => {
       if (!b) return;
@@ -2131,18 +2154,19 @@ function hzReveal(el, headEl) {
       if (pos !== "sticky" && pos !== "fixed") return;
       cover = Math.max(cover, b.getBoundingClientRect().bottom);
     });
-    return cover;
+    return el.getBoundingClientRect().top - (cover + 16);
   }
-  function gap() { return el.getBoundingClientRect().top - (coverBottom() + 16); }
 
   function onScroll() { clearTimeout(idleT); idleT = setTimeout(settled, 110); }
 
+  /* 계산이 어긋난 드문 경우에만 조용히 맞춘다(움직임이 눈에 띄지 않게 즉시) */
   function settled() {
     if (done) return;
     const d = gap();
-    if (Math.abs(d) > 3 && tries < 4) {
+    const atBottom = window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 2;
+    if (Math.abs(d) > 6 && tries < 2 && !(d > 0 && atBottom)) {
       tries += 1;
-      window.scrollBy({ top: d, behavior: "auto" });   // 즉시 — 애니메이션끼리 겹치지 않는다
+      window.scrollBy({ top: d, behavior: "auto" });
       clearTimeout(idleT); idleT = setTimeout(settled, 130);
       return;
     }
@@ -2166,8 +2190,9 @@ function hzReveal(el, headEl) {
   /* 사용자가 직접 휠·터치로 스크롤하면 보정을 멈춘다(끌어당기는 느낌 방지) */
   window.addEventListener("wheel", stop, { passive: true });
   window.addEventListener("touchstart", stop, { passive: true });
-  const d0 = gap();
-  if (Math.abs(d0) > 3) window.scrollBy({ top: d0, behavior: "smooth" });
+
+  const y = hzTargetY(el, headEl);
+  if (Math.abs(y - window.scrollY) > 3) window.scrollTo({ top: y, behavior: "smooth" });
   idleT = setTimeout(settled, 320);   // 스크롤이 아예 일어나지 않은 경우 대비
   deadT = setTimeout(stop, 2000);     // 어떤 경우에도 2초 뒤에는 손을 뗀다
 }
