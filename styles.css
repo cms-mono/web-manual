@@ -1696,9 +1696,30 @@ mark.search-hit {
 
 /* 확대 팝업 */
 
-/* ── 가이드 팝업 (한 단계 안에서 항목별로 짚어주기) ────────────
-   세로 flex — 설명은 위에 고정, 화면은 남은 높이에 '맞춰 축소'되므로
-   팝업 안에는 스크롤이 생기지 않는다. */
+/* ── 확대 팝업 ── */
+.hz-zoom { width: min(1240px, 96vw); }
+.hz-zoom-desc {
+  padding: 13px 20px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.hz-zoom-desc span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.hz-zoom-desc em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+.hz-zoom-cta { font-size: 12.5px; font-weight: 700; color: var(--text-3); margin-top: 2px; }
+.hz-zoom-cta span {
+  color: var(--accent-text); background: var(--accent-soft);
+  padding: 1px 7px; border-radius: 20px; font-weight: 800;
+}
+.hz-zoom-body { padding: 0; background: #fff; }
+.peek-btn.gd {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); font-weight: 800;
+}
+.peek-btn.gd:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── 가이드 팝업 (전체 화면 + 강조 지점으로 이동) ────────────
+   세로 flex — 설명은 위에 고정, 화면은 남은 높이를 채우되 넘치지 않는다.
+   팝업 안에 스크롤은 만들지 않고, 화면을 '옮겨서' 강조 지점을 보여준다. */
+.peek-back.over { z-index: 210; }
 .hz-tour {
   display: flex; flex-direction: column;
   width: min(1240px, 95vw); height: min(92vh, 940px); max-height: 92vh;
@@ -1726,18 +1747,28 @@ mark.search-hit {
 }
 .hz-say-tbl { flex: 0 0 auto; margin: 12px 20px 0; background: var(--surface); }
 
-/* 화면 — 남은 높이를 다 쓰되 넘치지 않게 */
+/* 화면 — 남은 높이를 쓰되 넘치지 않게 */
 .hz-tour-stage {
   flex: 1 1 0; min-height: 0; overflow: hidden;
   background: #fff; padding: 16px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;   /* 짧은 화면은 세로 가운데 */
+  display: flex; align-items: center; justify-content: center;
 }
-.hz-tour-clip { overflow: hidden; flex: 0 0 auto; }
+.hz-tour-view { position: relative; overflow: hidden; flex: 0 0 auto; }
 .hz-tour-page {
-  transform-origin: top left;
+  position: absolute; transform-origin: top left;
+  display: flow-root;   /* 자식 margin이 새어 나가 높이가 잘못 잡히는 것을 막는다 */
   font-family: "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif;
   font-size: 14px; color: #444;
 }
+/* 위아래로 더 있다는 표시 — 잘린 게 아니라 이어진다는 뜻 */
+.hz-tour-view::before, .hz-tour-view::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 34px;
+  pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 3;
+}
+.hz-tour-view::before { top: 0; background: linear-gradient(#fff, rgba(255,255,255,0)); }
+.hz-tour-view::after { bottom: 0; background: linear-gradient(rgba(255,255,255,0), #fff); }
+.hz-tour-view.up::before { opacity: 1; }
+.hz-tour-view.down::after { opacity: 1; }
 
 /* 강조 / 흐리게 */
 .hz-real .hz-hi {
@@ -1747,7 +1778,7 @@ mark.search-hit {
 }
 .hz-real .hz-hi th, .hz-real .hz-hi .tit, .hz-real .hz-hi h2 { color: #111 !important; font-weight: 800 !important; }
 .hz-real button.hz-hi { background: #ffd85e !important; border-color: rgb(234, 160, 20) !important; color: #111 !important; }
-.hz-real .hz-lo { opacity: .34; }
+.hz-real .hz-lo { opacity: .28; }
 
 /* 진행 표시 */
 .hz-tour-foot {
@@ -1775,6 +1806,7 @@ mark.search-hit {
   .hz-tour { height: 94vh; width: 96vw; }
   .hz-say { padding: 12px 14px; }
   .hz-tour-stage { padding: 10px; }
+}
 }
 }
 

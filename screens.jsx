@@ -2021,7 +2021,7 @@ const HZ_STEPS = [
         d: "툴팁 그대로 — <i>발송한 메시지를 수신 고객이 복사하도록 허용할지 여부를 선택하는 메뉴</i>. <b>허용 / 비허용</b>." },
       { t: "만료 옵션 (expiryOption)", hi: ["만료 옵션"],
         d: "툴팁 그대로 — <i>발송 결과 응답 대기 시간 이후 메시지 만료 처리. ‘전송성공 불확실(79998)’ 로 실패처리. 만료 처리 이후 SMS/LMS로 발송 가능</i>.<br>짧게 잡을수록 대체 발송이 빨라지고, 길게 잡을수록 RCS로 도달할 기회를 더 줍니다." },
-      { t: "제목 · 내용 → 미리보기", hi: ["메시지 제목", "미리보기"],
+      { t: "제목 · 내용 → 미리보기", hi: ["메시지 제목", "메시지 종류를 선택 해주세요"],
         d: "메시지 종류를 고르기 전에는 미리보기에 <i>메시지 종류를 선택 해주세요.</i> 만 표시됩니다. 종류를 고른 뒤 제목·내용을 쓰면 오른쪽에 그대로 반영됩니다." },
       { t: "커스텀 변수 표기 규칙", hi: ["메시지 내용"],
         d: "입력란 안내문 — <i>변수부에 오타 또는 공백이 있을 경우 변수 처리가 불가능 합니다.</i><br>· 처리 가능 &nbsp;<code>{{변수1}}</code><br>· 처리 불가 &nbsp;<code>{{변수}}</code> · <code>{{변수1 }}</code> · <code>{{ 변수1}}</code>" },
@@ -2090,12 +2090,23 @@ const HZ_STEPS = [
     ] },
 ];
 
-/* ── 가이드 팝업 ───────────────────────────────────────────
-   한 팝업 안에서 그 단계의 세부 항목을 순서대로 짚어준다.
-   · 설명은 항상 맨 위에 보이고
-   · 아래 화면에서 지금 설명 중인 영역만 강조(나머지는 흐리게)
-   · 화면을 누르면 다음 항목 — 스크롤은 만들지 않는다(폭·높이 모두 맞춰 축소)
+/* ── 확대 팝업 · 가이드 팝업 ────────────────────────────────
+   [크게 보기] → 그 단계 영역을 원래 크기로 (HzZoom)
+   [가이드 보기] → 전체 화면을 띄우고 항목을 하나씩 짚어줌 (HzTour)
+   확대 팝업 안에도 [가이드 보기]가 있어 팝업 → 팝업으로 넘어간다.
    ------------------------------------------------------------ */
+
+/* 자식 margin이 빠져나가 scrollHeight가 실제보다 작게 잡히는 경우가 있어
+   가장 아래 자식의 위치까지 함께 본다. transform이 없는 상태에서 부를 것. */
+function hzPageH(page) {
+  let h = page.scrollHeight;
+  const top = page.getBoundingClientRect().top;
+  page.querySelectorAll("*").forEach((k) => {
+    const b = k.getBoundingClientRect().bottom - top;
+    if (b > h) h = b;
+  });
+  return Math.ceil(h) + 4;
+}
 
 /* hi[] 키워드로 강조할 요소를 찾는다. 제목칸(th·.tit)을 먼저 보고,
    없으면 버튼·라벨에서 찾는다 — '발송량'이 '발송량 현황 조회' 버튼에
@@ -2137,6 +2148,87 @@ function hzPaint(root, targets) {
   });
 }
 
+/* 폰트가 늦게 붙으면 높이가 달라진다 → 리사이즈·폰트 로드까지 다시 잰다 */
+function useHzRemeasure(measure, deps) {
+  React.useLayoutEffect(() => {
+    measure();
+    const t1 = setTimeout(measure, 120);
+    const t2 = setTimeout(measure, 500);
+    window.addEventListener("resize", measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure).catch(() => {});
+    return () => { clearTimeout(t1); clearTimeout(t2); window.removeEventListener("resize", measure); };
+  }, deps);
+}
+
+/* ── 확대 팝업 — 그 단계 영역만 원래 크기로 ── */
+function HzZoom({ step, idx, onClose, onGo, onGuide }) {
+  const boxRef = React.useRef(null);
+  const pageRef = React.useRef(null);
+  const [z, setZ] = React.useState({ scale: 1, h: 0 });
+
+  const measure = React.useCallback(() => {
+    const box = boxRef.current, page = pageRef.current;
+    if (!box || !page) return;
+    page.style.transform = "none";
+    const nat = Math.max(page.scrollWidth, HZ_NATURAL_W);
+    const nh = hzPageH(page);
+    const cs = getComputedStyle(box);
+    const avail = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    const s = Math.min(1, avail / nat);
+    page.style.transform = "scale(" + s + ")";
+    setZ({ scale: s, h: nh * s });
+  }, []);
+  useHzRemeasure(measure, [step.part]);
+
+  React.useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onGo(idx + 1);
+      if (e.key === "ArrowLeft") onGo(idx - 1);
+    }
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose, onGo, idx]);
+
+  const ui = window.HZ_UI || { parts: {} };
+  return ReactDOM.createPortal(
+    <div className="peek-back" onClick={onClose}>
+      <div className="peek hz-zoom" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className="peek-head">
+          <div className="peek-tt">
+            <span className="peek-badge">{idx + 1} / {HZ_STEPS.length}</span>
+            <b>{step.title}</b>
+          </div>
+          <div className="peek-acts">
+            <button className="peek-btn gd" onClick={onGuide}><Icon name="book" size={13} /> 가이드 보기</button>
+            <button className="peek-btn" disabled={idx === 0} onClick={() => onGo(idx - 1)}>← 이전</button>
+            <button className="peek-btn primary" disabled={idx === HZ_STEPS.length - 1} onClick={() => onGo(idx + 1)}>다음 →</button>
+            <button className="peek-x" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} /></button>
+          </div>
+        </div>
+        <div className="hz-zoom-desc">
+          <span dangerouslySetInnerHTML={{ __html: step.desc }} />
+          {step.tip && <em dangerouslySetInnerHTML={{ __html: step.tip }} />}
+          <b className="hz-zoom-cta">이 화면을 항목별로 자세히 보려면 <span>가이드 보기</span>를 누르세요.</b>
+        </div>
+        <div className="peek-body hz-zoom-body">
+          <div className="hz-fit" ref={boxRef} style={{ height: z.h ? z.h + 32 : undefined }}>
+            <div className="hz-real hz-page" ref={pageRef}
+                 style={{ transform: "scale(" + z.scale + ")", width: HZ_NATURAL_W }}
+                 dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/* ── 가이드 팝업 — 전체 화면을 띄우고 강조 지점으로 이동 ──
+   화면 전체를 렌더한 뒤 강조 영역이 가운데 오도록 '옮겨서' 보여준다.
+   스크롤바 없이 위아래 맥락이 살짝 보이므로 잘린 느낌이 나지 않는다. */
 function HzTour({ stepIdx, sub, onMove, onClose }) {
   const step = HZ_STEPS[stepIdx];
   const items = step.detail || [];
@@ -2144,43 +2236,70 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   const ui = window.HZ_UI || { parts: {} };
 
   const boxRef = React.useRef(null);
+  const viewRef = React.useRef(null);
   const pageRef = React.useRef(null);
-  const [fit, setFit] = React.useState({ scale: 1, w: HZ_NATURAL_W, h: 0 });
+  const [v, setV] = React.useState({ scale: 1, tx: 0, ty: 0, w: HZ_NATURAL_W, h: 0, up: false, down: false });
 
   const atFirst = stepIdx === 0 && sub === 0;
   const atLast = stepIdx === HZ_STEPS.length - 1 && sub === items.length - 1;
 
-  /* 폭·높이 모두에 맞춰 축소 → 팝업 안에 스크롤이 생기지 않는다 */
-  React.useLayoutEffect(() => {
-    function measure() {
-      const box = boxRef.current, page = pageRef.current;
-      if (!box || !page) return;
-      page.style.transform = "none";
-      const nw = Math.max(page.scrollWidth, HZ_NATURAL_W);
-      const nh = page.scrollHeight;
-      const cs = getComputedStyle(box);
-      const availW = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
-      const availH = box.clientHeight - parseFloat(cs.paddingTop || 0) - parseFloat(cs.paddingBottom || 0);
-      const s = nh > 0 ? Math.min(1, availW / nw, availH / nh) : 1;
-      setFit({ scale: s, w: nw, h: nh });
-      page.style.transform = "scale(" + s + ")";
-    }
-    measure();
-    const t = setTimeout(measure, 220);
-    window.addEventListener("resize", measure);
-    return () => { clearTimeout(t); window.removeEventListener("resize", measure); };
-  }, [step.part, sub, cur.t]);
+  const fullHtml = React.useMemo(
+    () => HZ_STEPS.map((s) => ui.parts[s.part] || "").join(""),
+    [ui]
+  );
 
-  /* 강조는 마크업이 붙은 뒤에 다시 칠한다 */
-  React.useLayoutEffect(() => {
-    hzPaint(pageRef.current, hzTargets(pageRef.current, cur.hi));
-  }, [step.part, sub, cur.hi]);
+  const measure = React.useCallback(() => {
+    const box = boxRef.current, page = pageRef.current;
+    if (!box || !page) return;
+    page.style.transform = "none";
+
+    /* 강조는 위치를 재기 전에 칠해 둔다(강조로 높이가 변하진 않지만 대상 좌표가 필요) */
+    const targets = hzTargets(page, cur.hi);
+    hzPaint(page, targets);
+
+    const natW = Math.max(page.scrollWidth, HZ_NATURAL_W);
+    const natH = hzPageH(page);
+    const cs = getComputedStyle(box);
+    const availW = box.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+    const availH = box.clientHeight - parseFloat(cs.paddingTop || 0) - parseFloat(cs.paddingBottom || 0);
+
+    let s = Math.min(1, availW / natW);
+
+    /* 강조 영역(여백 포함)이 한 화면에 안 들어가면 그만큼 더 줄인다 */
+    let mid = null;
+    if (targets.length) {
+      const pr = page.getBoundingClientRect();
+      let top = Infinity, bot = -Infinity;
+      targets.forEach((e) => {
+        const r = e.getBoundingClientRect();
+        top = Math.min(top, r.top - pr.top);
+        bot = Math.max(bot, r.bottom - pr.top);
+      });
+      const PAD = 70;
+      const need = (bot - top) + PAD * 2;
+      if (need * s > availH) s = Math.min(s, availH / need);
+      mid = (top + bot) / 2;
+    }
+
+    const cw = natW * s, ch = natH * s;
+    const viewW = Math.min(availW, cw);
+    const viewH = Math.min(availH, ch);
+
+    let ty = 0;
+    if (mid != null && ch > viewH) {
+      ty = Math.max(0, Math.min(mid * s - viewH / 2, ch - viewH));
+    }
+    page.style.transform = "scale(" + s + ")";
+    setV({ scale: s, tx: 0, ty: ty, w: viewW, h: viewH, up: ty > 2, down: ty < ch - viewH - 2 });
+  }, [cur.hi, stepIdx, sub]);
+
+  useHzRemeasure(measure, [stepIdx, sub, cur.t]);
 
   React.useEffect(() => {
     function onKey(e) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") { e.preventDefault(); onClose(); return; }
       if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); onMove(1); }
-      if (e.key === "ArrowLeft") onMove(-1);
+      if (e.key === "ArrowLeft") { e.preventDefault(); onMove(-1); }
     }
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
@@ -2189,7 +2308,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   }, [onClose, onMove]);
 
   return ReactDOM.createPortal(
-    <div className="peek-back" onClick={onClose}>
+    <div className="peek-back over" onClick={onClose}>
       <div className="peek hz-tour" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="peek-head">
           <div className="peek-tt">
@@ -2224,12 +2343,13 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
           </div>
         )}
 
-        {/* 화면 — 강조된 곳이 지금 설명 중인 영역 */}
+        {/* 화면 전체 — 강조된 곳으로 옮겨서 보여준다(스크롤 없음) */}
         <div className="hz-tour-stage" ref={boxRef} onClick={() => onMove(1)} title="누르면 다음으로 넘어갑니다">
-          <div className="hz-tour-clip" style={{ width: fit.w * fit.scale, height: fit.h * fit.scale }}>
+          <div className={"hz-tour-view" + (v.up ? " up" : "") + (v.down ? " down" : "")}
+               ref={viewRef} style={{ width: v.w || undefined, height: v.h || undefined }}>
             <div className="hz-real hz-tour-page" ref={pageRef}
-                 style={{ width: HZ_NATURAL_W, transform: "scale(" + fit.scale + ")" }}
-                 dangerouslySetInnerHTML={{ __html: ui.parts[step.part] || "" }} />
+                 style={{ width: HZ_NATURAL_W, transform: "scale(" + v.scale + ")", left: -v.tx, top: -v.ty }}
+                 dangerouslySetInnerHTML={{ __html: fullHtml }} />
           </div>
         </div>
 
@@ -2237,10 +2357,10 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
           <span className="hz-tour-dots">
             {items.map((_, k) => (
               <i key={k} className={k === sub ? "on" : (k < sub ? "done" : "")}
-                 onClick={() => onMove(k - sub)} title={items[k].t} />
+                 onClick={(e) => { e.stopPropagation(); onMove(k - sub); }} title={items[k].t} />
             ))}
           </span>
-          <span className="hz-tour-hint">화면을 누르면 다음으로 · ESC 닫기</span>
+          <span className="hz-tour-hint">전체 화면에서 해당 영역으로 이동합니다 · 화면을 누르면 다음 · ESC 닫기</span>
         </div>
       </div>
     </div>,
@@ -2251,6 +2371,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
 function HermesSendFlow() {
   const [i, setI] = React.useState(0);
   const [open, setOpen] = React.useState(false);   // 제목 드롭다운
+  const [zoom, setZoom] = React.useState(false);   // 확대 팝업
   const [tour, setTour] = React.useState(null);    // 가이드 팝업 {sub}
   const ui = window.HZ_UI || { css: "", parts: {} };
   const step = HZ_STEPS[i];
@@ -2340,6 +2461,7 @@ function HermesSendFlow() {
             )}
           </div>
           <div className="hz-head-acts">
+            <button className="hz-navbtn sm" onClick={() => setZoom(true)}><Icon name="search" size={13} /> 크게 보기</button>
             <button className="hz-navbtn sm gd" onClick={() => setTour({ sub: 0 })}><Icon name="book" size={13} /> 가이드 보기</button>
             <button className="hz-navbtn sm" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
             <button className="hz-navbtn sm pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
@@ -2355,7 +2477,7 @@ function HermesSendFlow() {
         <div className="hz-stage-bar">
           <span className="hz-dots"><i /><i /><i /></span>
           <span className="hz-path">rcs.hermes.kt.com › 메시지발송(웹) › 메시지 조회/생성/발송</span>
-          <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 가이드가 열립니다</span>
+          <span className="hz-live">전체 화면 {Math.round(scale * 100)}% · 영역을 누르면 크게 볼 수 있습니다</span>
         </div>
         <div className="hz-fit" ref={boxRef} style={{ height: boxH || undefined }}>
           <div className="hz-real hz-page" ref={pageRef} style={{ transform: "scale(" + scale + ")", width: HZ_NATURAL_W }}>
@@ -2368,7 +2490,7 @@ function HermesSendFlow() {
                 key={s.part}
                 className={"hz-part" + (k === i ? " on" : "")}
                 data-part={s.part}
-                onClick={() => { if (k === i) setTour({ sub: 0 }); else go(k); }}
+                onClick={() => { if (k === i) setZoom(true); else go(k); }}
                 dangerouslySetInnerHTML={{ __html: ui.parts[s.part] || "" }}
               />
             ))}
@@ -2381,6 +2503,9 @@ function HermesSendFlow() {
       </div>
 
 
+      {zoom && <HzZoom step={step} idx={i} onClose={() => setZoom(false)}
+                       onGo={(k) => { if (k >= 0 && k < HZ_STEPS.length) setI(k); }}
+                       onGuide={() => setTour({ sub: 0 })} />}
       {tour && <HzTour stepIdx={i} sub={tour.sub} onMove={tourMove} onClose={() => setTour(null)} />}
     </div>
   );
