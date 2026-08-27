@@ -2007,7 +2007,7 @@ const HZ_STEPS = [
           ["통합 RCS", "삼성, 아이폰 등 단말의 구분 없이 모든 고객에 RCS 메시지를 전송할 수 있어 편리하고 효율적인 메시지"],
         ] } },
       { t: "③ 그 다음 메시지 베이스", hi: ["메시지 종류"], pop: "base",
-        d: "<b>SMS · LMS · MMS · 템플릿LMS · 템플릿이미지 · 템플릿레이아웃</b> 중에서 고릅니다. 오른쪽 <b>미리보기</b>에 고른 베이스의 모양이 나타납니다.<br><b class=\"hz-ex\">이 화면에서는</b> <code>기존 RCS · SMS</code> 를 골랐고, 메시지 베이스 ID는 <code>SS000000</code> 입니다." },
+        d: "고른 규격에 따라 아래 종류 버튼이 달라집니다. <b>기존 RCS</b>는 <b>SMS · LMS · MMS · 템플릿 · LMS템플릿 · 이미지템플릿 · 레이아웃</b> 7가지, <b>통합 RCS</b>는 <b>SMS · LMS · MMS · 템플릿</b> 4가지입니다. 종류를 누르면 아래 목록이 바뀌며, <b>이 가이드에서도 탭과 종류를 직접 눌러볼 수 있습니다.</b><br><b class=\"hz-ex\">이 화면에서는</b> <code>기존 RCS · SMS</code> 를 골랐고, 메시지 베이스 ID는 <code>SS000000</code> 입니다." },
       { t: "템플릿은 미리 만들어 승인받아야 합니다",
         d: "<b>템플릿 관리 &gt; 템플릿 생성</b>에서 만들고 <b>[승인 요청]</b>까지 해야 이 목록에 뜹니다. 진행 상태는 <b>템플릿 관리 &gt; 템플릿 조회</b>의 <b>상태</b> 열에서 확인합니다." },
       { t: "템플릿 종류 — 3분류 18종",
@@ -2441,6 +2441,48 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onMove]);
 
+  /* 메시지 종류 팝업은 실제처럼 눌러볼 수 있다 —
+     기존/통합 탭을 바꾸면 종류 버튼이 바뀌고, 종류를 누르면 아래 목록이 바뀐다.
+     (팝업 안 클릭이 화면 넘김으로 이어지지 않도록 stopPropagation) */
+  function paintBase(box, setName, typeName) {
+    const sets = (window.HZ_UI || {}).baseSets || {};
+    const set = sets[setName];
+    if (!set) return;
+    const type = set.lists[typeName] ? typeName : set.types[0];
+    const area = box.querySelector(".menu-area");
+    if (area) {
+      area.innerHTML = set.types
+        .map((t) => '<div class="menu-item' + (t === type ? " selected" : "") + '">' + t + "</div>")
+        .join("");
+    }
+    box.querySelectorAll(".tab-menu li").forEach((li) => {
+      const a = li.querySelector("a");
+      li.classList.toggle("current", !!a && a.textContent.trim() === setName);
+    });
+    const tb = box.querySelector(".table-data tbody");
+    if (tb) tb.innerHTML = set.lists[type];
+  }
+
+  function onPopClick(e) {
+    const box = popRef.current;
+    if (!box || !e.target.closest) return;
+    const sets = (window.HZ_UI || {}).baseSets || {};
+
+    const tab = e.target.closest(".tab-menu li");
+    if (tab && box.contains(tab)) {
+      const a = tab.querySelector("a");
+      const name = a ? a.textContent.trim() : "";
+      if (sets[name]) { e.stopPropagation(); paintBase(box, name, sets[name].types[0]); }
+      return;
+    }
+    const item = e.target.closest(".menu-item");
+    if (item && box.contains(item)) {
+      const cur = box.querySelector(".tab-menu li.current a");
+      const setName = cur ? cur.textContent.trim() : "기존 RCS";
+      if (sets[setName]) { e.stopPropagation(); paintBase(box, setName, item.textContent.trim()); }
+    }
+  }
+
   /* 좌 35% = 이전, 우 35% = 다음, 가운데 30% = 아무 일도 안 함
      (화면을 자세히 보려고 가운데를 눌렀다가 넘어가 버리는 일을 막는다) */
   function zoneOf(e) {
@@ -2515,7 +2557,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
           </div>
           {/* [조회] 등을 눌렀을 때 실제로 뜨는 팝업 — 화면 위에 그대로 얹는다 */}
           {cur.pop && (ui.pops || {})[cur.pop] && (
-            <div className="hz-pop-layer">
+            <div className="hz-pop-layer" onClick={onPopClick}>
               <div className="hz-real hz-pop" ref={popRef} style={{ zoom: popZoom }}
                    dangerouslySetInnerHTML={{ __html: ui.pops[cur.pop] }} />
             </div>

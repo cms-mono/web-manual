@@ -89,12 +89,16 @@
 .hz-real .send-legend i { display: inline-block; width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; border-radius: 2px; border: 1px solid rgb(0, 0, 0); }
 .hz-real .send-legend .select i { border-color: rgb(27, 174, 197); background-color: rgba(27, 174, 197, 0.14); }
 .hz-real .send-legend .partial i { border-color: rgb(255, 172, 11); background-color: rgba(255, 172, 11, 0.14); }
-.hz-real .menu-btn .menu-area { display: flex; flex-wrap: wrap; gap: 8px 0; }
+.hz-real .menu-btn .menu-area { display: flex; }
 .hz-real .menu-btn .menu-item { position: relative; height: 36px; padding: 0px 20px; line-height: 34px; font-weight: 500; font-size: 14px; color: rgb(179, 179, 179); border-radius: 100px; border: 1px solid rgb(218, 219, 221); background-color: rgb(255, 255, 255); cursor: pointer; }
 .hz-real .menu-btn .menu-item.selected { border-color: rgb(27, 174, 197); color: rgb(27, 174, 197); }
 .hz-real .menu-btn .menu-item + .menu-item { margin-left: 8px; }
 .hz-real .popup .tab-menu { width: 630px; margin: 0px auto; }
 .hz-real .popup .tab-menu li { position: relative; }
+/* 원래 hover 전까지 숨어 있는 안내 말풍선 — 이 규칙이 빠지면 메뉴 위에 겹쳐 보인다 */
+.hz-real .popup .tab-menu .tooltip { display: none; }
+.hz-real .popup .tab-menu li a { cursor: pointer; }
+.hz-real .menu-btn .menu-item { cursor: pointer; }
 .hz-real h3 { font-weight: 400; color: rgb(51, 51, 51); padding: 0; margin: 0; border: 0; }
 .hz-real img { max-width: 100%; vertical-align: middle; }
 .hz-real fieldset { width: 100%; border: 0px; padding: 0; margin: 0; }
@@ -132,7 +136,34 @@
 
   POPS.numberEmpty = `<div class="popup fild-list fild-number"><div class="popup-header"><h3>발신번호를 선택해주세요</h3></div><div class="popup-body"><fieldset class="srch-area"><legend>검색영역</legend><div class="flex"><input type="text" placeholder="검색어를 입력해주세요." value="" readonly=""><button type="button" class="btn btn-sm4 btn-gray fx-init">검색</button></div></fieldset><div class="table-wrap scroll-y" style="min-height:140px;"><table class="table-data"><caption>발신번호 선택</caption><colgroup><col style="width: 42px;"><col style="width: auto;"></colgroup><thead><tr><th>번호</th><th>대화방(발신번호) 명</th><th>발신번호</th></tr></thead><tbody></tbody></table></div></div><div class="popup-footer"><div class="btn-area"><button type="button" class="btn btn-sm2">취소</button><button type="button" class="btn btn-sm2 btn-primary">확인</button></div></div></div>`;
 
+  /* 기존/통합 탭과 종류 버튼에 따라 바뀌는 목록.
+     실제 화면에서 확인했고, 자사에서 만든 템플릿 이름은 샘플 1건으로 대체했다. */
+  var BASE_SETS = {
+    "기존 RCS": {
+      types: ["SMS", "LMS", "MMS", "템플릿", "LMS템플릿", "이미지템플릿", "레이아웃"],
+      lists: {
+        "SMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>SMS</td></tr>`,
+        "LMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>LMS</td></tr><tr><td>2</td><td>기본형</td></tr><tr><td>3</td><td>기본형 타이틀 강조</td></tr><tr><td>4</td><td>문단형</td></tr>`,
+        "MMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>세로형(Medium)</td></tr><tr><td>2</td><td>세로형(Tall)</td></tr><tr><td>3</td><td>슬라이드형(Medium,2장)</td></tr><tr><td>4</td><td>슬라이드형(Medium,3장)</td></tr><tr><td>5</td><td>슬라이드형(Medium,4장)</td></tr><tr><td>6</td><td>슬라이드형(Small,2장)</td></tr>`,
+        "템플릿": `<tr style="background-color:#e8f7fa;"><td>1</td><td>테스트 템플릿</td></tr>`,
+        "LMS템플릿": `<tr style="background-color:#e8f7fa;"><td>1</td><td>LMS 테스트 템플릿</td></tr>`,
+        "이미지템플릿": `<tr><td colspan="2" style="text-align:left;padding:8px 10px;color:#e2711d;">📢 일부 이미지 템플릿은 현재 KT RCS 포탈에서 제공되지 않고 있으니 참고 부탁드립니다.</td></tr><tr style="background-color:#e8f7fa;"><td>1</td><td>테스트 이미지템플릿</td></tr>`,
+        "레이아웃": `<tr><td colspan="2" class="center">검색 결과가 없습니다.</td></tr>`,
+      },
+    },
+    "통합 RCS": {
+      types: ["SMS", "LMS", "MMS", "템플릿"],
+      lists: {
+        "SMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>통합 SMS 카드</td></tr>`,
+        "LMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>통합 LMS 카드</td></tr>`,
+        "MMS": `<tr style="background-color:#e8f7fa;"><td>1</td><td>통합 MMS 카드 M</td></tr><tr><td>2</td><td>통합 MMS 카드 T</td></tr>`,
+        "템플릿": `<tr style="background-color:#e8f7fa;"><td>1</td><td>통합 테스트 템플릿</td></tr>`,
+      },
+    },
+  };
+
   window.HZ_UI = window.HZ_UI || {};
   window.HZ_UI.pops = POPS;
+  window.HZ_UI.baseSets = BASE_SETS;
   window.HZ_UI.css = (window.HZ_UI.css || "") + "\n" + CSS;
 })();
