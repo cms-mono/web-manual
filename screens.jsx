@@ -2109,12 +2109,21 @@ function useBodyScrollLock() {
 }
 
 /* 고정(sticky/fixed) 요소에 가리지 않도록 대상을 화면에 드러낸다.
-   가리는 요소의 실제 위치를 그때그때 재기 때문에, 조작 바 높이가 바뀌거나
-   상단 메뉴가 접혀도 결과가 어긋나지 않는다. */
+
+   부드러운 스크롤은 '한 번만' 쏘고, 그 뒤에는 스크롤이 멎을 때까지 기다렸다가
+   남은 오차만 소리 없이(behavior:auto) 맞춘다. 정해진 시각에 smooth 스크롤을
+   또 쏘면 앞의 동작과 겹쳐 화면이 튄다.
+   새 호출이 들어오면 이전 작업은 즉시 취소 — 다음/이전을 연타해도
+   지나간 목표로 끌려가지 않는다. */
+let hzRevealJob = null;
+
 function hzReveal(el, headEl) {
   if (!el) return;
-  function once() {
-    const r = el.getBoundingClientRect();
+  if (hzRevealJob) hzRevealJob.cancel();
+
+  let idleT = null, deadT = null, tries = 0, done = false;
+
+  function coverBottom() {
     let cover = 0;
     [document.querySelector(".hdr"), headEl].forEach((b) => {
       if (!b) return;
@@ -2122,13 +2131,45 @@ function hzReveal(el, headEl) {
       if (pos !== "sticky" && pos !== "fixed") return;
       cover = Math.max(cover, b.getBoundingClientRect().bottom);
     });
-    const diff = r.top - (cover + 16);
-    if (Math.abs(diff) > 4) window.scrollBy({ top: diff, behavior: "smooth" });
-    return Math.abs(diff);
+    return cover;
   }
-  once();
-  setTimeout(once, 400);   // 부드러운 스크롤이 끝나고 sticky가 자리 잡은 뒤
-  setTimeout(once, 820);   // 상단 메뉴 접힘(0.28s)까지 끝난 뒤
+  function gap() { return el.getBoundingClientRect().top - (coverBottom() + 16); }
+
+  function onScroll() { clearTimeout(idleT); idleT = setTimeout(settled, 110); }
+
+  function settled() {
+    if (done) return;
+    const d = gap();
+    if (Math.abs(d) > 3 && tries < 4) {
+      tries += 1;
+      window.scrollBy({ top: d, behavior: "auto" });   // 즉시 — 애니메이션끼리 겹치지 않는다
+      clearTimeout(idleT); idleT = setTimeout(settled, 130);
+      return;
+    }
+    stop();
+  }
+
+  function stop() {
+    if (done) return;
+    done = true;
+    clearTimeout(idleT); clearTimeout(deadT);
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("wheel", stop);
+    window.removeEventListener("touchstart", stop);
+    if (hzRevealJob === job) hzRevealJob = null;
+  }
+
+  const job = { cancel: stop };
+  hzRevealJob = job;
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  /* 사용자가 직접 휠·터치로 스크롤하면 보정을 멈춘다(끌어당기는 느낌 방지) */
+  window.addEventListener("wheel", stop, { passive: true });
+  window.addEventListener("touchstart", stop, { passive: true });
+  const d0 = gap();
+  if (Math.abs(d0) > 3) window.scrollBy({ top: d0, behavior: "smooth" });
+  idleT = setTimeout(settled, 320);   // 스크롤이 아예 일어나지 않은 경우 대비
+  deadT = setTimeout(stop, 2000);     // 어떤 경우에도 2초 뒤에는 손을 뗀다
 }
 
 /* ── 확대 팝업 · 가이드 팝업 ────────────────────────────────

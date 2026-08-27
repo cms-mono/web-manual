@@ -1663,13 +1663,17 @@ mark.search-hit {
 .hz-taboff { color: #999; }
 
 /* 스포트라이트 — 선택한 영역만 또렷하게 */
-.hz-part { position: relative; cursor: pointer; border-radius: 8px; transition: opacity .2s, filter .2s; }
-.hz-part:not(.on) { opacity: .3; filter: saturate(.25); }
+/* 칠하는 면적을 작게 유지한다.
+   · box-shadow 의 9999px 확산은 스크롤 프레임마다 화면 전체를 다시 칠하게 만든다
+   · filter: saturate() 도 요소마다 별도 레이어를 만들어 비싸다
+   흐리게 보이는 효과는 opacity 만으로 충분하다(합성만 하면 되므로 저렴). */
+.hz-part { position: relative; cursor: pointer; border-radius: 8px; transition: opacity .18s; }
+.hz-part:not(.on) { opacity: .3; }
 .hz-part:not(.on):hover { opacity: .55; }
 .hz-part.on { opacity: 1; cursor: zoom-in; }
 .hz-part.on::after {
   content: ""; position: absolute; inset: -8px; border-radius: 10px;
-  border: 2px solid rgb(79,70,229); box-shadow: 0 0 0 9999px rgba(15,23,42,.06);
+  border: 2px solid rgb(79,70,229); box-shadow: 0 0 0 3px rgba(79,70,229,.14);
   pointer-events: none;
 }
 
