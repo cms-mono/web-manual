@@ -1652,6 +1652,89 @@ mark.search-hit {
   .hz-goal-body { grid-template-columns: minmax(0,1fr); }
 }
 
+/* ── 발송 가이드 홈 ─────────────────────────────────────── */
+.gh { display: flex; flex-direction: column; gap: 30px; }
+.gh-sec-t { font-size: 15px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.01em; }
+.gh-sec-d { font-size: 13px; color: var(--text-3); margin: 0 0 12px; }
+.gh-sec-t + .gh-flow, .gh-sec-t + .gh-tasks, .gh-sec-t + .gh-kinds { margin-top: 12px; }
+.gh-note { font-size: 12.5px; color: var(--text-3); line-height: 1.6; margin: 10px 0 0; }
+.gh-note b { color: var(--text-2); font-weight: 700; }
+
+/* 기본 흐름 — 다섯 칸이 화살표로 이어진다 */
+.gh-flow {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
+}
+.gh-flow li {
+  position: relative; display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+}
+.gh-flow li + li::before {
+  content: ""; position: absolute; left: -8px; top: 50%; width: 8px; height: 1px;
+  background: var(--border-strong);
+}
+.gh-flow-n {
+  font-size: 10.5px; font-weight: 800; color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+.gh-flow b { font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.gh-flow b em {
+  font-style: normal; font-size: 9.5px; font-weight: 700; color: var(--text-3);
+  background: var(--bg-sunken); border-radius: 100px; padding: 1px 6px;
+}
+.gh-flow li > span:last-child { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+
+/* 자주 하는 작업 */
+.gh-tasks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.gh-task {
+  display: flex; flex-direction: column; gap: 5px; padding: 15px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+  cursor: pointer; text-decoration: none; transition: border-color .12s, transform .12s;
+}
+.gh-task:hover { border-color: var(--accent); transform: translateY(-1px); }
+.gh-task b { font-size: 14px; font-weight: 700; color: var(--text); }
+.gh-task span { font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+
+/* 메시지 유형 선택 */
+.gh-kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.gh-kind {
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+  padding: 16px; display: flex; flex-direction: column; gap: 12px;
+}
+.gh-kind-h { display: flex; flex-direction: column; gap: 4px; }
+.gh-kind-h b { font-size: 15.5px; font-weight: 800; letter-spacing: -.02em; }
+.gh-kind-h span { font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+.gh-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.gh-type {
+  display: flex; flex-direction: column; gap: 5px; padding: 11px 12px;
+  border: 1px solid var(--border); border-radius: 9px; background: var(--bg);
+  text-decoration: none;
+}
+.gh-type-h { display: flex; flex-direction: column; gap: 3px; }
+.gh-type-h b { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.gh-type-h em {
+  font-style: normal; font-size: 9.5px; font-weight: 700; width: fit-content;
+  border-radius: 100px; padding: 1px 7px;
+}
+.gh-type.direct .gh-type-h em { color: #2f7d5c; background: rgba(47, 125, 92, .12); }
+.gh-type.pre .gh-type-h em { color: #a8720f; background: rgba(168, 114, 15, .14); }
+.gh-type-d { font-size: 11.5px; color: var(--text-3); line-height: 1.5; }
+.gh-type-go { font-size: 11px; font-weight: 700; color: var(--text-3); margin-top: 2px; }
+.gh-type.ready { cursor: pointer; transition: border-color .12s, background .12s; }
+.gh-type.ready:hover { border-color: var(--accent); background: var(--accent-soft); }
+.gh-type.ready .gh-type-go { color: var(--accent-text); }
+.gh-type.soon { opacity: .62; }
+
+@media (max-width: 980px) {
+  .gh-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gh-flow li + li::before { display: none; }
+  .gh-tasks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gh-kinds { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .gh-flow, .gh-tasks, .gh-types { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* 완성 예시와 따라하기 사이 구분 */
 .hz-sep { display: flex; align-items: center; gap: 10px; margin: 22px 0 14px; }
 .hz-sep::before, .hz-sep::after { content: ""; flex: 1; height: 1px; background: var(--border); }

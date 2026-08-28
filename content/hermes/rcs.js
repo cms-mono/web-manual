@@ -40,7 +40,7 @@
                 ["② KT RCS 상품 청약", "RCS 상품 가입 등 청약 신청", "청약 상세 가이드"],
                 ["③ 고객발송포탈 로그인", "청약 완료된 계정으로 포탈 최초 로그인", "<code>rcs.hermes.kt.com</code>"],
                 ["④ 이용동의 · 발송 ID 생성", "포탈 이용동의 후 청약된 RCS_ID로 <b>발송용 P_RCS_ID</b> 생성", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-rcsid-1\">포탈 발송용 RCS ID 생성</a>"],
-                ["⑤ 메시지 발송", "생성된 <b>메시지발송(웹)</b> 메뉴에서 발송·관리", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-flow-1\">발송 가이드 (따라하기)</a>"],
+                ["⑤ 메시지 발송", "생성된 <b>메시지발송(웹)</b> 메뉴에서 발송·관리", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-flowsms-1\">SMS 따라하기</a>"],
               ],
             },
             note: "RBC(RCS Biz Center)는 RCS 브랜드를 생성·등록하는 사이트입니다. 브랜드·대화방 승인이 끝나야 포탈에서 발신번호를 선택할 수 있습니다. → <a class=\"xref\" data-to=\"rbc\">RCS Biz Center(RBC) 가이드</a>",
@@ -110,7 +110,18 @@
       },
 
       { id: "flow", group: "시작하기", name: "발송 가이드 (따라하기)",
-        intro: "메시지 발송 화면을 위에서부터 채우는 순서대로 6단계로 안내합니다. 실제 헤르메스 화면을 그대로 띄워 두고 그 단계에서 채울 영역을 짚어줍니다.",
+        intro: "처음이라면 기본 발송 흐름을 확인하고, 만들고 싶은 메시지 유형을 선택해 예제를 따라해 보세요.",
+        steps: [
+          {
+            title: "무엇부터 하면 되나요",
+            widget: "hermesGuideHome",
+            note: "유형 카드를 누르면 따라하기가 미리보기로 열립니다. 창 위쪽의 <b>[새 탭으로 열기]</b>로 따로 띄워 두고 실제 화면과 나란히 보면 편합니다.",
+          },
+        ],
+      },
+
+      { id: "flowsms", group: "시작하기", name: "SMS 따라하기 (기존 RCS)",
+        intro: "기존 RCS · SMS로 안내 문자 한 통을 보내는 과정을 6단계로 안내합니다. 실제 헤르메스 화면을 그대로 띄워 두고 그 단계에서 채울 영역을 짚어줍니다.",
         steps: [
           {
             title: "화면 순서대로 따라하기",

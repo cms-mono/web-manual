@@ -1517,6 +1517,7 @@ function CapStep({ step, n, id, agentId, serviceId, featureId, noLink }) {
         {step.widget === "queryGen" && <QueryGenerator />}
         {step.widget === "mstgExamples" && <MstgExamples />}
         {step.widget === "hermesFlow" && <HermesSendFlow />}
+        {step.widget === "hermesGuideHome" && <HermesGuideHome />}
         {step.shot && <Shot shot={step.shot} />}
         {step.note && (
           <div className="cap-note">
@@ -1957,6 +1958,130 @@ Object.assign(window, {
    · 자세히 볼 때는 [크게 보기] 팝업에서 원래 크기로 확인
    · 조작 바(제목 드롭다운·이전/다음)는 sticky로 항상 따라다닌다
    ============================================================ */
+/* ── 발송 가이드 홈 ─────────────────────────────────────────
+   기획안 v2 3장. 목차를 나열하지 않고 "지금 하려는 일"을 고르게 한다.
+   유형 카드는 xref 로 연결돼 따라하기가 모달로 열리고, 모달에서
+   [새 탭으로 열기]·[이 문서로 이동]을 쓸 수 있다.
+   ------------------------------------------------------------ */
+const HZ_HOME_FLOW = [
+  ["주소록 준비", "연락처를 미리 등록", "선택"],
+  ["메시지 만들기", "유형을 고르고 내용 작성", ""],
+  ["수신자 설정", "보낼 사람 지정", ""],
+  ["발송", "즉시 또는 예약", ""],
+  ["결과 확인", "성공 여부·상세 결과", ""],
+];
+
+const HZ_HOME_TASKS = [
+  ["주소록 준비하기", "연락처를 직접 등록하거나 파일로 업로드합니다.", "address"],
+  ["메시지 만들어보기", "메시지 유형을 선택하고 예제를 따라 만듭니다.", ""],
+  ["메시지 발송하기", "수신자와 발송 시간을 설정하여 발송합니다.", "send"],
+  ["결과 확인하기", "발송 성공 여부와 상세 결과를 확인합니다.", "result"],
+];
+
+/* [유형, 한 줄 기준, 작성 방식, 따라하기 앵커(없으면 준비 중)] */
+const HZ_HOME_KINDS = [
+  {
+    name: "기존 RCS",
+    desc: "삼성 단말 사용자에게 다양한 형태의 RCS 메시지를 보낼 때 선택하세요.",
+    types: [
+      ["SMS", "짧고 간단한 안내를 이 화면에서 바로 작성할 때", "direct", "step-rcs-flowsms-1"],
+      ["LMS", "상세 안내나 긴 내용을 이 화면에서 바로 작성할 때", "direct", ""],
+      ["MMS", "이미지와 문구가 포함된 메시지를 바로 작성할 때", "direct", ""],
+      ["템플릿", "미리 등록한 템플릿을 불러와 발송할 때", "pre", ""],
+      ["LMS템플릿", "미리 등록한 긴 안내용 템플릿을 불러와 발송할 때", "pre", ""],
+      ["이미지템플릿", "미리 등록한 이미지형 템플릿을 불러와 발송할 때", "pre", ""],
+    ],
+  },
+  {
+    name: "통합 RCS",
+    desc: "단말 종류와 관계없이 더 많은 고객에게 RCS 메시지를 보낼 때 선택하세요.",
+    types: [
+      ["SMS", "짧고 간단한 안내를 이 화면에서 바로 작성할 때", "direct", ""],
+      ["LMS", "상세 안내나 긴 내용을 이 화면에서 바로 작성할 때", "direct", ""],
+      ["MMS", "이미지와 문구가 포함된 메시지를 바로 작성할 때", "direct", ""],
+      ["템플릿", "미리 등록한 템플릿을 불러와 발송할 때", "pre", ""],
+    ],
+  },
+];
+
+function HermesGuideHome() {
+  return (
+    <div className="gh">
+      {/* 기본 흐름 — 주소록은 필수가 아니라 '해두면 편한 것' */}
+      <div className="gh-sec">
+        <h4 className="gh-sec-t">기본 발송 흐름</h4>
+        <ol className="gh-flow">
+          {HZ_HOME_FLOW.map(([t, d, tag], k) => (
+            <li key={k}>
+              <span className="gh-flow-n">{k + 1}</span>
+              <b>{t}{tag && <em>{tag}</em>}</b>
+              <span>{d}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="gh-note">여러 수신자에게 반복적으로 발송한다면 주소록을 미리 등록해 두면 편리합니다.</p>
+      </div>
+
+      {/* 자주 하는 작업 */}
+      <div className="gh-sec">
+        <h4 className="gh-sec-t">자주 하는 작업</h4>
+        <div className="gh-tasks">
+          {HZ_HOME_TASKS.map(([t, d, sec], k) =>
+            sec ? (
+              <a key={k} className="gh-task xref" data-to="hermes" data-sec={"step-rcs-" + sec + "-1"}>
+                <b>{t}</b><span>{d}</span>
+              </a>
+            ) : (
+              <a key={k} className="gh-task" href="#gh-kinds"
+                 onClick={(e) => { e.preventDefault(); scrollToId("gh-kinds"); }}>
+                <b>{t}</b><span>{d}</span>
+              </a>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* 메시지 유형 선택 */}
+      <div className="gh-sec" id="gh-kinds">
+        <h4 className="gh-sec-t">어떤 메시지를 만들어볼까요?</h4>
+        <p className="gh-sec-d">유형을 선택하면 설정부터 발송까지 단계별로 안내합니다.</p>
+        <div className="gh-kinds">
+          {HZ_HOME_KINDS.map((g) => (
+            <div className="gh-kind" key={g.name}>
+              <div className="gh-kind-h">
+                <b>{g.name}</b>
+                <span>{g.desc}</span>
+              </div>
+              <div className="gh-types">
+                {g.types.map(([t, d, mode, sec]) => {
+                  const cls = "gh-type " + mode + (sec ? " ready" : " soon");
+                  const inner = (
+                    <>
+                      <span className="gh-type-h">
+                        <b>{t}</b>
+                        <em>{mode === "direct" ? "발송 화면에서 바로 작성" : "템플릿 사전 등록 필요"}</em>
+                      </span>
+                      <span className="gh-type-d">{d}</span>
+                      <span className="gh-type-go">{sec ? "따라하기 열기 →" : "준비 중"}</span>
+                    </>
+                  );
+                  return sec
+                    ? <a className={cls + " xref"} key={t} data-to="hermes" data-sec={sec}>{inner}</a>
+                    : <span className={cls} key={t}>{inner}</span>;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="gh-note">
+          SMS·LMS·MMS는 따로 있는 <b>일반 문자</b>가 아니라, 기존 RCS와 통합 RCS 각각에서 고르는 <b>메시지 유형</b>입니다.
+          세부 종류는 서비스 화면 기준으로 구성했습니다.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const HZ_NATURAL_W = 1100;   // 헤르메스 본문 기준 폭(px)
 
 /* 상자 안에 화면을 '잘리지 않게' 담기 위한 배율·높이 계산.
