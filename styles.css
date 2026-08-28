@@ -1601,7 +1601,7 @@ mark.search-hit {
 .hz-goal-arr { color: var(--text-3); transition: transform .18s; flex-shrink: 0; }
 .hz-goal.open .hz-goal-arr { transform: rotate(90deg); }
 .hz-goal-body {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 24px; align-items: start;
+  display: flex; justify-content: center;
   padding: 14px 16px 16px; border-top: 1px solid var(--border);
 }
 .hz-goal-tx p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 0 0 8px; }
@@ -1630,7 +1630,7 @@ mark.search-hit {
 /* 실제 수신 캡쳐본 */
 .hz-goal-shot { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .hz-goal-shot img {
-  display: block; width: 100%; max-width: 420px; height: auto;
+  display: block; width: 100%; max-width: 560px; height: auto;
   border: 1px solid var(--border); border-radius: 10px;
 }
 .hz-goal-shot figcaption { font-size: 11.5px; color: var(--text-3); font-weight: 600; }
@@ -1661,6 +1661,47 @@ mark.search-hit {
 }
 .hz-lead b { color: var(--text); font-weight: 700; }
 
+/* 6단계 한눈에 — 눌러서 이동 */
+.hz-steps {
+  list-style: none; margin: 0 0 14px; padding: 0;
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
+}
+.hz-steps li { min-width: 0; }
+.hz-steps button {
+  width: 100%; height: 100%; display: flex; flex-direction: column; gap: 3px; align-items: flex-start;
+  padding: 9px 11px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--surface); font-family: inherit; text-align: left; cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.hz-steps button:hover { border-color: var(--accent); }
+.hz-steps .n {
+  font-size: 10.5px; font-weight: 800; color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.hz-steps b {
+  font-size: 12.5px; font-weight: 700; color: var(--text-2); line-height: 1.3;
+  word-break: keep-all;
+}
+.hz-steps em {
+  font-style: normal; font-size: 10px; font-weight: 700; color: var(--text-3);
+  background: var(--bg-sunken); border-radius: 100px; padding: 1px 6px;
+}
+.hz-steps li.done button { background: var(--surface-2); }
+.hz-steps li.done .n { color: var(--accent-text); }
+.hz-steps li.on button { border-color: var(--accent); background: var(--accent-soft); }
+.hz-steps li.on .n, .hz-steps li.on b { color: var(--accent-text); }
+.hz-steps li.on em { background: var(--surface); color: var(--accent-text); }
+
+/* 조작 바 단계 번호를 n / 6 으로 */
+.hz-head-n i { font-style: normal; font-size: 9.5px; opacity: .75; font-weight: 700; }
+
+@media (max-width: 980px) {
+  .hz-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .hz-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* 조작 바 — 제목 드롭다운·설명·이전/다음. 스크롤해도 따라온다 */
 .hz-head {
   display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding: 12px 14px;
@@ -1670,7 +1711,7 @@ mark.search-hit {
 }
 .hz-head-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .hz-head-n {
-  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
+  flex-shrink: 0; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 100px; background: var(--accent); color: #fff;
   display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800;
 }
 .hz-head-acts { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }

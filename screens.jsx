@@ -1990,7 +1990,7 @@ const HZ_SRC = [
       { t: "\u2464 목록이 비어 있다면 — 대화방이 아직입니다", hi: ["발신 번호"], pop: "numberEmpty",
         d: "브랜드는 있는데 발신번호만 안 나오는 경우입니다. 그 브랜드에 <b>대화방을 등록</b>했는지, 그리고 <b>승인이 완료</b>되었는지 확인합니다." },
       { t: "\u2465 대화방이 등록·승인되면 이렇게 나옵니다", hi: ["발신 번호"], pop: "number",
-        d: "제목은 <b>\u2018발신번호를 선택해주세요\u2019</b>. <b>브랜드를 먼저 골라야</b> 목록이 채워지고, 그 브랜드에 등록된 <b>대화방(발신번호)</b>만 나옵니다.<br><b class=\"hz-ex\">이 화면에서는</b> <code>(주) 모노커뮤니케이션즈 / 15777223</code> 을 골랐습니다." },
+        d: "제목은 <b>\u2018발신번호를 선택해주세요\u2019</b>. <b>브랜드를 먼저 골라야</b> 목록이 채워지고, 그 브랜드에 등록된 <b>대화방(발신번호)</b>만 나옵니다. 여기서 고른 <b>대화방 이름이 수신자 단말에 \u2018보내는 이\u2019로 표시</b>됩니다.<br><b class=\"hz-ex\">이 화면에서는</b> <code>(주) 모노커뮤니케이션즈 / 15777223</code> 을 골랐습니다." },
       { t: "\u2466 번호 형식과 bot- 코드는 무엇이 다른가", hi: ["발신 번호"], pop: "number",
         d: "목록에 <code>15777223</code> 같은 <b>전화번호 형식</b>과 <code>bot-**********</code> 같은 <b>코드 형식</b>이 섞여 있습니다. 어느 쪽이든 발송에는 똑같이 쓰이고, 차이는 <b>RBC에서 대화방을 등록할 때 고른 \u2018대화방 유형\u2019</b>에서 갈립니다." },
       { t: "\u2467 대화방 유형 두 가지", hi: ["발신 번호"], pop: "number",
@@ -2112,6 +2112,8 @@ const HZ_SRC = [
         d: "메시지 저장 아래의 <b>\u2018광고성 문자 전송 시 표기 의무를 준수하여 메시지를 작성하였습니다\u2019</b> 체크를 확인합니다. 광고성 메시지라면 <code>(광고)</code> 표시와 무료 수신거부번호가 함께 들어가 있어야 합니다." },
       { t: "\u2461 [발송] 누르기",
         d: "화면 맨 아래 <b>[발송]</b>을 누르면 전송됩니다. <b>발송량 현황 조회 필요</b>·<b>발송그룹ID 중복검사필요</b> 같은 빨간 안내가 남아 있으면 넘어가지 않으니 위로 올라가 마저 처리합니다.<br><b>[목록]</b>을 누르면 저장한 메시지 목록으로 돌아갑니다." },
+      { t: "\u2462 보낸 뒤 결과 확인",
+        d: "발송이 끝나면 <b>메시지발송(웹)</b> 메뉴에서 확인합니다.<br>· <b>포탈 메시지 결과</b> — 건별 상태·결과 조회, <b>예약 건 취소</b>도 여기서<br>· <b>포탈 메시지 실시간 통계</b> — 발송 중·완료·실패 실시간 집계<br>· <b>포탈 메시지 통계조회</b> — 일별·월별 집계" },
     ] },
 ];
 
@@ -2709,34 +2711,20 @@ function HermesSendFlow() {
 
   return (
     <div className="hz">
-      {/* 오늘 만들어볼 메시지 — 다 따라 했을 때 수신자 단말에 실제로 도착한 화면 */}
+      {/* 완성 예시 — 따라하기를 마쳤을 때 실제로 수신되는 모습.
+          설정값의 의미는 각 STEP에서 다루고, 여기서는 결과만 보여준다. */}
       <div className={"hz-goal" + (goalOpen ? " open" : "")}>
         <button className="hz-goal-head" onClick={() => setGoalOpen(!goalOpen)} aria-expanded={goalOpen}>
-          <span className="hz-goal-k">오늘 만들어볼 메시지</span>
-          <b>다 따라 하면 수신자에게 이렇게 도착합니다</b>
+          <span className="hz-goal-k">완성 예시</span>
+          <b>따라하기를 완료하면 아래와 같은 메시지가 수신됩니다</b>
           <Icon name="chevron" size={15} className="hz-goal-arr" />
         </button>
         {goalOpen && (
           <div className="hz-goal-body">
-            <div className="hz-goal-tx">
-              <p>아래 6단계를 마치고 발송하면 수신자 단말에 <b>실제로 도착한 화면</b>입니다.
-                 무엇을 만드는 것인지 먼저 보고 시작하세요.</p>
-              <p className="hz-goal-note">위·아래 관련 없는 대화와 단말 상태바는 지운 화면입니다.</p>
-              <dl className="hz-goal-dl">
-                <dt>보내는 이</dt>
-                <dd>브랜드가 아니라 <b>대화방(발신번호) 이름</b>으로 뜹니다 — <code>(주) 모노커뮤니케이션즈 · 1577-7223</code></dd>
-                <dt>맨 윗줄</dt>
-                <dd><b>'(광고)' 표시</b>를 <b>사용</b>으로 두면 본문 앞에 <code>[Web발신] (광고)</code>가 자동으로 붙습니다</dd>
-                <dt>본문</dt>
-                <dd>발송 화면에 <code>{"{{변수1}}"}</code>로 써 둔 자리가 수신자 값(<b>홍길동</b>)으로 바뀌어 나갑니다</dd>
-                <dt>맨 아래</dt>
-                <dd>입력한 <b>무료 수신거부번호</b>가 시각과 함께 자동으로 붙습니다</dd>
-              </dl>
-            </div>
             <figure className="hz-goal-shot">
               <img src="assets/hermes/result-sms.png"
                    alt="기존 RCS · SMS로 발송한 메시지가 수신자 단말에 도착한 화면" loading="lazy" />
-              <figcaption>기존 RCS · SMS 수신 화면</figcaption>
+              <figcaption>기존 RCS · SMS 수신 화면 · 관련 없는 대화와 단말 상태바는 지웠습니다</figcaption>
             </figure>
           </div>
         )}
@@ -2749,10 +2737,24 @@ function HermesSendFlow() {
         "<b>[다음]</b>으로 단계를 넘기면 채워야 할 영역이 차례로 표시되고, " +
         "<b>[가이드 보기]</b>를 누르면 각 칸을 하나씩 짚어주는 안내가 열립니다." }} />
 
+      {/* 6단계 한눈에 — 눌러서 바로 이동. 스크롤하면 지나가므로
+          지금 어느 단계인지는 아래 조작 바가 계속 알려준다. */}
+      <ol className="hz-steps">
+        {HZ_STEPS.map((st, k) => (
+          <li key={k} className={k === i ? "on" : (k < i ? "done" : "")}>
+            <button onClick={() => go(k)}>
+              <span className="n">{k + 1}</span>
+              <b>{st.title}</b>
+              <em>{st.kind}</em>
+            </button>
+          </li>
+        ))}
+      </ol>
+
       {/* 조작 바 — 제목 드롭다운 · 설명 · 이전/다음 · 크게 보기 (스크롤해도 따라옴) */}
       <div className="hz-head" ref={headRef}>
         <div className="hz-head-top">
-          <span className="hz-head-n">{i + 1}</span>
+          <span className="hz-head-n">{i + 1} <i>/ {HZ_STEPS.length}</i></span>
           <div className="hz-pick">
             <button className={"hz-pick-btn" + (open ? " on" : "")} onClick={() => setOpen(!open)}>
               {step.title}<span className="hz-kind">{step.kind}</span><Icon name="chevron" size={14} className="hz-pick-arr" />
