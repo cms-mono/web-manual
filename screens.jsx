@@ -8,9 +8,29 @@
    ============================================================ */
 
 const HEADER_OFFSET = 88;
+
+/* 같은 화면이 문서에도, 미리보기 팝업(.peek-body) 안에도 렌더된다.
+   팝업 안에서는 스크롤 주체가 window 가 아니라 그 컨테이너라, 스크롤을 옮기려면
+   먼저 실제로 스크롤되는 조상을 찾아야 한다. 없으면 null(=문서 전체). */
+function hzScroller(el) {
+  let p = el && el.parentElement;
+  while (p && p !== document.body && p !== document.documentElement) {
+    const ov = getComputedStyle(p).overflowY;
+    if ((ov === "auto" || ov === "scroll") && p.scrollHeight > p.clientHeight + 1) return p;
+    p = p.parentElement;
+  }
+  return null;
+}
+
 function scrollToId(id) {
   const el = document.getElementById(id);
   if (!el) return;
+  const box = hzScroller(el);
+  if (box) {
+    const y = el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 12;
+    box.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    return;
+  }
   const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
   window.scrollTo({ top: y, behavior: "smooth" });
 }
@@ -21,8 +41,12 @@ function scrollToIdSettled(id) {
   setTimeout(() => {
     const el = document.getElementById(id);
     if (!el) return;
-    const off = el.getBoundingClientRect().top - HEADER_OFFSET;
-    if (Math.abs(off) > 8) window.scrollTo({ top: window.scrollY + off, behavior: "smooth" });
+    const box = hzScroller(el);
+    const want = box ? box.getBoundingClientRect().top + 12 : HEADER_OFFSET;
+    const off = el.getBoundingClientRect().top - want;
+    if (Math.abs(off) <= 8) return;
+    if (box) box.scrollTo({ top: box.scrollTop + off, behavior: "smooth" });
+    else window.scrollTo({ top: window.scrollY + off, behavior: "smooth" });
   }, 400);
 }
 
@@ -2443,30 +2467,44 @@ function useBodyScrollLock() {
 let hzRevealJob = null;
 
 function hzTargetY(el, headEl) {
-  const docTop = el.getBoundingClientRect().top + window.scrollY;
-  const hdr = document.querySelector(".hdr");
-  const hdrH = hdr ? hdr.getBoundingClientRect().height : 64;
+  const box = hzScroller(el);
+  const edge = box ? box.getBoundingClientRect().top : 0;
+  const cur = box ? box.scrollTop : window.scrollY;
+  const top = el.getBoundingClientRect().top - edge + cur;
 
+  const hdr = document.querySelector(".hdr");
+  const hdrH = box ? 0 : (hdr ? hdr.getBoundingClientRect().height : 64);
+
+  /* 조작 바가 sticky 로 걸리는 위치(computed top)만큼은 비워 둬야 가리지 않는다.
+     페이지에서는 헤더 높이+8, 팝업(.peek-body) 안에서는 6 이라 값이 알아서 맞는다. */
   let cover = hdrH;
   if (headEl) {
     const st = parseFloat(getComputedStyle(headEl).top);
     cover = (isNaN(st) ? hdrH + 8 : st) + headEl.getBoundingClientRect().height;
   }
 
-  /* 퀵메뉴 스페이서는 높이가 고정이라 문서가 접히거나 펴지지 않는다(보정 불필요) */
-  const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-  return Math.max(0, Math.min(docTop - cover - 16, max));
+  const max = box
+    ? Math.max(0, box.scrollHeight - box.clientHeight)
+    : Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  return Math.max(0, Math.min(top - cover - 16, max));
 }
 
 function hzReveal(el, headEl) {
   if (!el) return;
   if (hzRevealJob) hzRevealJob.cancel();
 
+  const box = hzScroller(el);        // 팝업 안이면 그 컨테이너, 아니면 문서
+  const sc = box || window;
+  const curY = () => (box ? box.scrollTop : window.scrollY);
+  const maxY = () => (box
+    ? box.scrollHeight - box.clientHeight
+    : document.documentElement.scrollHeight - window.innerHeight);
+
   let idleT = null, deadT = null, tries = 0, done = false;
 
   function gap() {
-    let cover = 0;
-    [document.querySelector(".hdr"), headEl].forEach((b) => {
+    let cover = box ? box.getBoundingClientRect().top : 0;
+    [box ? null : document.querySelector(".hdr"), headEl].forEach((b) => {
       if (!b) return;
       const pos = getComputedStyle(b).position;
       if (pos !== "sticky" && pos !== "fixed") return;
@@ -2481,10 +2519,10 @@ function hzReveal(el, headEl) {
   function settled() {
     if (done) return;
     const d = gap();
-    const atBottom = window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 2;
+    const atBottom = curY() >= maxY() - 2;
     if (Math.abs(d) > 6 && tries < 2 && !(d > 0 && atBottom)) {
       tries += 1;
-      window.scrollBy({ top: d, behavior: "auto" });
+      sc.scrollBy({ top: d, behavior: "auto" });
       clearTimeout(idleT); idleT = setTimeout(settled, 130);
       return;
     }
@@ -2495,22 +2533,22 @@ function hzReveal(el, headEl) {
     if (done) return;
     done = true;
     clearTimeout(idleT); clearTimeout(deadT);
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("wheel", stop);
-    window.removeEventListener("touchstart", stop);
+    sc.removeEventListener("scroll", onScroll);
+    sc.removeEventListener("wheel", stop);
+    sc.removeEventListener("touchstart", stop);
     if (hzRevealJob === job) hzRevealJob = null;
   }
 
   const job = { cancel: stop };
   hzRevealJob = job;
 
-  window.addEventListener("scroll", onScroll, { passive: true });
+  sc.addEventListener("scroll", onScroll, { passive: true });
   /* 사용자가 직접 휠·터치로 스크롤하면 보정을 멈춘다(끌어당기는 느낌 방지) */
-  window.addEventListener("wheel", stop, { passive: true });
-  window.addEventListener("touchstart", stop, { passive: true });
+  sc.addEventListener("wheel", stop, { passive: true });
+  sc.addEventListener("touchstart", stop, { passive: true });
 
   const y = hzTargetY(el, headEl);
-  if (Math.abs(y - window.scrollY) > 3) window.scrollTo({ top: y, behavior: "smooth" });
+  if (Math.abs(y - curY()) > 3) sc.scrollTo({ top: y, behavior: "smooth" });
   idleT = setTimeout(settled, 320);   // 스크롤이 아예 일어나지 않은 경우 대비
   deadT = setTimeout(stop, 2000);     // 어떤 경우에도 2초 뒤에는 손을 뗀다
 }
