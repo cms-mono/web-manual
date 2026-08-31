@@ -32,5 +32,28 @@
 
   PARTS.send = `<div class="info-wrap mg-t10"><div class="btn-area pd-t40 align-c" style="display:flex;justify-content:center;gap:7px;padding-top:24px;"><button type="button" class="btn btn-sm">목록</button><button type="button" class="btn btn-sm btn-primary">발송</button></div></div>`;
 
-  window.HZ_UI = { css: CSS, parts: PARTS };
+  /* ── 유형별 화면 차이 ──────────────────────────────
+     유형이 달라도 브랜드·발송정보·수신자·발송 화면은 같다.
+     달라지는 것은 '메시지 종류'와 '제목/내용'(제목 유무·글자수·미리보기)뿐이라
+     그 둘만 따로 두고, 값만 다른 곳은 repl 로 바꿔 쓴다. */
+  var PARTS_T = { lms: {} };
+
+  PARTS_T.lms.msgtype = `<div class="info-wrap"><h2 class="tit-info mg-t25 pd-t2">메시지 세팅</h2><div class="card form-type"><div class="card-body"><table><colgroup><col style="width: 180px;"><col span="3" style="width: auto;"></colgroup><tr><th class="ess">메시지 종류</th><td style="width: 230px;"><span class="input-group"><input type="text" value="기존 RCS" readonly=""></span></td><td><span class="input-group"><input type="text" value="LMS" readonly=""></span></td><td><span class="input-group"><input type="text" value="SL000000" readonly=""><button type="button" class="btn btn-xs btn-gray btn-select">조회</button></span></td></tr></table></div></div></div>`;
+
+  PARTS_T.lms.common = `<div class="info-wrap flex"><div class="message-form mg-t25"><div class="card form-type"><div class="card-header"><h2>메시지 공통 정보</h2></div><div class="card-body"><table><colgroup><col style="width: 180px;"><col></colgroup><tr><th class="ess"> '(광고)'표시 여부 <span class="label-tooltip"><i></i><span>header</span></span></th><td><div class="radio-group"><span class="radio-type"><input type="radio" name="header-radio" checked=""><label>사용</label></span><span class="radio-type"><input type="radio" name="header-radio"><label>미사용</label></span></div></td></tr><tr><th class="ess"> 무료 수신거부번호등록 <span class="label-tooltip"><i></i><span>footer</span></span></th><td><span class="input-type"><input type="text" placeholder="전화번호를 입력하세요. 예) 08012345678" value="08012345678" readonly=""></span></td></tr><tr><th class="ess"> 본문 복사 <span class="label-tooltip"><i></i><span>copyAllowed : 발송한 메시지를 수신 고객이 복사하도록 허용할지 여부</span></span></th><td><div class="radio-group"><span class="radio-type"><input type="radio" name="copyAllowed-radio" checked=""><label>허용</label></span><span class="radio-type"><input type="radio" name="copyAllowed-radio"><label>비허용</label></span></div></td></tr><tr><th class="ess"> 만료 옵션 <span class="label-tooltip"><i></i><span>expiryOption: 응답 대기 시간 이후 만료 처리('전송성공 불확실 79998'). 만료 후 SMS/LMS 발송 가능</span></span></th><td><div class="radio-group"><span class="radio-type"><input type="radio" name="expiery-radio" checked=""><label>40초</label></span><span class="radio-type"><input type="radio" name="expiery-radio"><label>3분10초</label></span><span class="radio-type"><input type="radio" name="expiery-radio"><label>1시간10초</label></span><span class="radio-type"><input type="radio" name="expiery-radio"><label>1일10초</label></span></div></td></tr></table></div></div><div class="card form-type"><div class="card-header"><h2>제목 / 내용</h2></div><div class="card-body"><table><colgroup><col style="width: 180px;"><col></colgroup><tr><th>메시지 제목</th><td><div class="radio-group"><span class="radio-type"><input type="radio" name="radio-title" checked=""><label>사용</label></span><span class="radio-type"><input type="radio" name="radio-title"><label>미사용</label></span></div><span class="input-type"><input type="text" placeholder="제목을 입력해주세요." maxlength="30" style="margin-top:10px;" value="서비스 점검 안내" readonly=""><span style="margin-top:10px;">9 / 30</span></span></td></tr><tr><th class="ess">메시지 내용</th><td><span class="textarea-type"><textarea cols="30" rows="5" readonly="">{{변수1}}님, 안녕하세요. 모노커뮤니케이션즈입니다.
+
+아래와 같이 시스템 정기 점검을 시행합니다.
+· 일시 : 2026년 9월 5일(토) 02:00 ~ 04:00
+· 대상 : 발송 포탈 전체
+· 영향 : 점검 시간 동안 발송이 지연될 수 있습니다.
+
+이용에 불편을 드려 죄송합니다.
+문의: 1577-7223</textarea><span>173 / 1300</span></span></td></tr><tr><th>액션 버튼 설정</th><td><div class="btn-form"><button type="button" class="btn btn-xs btn-primary">미사용</button><button type="button" class="btn btn-xs mg-l5">1개</button><button type="button" class="btn btn-xs mg-l5">2개</button><button type="button" class="btn btn-xs mg-l5">3개</button></div></td></tr></table></div></div></div><div class="message-preview mg-t25 fx-init"><h2 class="tit-info pd-t2">미리보기</h2><div class="card table-type preview-wrap"><div class="card-header"><h2>기존 RCS · LMS</h2></div><div class="card-body"><div class="preview-area template desc"><div class="card-type"><span>[Web발신](광고)</span><div class="inner"><div class="cont"><div class="txt-area"><p class="tit">서비스 점검 안내</p><p class="txt">{{변수1}}님, 안녕하세요. 모노커뮤니케이션즈입니다.<br><br>아래와 같이 시스템 정기 점검을 시행합니다.<br>· 일시 : 2026년 9월 5일(토) 02:00 ~ 04:00<br>· 대상 : 발송 포탈 전체<br>· 영향 : 점검 시간 동안 발송이 지연될 수 있습니다.<br><br>이용에 불편을 드려 죄송합니다.<br>문의: 1577-7223<br><br>수신거부 08012345678</p></div></div></div></div></div></div></div></div></div>`;
+
+  PARTS_T.lms.repl = [
+    ["2026-08 안내 발송", "2026-09 점검 안내"],
+    ["GUIDE-20260827-01", "GUIDE-20260831-01"],
+  ];
+
+  window.HZ_UI = { css: CSS, parts: PARTS, typeParts: PARTS_T };
 })();

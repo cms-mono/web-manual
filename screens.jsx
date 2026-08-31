@@ -1516,7 +1516,7 @@ function CapStep({ step, n, id, agentId, serviceId, featureId, noLink }) {
         {step.codeTabs && <CodeTabs tabs={step.codeTabs} />}
         {step.widget === "queryGen" && <QueryGenerator />}
         {step.widget === "mstgExamples" && <MstgExamples />}
-        {step.widget === "hermesFlow" && <HermesSendFlow />}
+        {step.widget === "hermesFlow" && <HermesSendFlow type={step.flowType || "sms"} />}
         {step.widget === "hermesGuideHome" && <HermesGuideHome />}
         {step.shot && <Shot shot={step.shot} />}
         {step.note && (
@@ -1985,7 +1985,7 @@ const HZ_HOME_KINDS = [
     desc: "삼성 단말 사용자에게 다양한 형태의 RCS 메시지를 보낼 때 선택하세요.",
     types: [
       ["SMS", "짧고 간단한 안내를 이 화면에서 바로 작성할 때", "direct", "step-rcs-flowsms-1"],
-      ["LMS", "상세 안내나 긴 내용을 이 화면에서 바로 작성할 때", "direct", ""],
+      ["LMS", "상세 안내나 긴 내용을 이 화면에서 바로 작성할 때", "direct", "step-rcs-flowlms-1"],
       ["MMS", "이미지와 문구가 포함된 메시지를 바로 작성할 때", "direct", ""],
       ["템플릿", "미리 등록한 템플릿을 불러와 발송할 때", "pre", ""],
       ["LMS템플릿", "미리 등록한 긴 안내용 템플릿을 불러와 발송할 때", "pre", ""],
@@ -2138,7 +2138,7 @@ const HZ_SRC = [
           ["기존 RCS", "삼성 단말 이용자에게만 RCS 전송이 가능하지만, 가독성이 높고 효과적인 메시지"],
           ["통합 RCS", "삼성, 아이폰 등 단말의 구분 없이 모든 고객에 RCS 메시지를 전송할 수 있어 편리하고 효율적인 메시지"],
         ] } },
-      { t: "③ 그 다음 메시지 베이스", hi: ["메시지 종류"], pop: "base",
+      { id: "base", t: "③ 그 다음 메시지 베이스", hi: ["메시지 종류"], pop: "base",
         d: "고른 규격에 따라 아래 종류 버튼이 달라집니다. <b>기존 RCS</b>는 <b>SMS · LMS · MMS · 템플릿 · LMS템플릿 · 이미지템플릿</b> 6가지, <b>통합 RCS</b>는 <b>SMS · LMS · MMS · 템플릿</b> 4가지입니다. 종류를 누르면 아래 목록이 바뀌며, <b>이 가이드에서도 탭과 종류를 직접 눌러볼 수 있습니다.</b><br><b class=\"hz-ex\">이 화면에서는</b> <code>기존 RCS · SMS</code> 를 골랐고, 메시지 베이스 ID는 <code>SS000000</code> 입니다." },
       { t: "템플릿은 미리 만들어 승인받아야 합니다",
         d: "<b>템플릿 관리 &gt; 템플릿 생성</b>에서 만들고 <b>[승인 요청]</b>까지 해야 이 목록에 뜹니다. 진행 상태는 <b>템플릿 관리 &gt; 템플릿 조회</b>의 <b>상태</b> 열에서 확인합니다." },
@@ -2158,7 +2158,7 @@ const HZ_SRC = [
         d: "툴팁 그대로 — <i>발송한 메시지를 수신 고객이 복사하도록 허용할지 여부를 선택하는 메뉴</i>. <b>허용 / 비허용</b>." },
       { t: "만료 옵션 (expiryOption)", hi: ["만료 옵션"],
         d: "툴팁 그대로 — <i>발송 결과 응답 대기 시간 이후 메시지 만료 처리. ‘전송성공 불확실(79998)’ 로 실패처리. 만료 처리 이후 SMS/LMS로 발송 가능</i>.<br>짧게 잡을수록 대체 발송이 빨라지고, 길게 잡을수록 RCS로 도달할 기회를 더 줍니다." },
-      { t: "내용 → 미리보기", hi: ["메시지 내용", "기존 RCS · SMS"],
+      { id: "body", t: "내용 → 미리보기", hi: ["메시지 내용", "기존 RCS · SMS"],
         d: "내용을 쓰면 오른쪽 미리보기에 바로 반영됩니다. <b>SMS에는 제목 칸이 없고</b> 본문만 <b>100자</b>까지 쓸 수 있습니다(LMS는 제목 30자 + 본문 1,300자). 종류를 고르기 전에는 <i>메시지 종류를 선택 해주세요.</i> 만 떠 있습니다.<br><b class=\"hz-ex\">이 화면에서는</b> 내용에 <code>{{변수1}}님, 요청하신 안내 자료를 보내드립니다.</code> 를 넣었습니다." },
       { t: "커스텀 변수 표기 규칙", hi: ["메시지 내용"],
         d: "입력란 안내문 — <i>변수부에 오타 또는 공백이 있을 경우 변수 처리가 불가능 합니다.</i><br>· 처리 가능 &nbsp;<code>{{변수1}}</code><br>· 처리 불가 &nbsp;<code>{{변수}}</code> · <code>{{변수1 }}</code> · <code>{{ 변수1}}</code>" },
@@ -2246,43 +2246,93 @@ const HZ_SRC = [
    화면 순서(위 7덩어리)는 그대로 두고 '메시지 작성'만 공통정보·Fallback·메시지 저장을
    한 단계로 합쳤다. 하위 항목은 하나도 줄이지 않고 순서대로 이어 붙는다. */
 const HZ_GROUPS = [
-  { title: "브랜드 · 발신번호 선택", kind: "공통",  from: ["brand"],
+  { id: "brand", title: "브랜드 · 발신번호 선택", kind: "공통",  from: ["brand"],
     set: [["브랜드", "모노커뮤니케이션즈"], ["발신번호", "(주) 모노커뮤니케이션즈 · 15777223"]] },
-  { title: "메시지 종류 선택",       kind: "유형별", from: ["msgtype"],
+  { id: "msgtype", title: "메시지 종류 선택",       kind: "유형별", from: ["msgtype"],
     set: [["규격", "기존 RCS"], ["종류", "SMS"], ["메시지 베이스", "SS000000"]] },
-  { title: "메시지 작성",            kind: "유형별", from: ["common", "fallback", "name"],
+  { id: "write", title: "메시지 작성",            kind: "유형별", from: ["common", "fallback", "name"],
     desc: "공통 정보와 제목·내용을 채우고, 대체 발송(Fallback)과 메시지 저장까지 이 단계에서 끝냅니다.",
     tip: "<b>'(광고)' 표시 여부</b>와 <b>무료 수신거부번호</b>는 필수 항목(*)입니다.",
     set: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["본문 복사", "허용"],
           ["만료 옵션", "40초"], ["Fallback", "사용"], ["메시지 이름", "2026-08 안내 발송"]] },
-  { title: "발송 정보",              kind: "공통",  from: ["sendinfo"],
+  { id: "sendinfo", title: "발송 정보",              kind: "공통",  from: ["sendinfo"],
     set: [["발송 형태", "즉시 발송"], ["발송량", "단건 · 20건 이하"], ["발송그룹ID", "GUIDE-20260827-01"]] },
-  { title: "수신자 추가",            kind: "공통",  from: ["recv"],
+  { id: "recv", title: "수신자 추가",            kind: "공통",  from: ["recv"],
     set: [["넣는 방법", "수신자 추가(직접 등록)"], ["인원", "2명"], ["변수1", "수신자 이름"]] },
-  { title: "발송",                   kind: "공통",  from: ["send"],
+  { id: "send", title: "발송",                   kind: "공통",  from: ["send"],
     set: [["표기 의무 확인", "체크"], ["마지막 동작", "[발송] 누르기"]] },
 ];
 
 const HZ_SRC_MAP = {};
 HZ_SRC.forEach((x) => { HZ_SRC_MAP[x.part] = x; });
 
-const HZ_STEPS = HZ_GROUPS.map((g) => {
-  const srcs = g.from.map((k) => HZ_SRC_MAP[k]).filter(Boolean);
-  return {
-    parts: g.from,
-    title: g.title,
-    kind: g.kind,
-    set: g.set || [],
-    desc: g.desc || (srcs[0] ? srcs[0].desc : ""),
-    tip: g.tip || (srcs[0] ? srcs[0].tip : ""),
-    detail: srcs.reduce((a, x) => a.concat(x.detail || []), []),
-  };
-});
+/* ── 메시지 유형별 따라하기 ────────────────────────────────
+   기획 요청(2026-08-31)에 따라 유형마다 페이지를 따로 둔다.
+   6단계 흐름과 설명은 한 벌만 두고, 유형에 따라 달라지는 것만 여기서 덮어쓴다.
+   · set    — 그 단계의 '예시 설정값' 줄
+   · detail — id 가 붙은 안내 항목(지금은 base·body) 교체
+   화면 HTML 차이는 content/hermes/_ui.js 의 typeParts 에 있다. */
+const HZ_TYPES = {
+  sms: {
+    id: "sms", label: "SMS", spec: "기존 RCS", base: "SS000000",
+    shot: "assets/hermes/result-sms.png",
+    shotAlt: "기존 RCS · SMS로 발송한 메시지가 수신자 단말에 도착한 화면",
+    shotCap: "기존 RCS · SMS 수신 화면 · 관련 없는 대화와 단말 상태바는 지웠습니다",
+  },
+  lms: {
+    id: "lms", label: "LMS", spec: "기존 RCS", base: "SL000000",
+    shot: "",
+    set: {
+      msgtype: [["규격", "기존 RCS"], ["종류", "LMS"], ["메시지 베이스", "SL000000"]],
+      write: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["본문 복사", "허용"],
+              ["만료 옵션", "40초"], ["메시지 제목", "사용 · 서비스 점검 안내"],
+              ["Fallback", "사용"], ["메시지 이름", "2026-09 점검 안내"]],
+      sendinfo: [["발송 형태", "즉시 발송"], ["발송량", "단건 · 20건 이하"], ["발송그룹ID", "GUIDE-20260831-01"]],
+    },
+    detail: {
+      base: { d: "고른 규격에 따라 아래 종류 버튼이 달라집니다. <b>기존 RCS</b>는 <b>SMS · LMS · MMS · 템플릿 · LMS템플릿 · 이미지템플릿</b> 6가지, <b>통합 RCS</b>는 <b>SMS · LMS · MMS · 템플릿</b> 4가지입니다. 버튼을 누르면 아래 목록이 바뀌고, <b>이 가이드에서도 실제 목록을 눌러 볼 수 있습니다.</b><br><b class=\"hz-ex\">이 화면에서는</b> <code>기존 RCS · LMS</code> 를 골랐고, 메시지 베이스 ID는 <code>SL000000</code> 입니다." },
+      body: {
+        t: "제목 · 내용 → 미리보기",
+        hi: ["메시지 제목", "메시지 내용", "기존 RCS · LMS"],
+        d: "LMS는 SMS와 달리 <b>제목 칸</b>이 따로 있습니다. <b>사용</b>이면 제목을 <b>30자</b>까지 쓸 수 있고 미리보기 맨 윗줄에 굵게 나옵니다. <b>미사용</b>이면 본문만 나갑니다. 본문은 <b>1,300자</b>까지입니다(SMS는 제목 없이 본문 100자).<br><b class=\"hz-ex\">이 화면에서는</b> 제목 <code>서비스 점검 안내</code>, 본문에 점검 안내문을 넣었습니다.",
+      },
+    },
+  },
+};
+
+const HZ_STEP_CACHE = {};
+function hzSteps(type) {
+  const t = HZ_TYPES[type] ? type : "sms";
+  if (HZ_STEP_CACHE[t]) return HZ_STEP_CACHE[t];
+  const sov = HZ_TYPES[t].set || {};
+  const dov = HZ_TYPES[t].detail || {};
+  HZ_STEP_CACHE[t] = HZ_GROUPS.map((g) => {
+    const srcs = g.from.map((k) => HZ_SRC_MAP[k]).filter(Boolean);
+    return {
+      parts: g.from,
+      title: g.title,
+      kind: g.kind,
+      set: sov[g.id] || g.set || [],
+      desc: g.desc || (srcs[0] ? srcs[0].desc : ""),
+      tip: g.tip || (srcs[0] ? srcs[0].tip : ""),
+      detail: srcs
+        .reduce((a, x) => a.concat(x.detail || []), [])
+        .map((d) => (d.id && dov[d.id] ? Object.assign({}, d, dov[d.id]) : d)),
+    };
+  });
+  return HZ_STEP_CACHE[t];
+}
 
 /* 한 단계가 여러 덩어리를 묶을 수 있으므로 항상 이어 붙여 쓴다 */
-function hzHtml(step) {
+function hzHtml(step, type) {
   const ui = window.HZ_UI || { parts: {} };
-  return (step.parts || []).map((k) => ui.parts[k] || "").join("");
+  const T = (ui.typeParts && ui.typeParts[type]) || {};
+  const repl = T.repl || [];
+  return (step.parts || []).map((k) => {
+    let h = T[k] || ui.parts[k] || "";
+    for (let n = 0; n < repl.length; n++) h = h.split(repl[n][0]).join(repl[n][1]);
+    return h;
+  }).join("");
 }
 
 /* 팝업이 겹쳐 뜰 수 있으므로 본문 스크롤 잠금은 참조 카운트로 관리한다.
@@ -2464,7 +2514,7 @@ function useHzRemeasure(measure, deps) {
 }
 
 /* ── 확대 팝업 — 그 단계 영역만 원래 크기로 ── */
-function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
+function HzZoom({ step, idx, steps, type, onClose, onGo, onGuide, paused }) {
   useBodyScrollLock();
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
@@ -2506,13 +2556,13 @@ function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
       <div className="peek hz-zoom" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="peek-head">
           <div className="peek-tt">
-            <span className="peek-badge">{idx + 1} / {HZ_STEPS.length}</span>
+            <span className="peek-badge">{idx + 1} / {steps.length}</span>
             <b>{step.title}</b>
           </div>
           <div className="peek-acts">
             <button className="peek-btn gd" onClick={onGuide}><Icon name="book" size={13} /> 가이드 보기</button>
             <button className="peek-btn" disabled={idx === 0} onClick={() => onGo(idx - 1)}>← 이전</button>
-            <button className="peek-btn primary" disabled={idx === HZ_STEPS.length - 1} onClick={() => onGo(idx + 1)}>다음 →</button>
+            <button className="peek-btn primary" disabled={idx === steps.length - 1} onClick={() => onGo(idx + 1)}>다음 →</button>
             <button className="peek-x" onClick={onClose} aria-label="닫기"><Icon name="x" size={16} /></button>
           </div>
         </div>
@@ -2525,7 +2575,7 @@ function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
           <div className="hz-fit auto" ref={boxRef}>
             <div className="hz-real hz-page" ref={pageRef}
                  style={{ zoom: z.scale, width: HZ_NATURAL_W }}
-                 dangerouslySetInnerHTML={{ __html: hzHtml(step) }} />
+                 dangerouslySetInnerHTML={{ __html: hzHtml(step, type) }} />
           </div>
         </div>
       </div>
@@ -2537,9 +2587,9 @@ function HzZoom({ step, idx, onClose, onGo, onGuide, paused }) {
 /* ── 가이드 팝업 — 전체 화면을 띄우고 강조 지점으로 이동 ──
    화면 전체를 렌더한 뒤 강조 영역이 가운데 오도록 '옮겨서' 보여준다.
    스크롤바 없이 위아래 맥락이 살짝 보이므로 잘린 느낌이 나지 않는다. */
-function HzTour({ stepIdx, sub, onMove, onClose }) {
+function HzTour({ stepIdx, sub, steps, type, onMove, onClose }) {
   useBodyScrollLock();
-  const step = HZ_STEPS[stepIdx];
+  const step = steps[stepIdx];
   const items = step.detail || [];
   const cur = items[sub] || {};
   const ui = window.HZ_UI || { parts: {} };
@@ -2553,11 +2603,11 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   const [v, setV] = React.useState({ scale: 1, tx: 0, ty: 0, w: HZ_NATURAL_W, h: 0, up: false, down: false });
 
   const atFirst = stepIdx === 0 && sub === 0;
-  const atLast = stepIdx === HZ_STEPS.length - 1 && sub === items.length - 1;
+  const atLast = stepIdx === steps.length - 1 && sub === items.length - 1;
 
   const fullHtml = React.useMemo(
-    () => HZ_STEPS.map((s) => hzHtml(s)).join(""),
-    [ui]
+    () => steps.map((s) => hzHtml(s, type)).join(""),
+    [ui, steps, type]
   );
 
   const measure = React.useCallback(() => {
@@ -2692,7 +2742,7 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
       <div className="peek hz-tour" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="peek-head">
           <div className="peek-tt">
-            <span className="peek-badge">{stepIdx + 1} / {HZ_STEPS.length}</span>
+            <span className="peek-badge">{stepIdx + 1} / {steps.length}</span>
             <b>{step.title}</b><span className="hz-kind">{step.kind}</span>
           </div>
           <div className="peek-acts">
@@ -2765,14 +2815,16 @@ function HzTour({ stepIdx, sub, onMove, onClose }) {
   );
 }
 
-function HermesSendFlow() {
+function HermesSendFlow({ type }) {
+  const T = HZ_TYPES[type] ? HZ_TYPES[type] : HZ_TYPES.sms;
+  const steps = hzSteps(T.id);
   const [i, setI] = React.useState(0);
   const [open, setOpen] = React.useState(false);   // 제목 드롭다운
   const [zoom, setZoom] = React.useState(false);   // 확대 팝업
   const [goalOpen, setGoalOpen] = React.useState(true);   // 완성 예시 펼침
   const [tour, setTour] = React.useState(null);    // 가이드 팝업 {sub}
   const ui = window.HZ_UI || { css: "", parts: {} };
-  const step = HZ_STEPS[i];
+  const step = steps[i];
 
   const boxRef = React.useRef(null);
   const pageRef = React.useRef(null);
@@ -2800,7 +2852,7 @@ function HermesSendFlow() {
     window.addEventListener("resize", fit);
     const t = setTimeout(fit, 300);
     return () => { if (ro) ro.disconnect(); window.removeEventListener("resize", fit); clearTimeout(t); };
-  }, [ui.parts]);
+  }, [ui.parts, T.id]);
 
   // 바깥 클릭 시 드롭다운 닫기
   React.useEffect(() => {
@@ -2815,10 +2867,10 @@ function HermesSendFlow() {
      접힘 때문에 자꾸 어긋났다. 대신 '지금 실제로 가리고 있는 것의 아래쪽'을
      매번 재서 그만큼만 움직이고, 자리가 잡힌 뒤 한 번 더 확인한다. */
   function go(k) {
-    if (k < 0 || k >= HZ_STEPS.length) return;
+    if (k < 0 || k >= steps.length) return;
     setI(k); setOpen(false);
     setTimeout(() => {
-      const el = pageRef.current && pageRef.current.querySelector('[data-part="' + HZ_STEPS[k].parts[0] + '"]');
+      const el = pageRef.current && pageRef.current.querySelector('[data-part="' + steps[k].parts[0] + '"]');
       if (el) hzReveal(el, headRef.current);
     }, 40);
   }
@@ -2826,9 +2878,9 @@ function HermesSendFlow() {
   /* 가이드 이동 — 항목 끝에 닿으면 다음(이전) 단계로 자연스럽게 넘어간다 */
   function tourMove(d) {
     if (!tour) return;
-    const items = (k) => (HZ_STEPS[k].detail || []).length;
+    const items = (k) => (steps[k].detail || []).length;
     let k = i, n = tour.sub + d;
-    while (n >= items(k)) { if (k >= HZ_STEPS.length - 1) { n = items(k) - 1; break; } n -= items(k); k += 1; }
+    while (n >= items(k)) { if (k >= steps.length - 1) { n = items(k) - 1; break; } n -= items(k); k += 1; }
     while (n < 0) { if (k <= 0) { n = 0; break; } k -= 1; n += items(k); }
     if (k !== i) setI(k);
     setTour({ sub: n });
@@ -2846,11 +2898,14 @@ function HermesSendFlow() {
         </button>
         {goalOpen && (
           <div className="hz-goal-body">
-            <figure className="hz-goal-shot">
-              <img src="assets/hermes/result-sms.png"
-                   alt="기존 RCS · SMS로 발송한 메시지가 수신자 단말에 도착한 화면" loading="lazy" />
-              <figcaption>기존 RCS · SMS 수신 화면 · 관련 없는 대화와 단말 상태바는 지웠습니다</figcaption>
-            </figure>
+            {T.shot ? (
+              <figure className="hz-goal-shot">
+                <img src={T.shot} alt={T.shotAlt} loading="lazy" />
+                <figcaption>{T.shotCap}</figcaption>
+              </figure>
+            ) : (
+              <p className="hz-goal-todo">{T.spec} · {T.label} 수신 화면 캡쳐는 준비 중입니다.</p>
+            )}
           </div>
         )}
       </div>
@@ -2865,7 +2920,7 @@ function HermesSendFlow() {
       {/* 6단계 한눈에 — 눌러서 바로 이동. 스크롤하면 지나가므로
           지금 어느 단계인지는 아래 조작 바가 계속 알려준다. */}
       <ol className="hz-steps">
-        {HZ_STEPS.map((st, k) => (
+        {steps.map((st, k) => (
           <li key={k} className={k === i ? "on" : (k < i ? "done" : "")}>
             <button onClick={() => go(k)}>
               <span className="n">{k + 1}</span>
@@ -2879,15 +2934,15 @@ function HermesSendFlow() {
       {/* 조작 바 — 제목 드롭다운 · 설명 · 이전/다음 · 크게 보기 (스크롤해도 따라옴) */}
       <div className="hz-head" ref={headRef}>
         <div className="hz-head-top">
-          <span className="hz-head-n">{i + 1} <i>/ {HZ_STEPS.length}</i></span>
+          <span className="hz-head-n">{i + 1} <i>/ {steps.length}</i></span>
           <div className="hz-pick">
             <button className={"hz-pick-btn" + (open ? " on" : "")} onClick={() => setOpen(!open)}>
               {step.title}<span className="hz-kind">{step.kind}</span><Icon name="chevron" size={14} className="hz-pick-arr" />
             </button>
             {open && (
               <div className="hz-pick-menu">
-                {HZ_STEPS.map((s, k) => (
-                  <button key={s.part} className={"hz-pick-item" + (k === i ? " on" : "")} onClick={() => go(k)}>
+                {steps.map((s, k) => (
+                  <button key={s.parts[0]} className={"hz-pick-item" + (k === i ? " on" : "")} onClick={() => go(k)}>
                     <span className="hz-pick-n">{k + 1}</span>{s.title}<span className="hz-kind">{s.kind}</span>
                   </button>
                 ))}
@@ -2898,7 +2953,7 @@ function HermesSendFlow() {
             <button className="hz-navbtn sm" onClick={() => setZoom(true)}><Icon name="search" size={13} /> 크게 보기</button>
             <button className="hz-navbtn sm gd" onClick={() => setTour({ sub: 0 })}><Icon name="book" size={13} /> 가이드 보기</button>
             <button className="hz-navbtn sm" disabled={i === 0} onClick={() => go(i - 1)}>← 이전</button>
-            <button className="hz-navbtn sm pri" disabled={i === HZ_STEPS.length - 1} onClick={() => go(i + 1)}>다음 →</button>
+            <button className="hz-navbtn sm pri" disabled={i === steps.length - 1} onClick={() => go(i + 1)}>다음 →</button>
           </div>
         </div>
         <div className="hz-head-tx">
@@ -2927,13 +2982,13 @@ function HermesSendFlow() {
               <span className="hz-tabon">메시지 생성/상세조회/발송</span>
               <span className="hz-taboff">메시지 조회/삭제</span>
             </div>
-            {HZ_STEPS.map((s, k) => (
+            {steps.map((s, k) => (
               <div
-                key={s.part}
+                key={s.parts[0]}
                 className={"hz-part" + (k === i ? " on" : "")}
                 data-part={s.parts[0]}
                 onClick={() => { if (k === i) setZoom(true); else go(k); }}
-                dangerouslySetInnerHTML={{ __html: hzHtml(s) }}
+                dangerouslySetInnerHTML={{ __html: hzHtml(s, T.id) }}
               />
             ))}
           </div>
@@ -2941,10 +2996,11 @@ function HermesSendFlow() {
       </div>
 
 
-      {zoom && <HzZoom step={step} idx={i} onClose={() => setZoom(false)}
-                       onGo={(k) => { if (k >= 0 && k < HZ_STEPS.length) setI(k); }}
+      {zoom && <HzZoom step={step} idx={i} steps={steps} type={T.id} onClose={() => setZoom(false)}
+                       onGo={(k) => { if (k >= 0 && k < steps.length) setI(k); }}
                        onGuide={() => setTour({ sub: 0 })} paused={!!tour} />}
-      {tour && <HzTour stepIdx={i} sub={tour.sub} onMove={tourMove} onClose={() => setTour(null)} />}
+      {tour && <HzTour stepIdx={i} sub={tour.sub} steps={steps} type={T.id}
+                       onMove={tourMove} onClose={() => setTour(null)} />}
     </div>
   );
 }

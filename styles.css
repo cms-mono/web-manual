@@ -1634,6 +1634,11 @@ mark.search-hit {
   border: 1px solid var(--border); border-radius: 10px;
 }
 .hz-goal-shot figcaption { font-size: 11.5px; color: var(--text-3); font-weight: 600; }
+.hz-goal-todo {
+  margin: 0; padding: 26px 14px; text-align: center;
+  font-size: 12.5px; font-weight: 600; color: var(--text-3);
+  border: 1px dashed var(--border); border-radius: 8px; background: var(--bg-2);
+}
 
 /* 예시 설정값 — 이 단계에서 무엇을 무엇으로 채웠는지 */
 .hz-set {
@@ -2021,6 +2026,19 @@ mark.search-hit {
 .hz-tour-view::after { bottom: 0; background: linear-gradient(rgba(255,255,255,0), #fff); }
 .hz-tour-view.up::before { opacity: 1; }
 .hz-tour-view.down::after { opacity: 1; }
+
+/* 글자수 표시는 입력칸 오른쪽 아래 안쪽에 붙인다.
+   그냥 두면 textarea 다음 줄로 흘러 아래 행 위에 얹힌다. */
+.hz-real .textarea-type { position: relative; display: block; }
+.hz-real .textarea-type > span {
+  position: absolute; right: 10px; bottom: 7px;
+  font-size: 11px; color: #9a9a9a; background: #fff; padding: 0 3px; line-height: 1.4;
+}
+/* 한 줄 입력칸(LMS 제목)은 안쪽에 넣으면 글자와 겹치므로 바로 아래 오른쪽에 붙인다 */
+.hz-real .input-type > span {
+  display: block; text-align: right; margin-top: 3px !important;
+  font-size: 11px; color: #9a9a9a; line-height: 1.4;
+}
 
 /* 강조 / 흐리게 — 배경·테두리를 씌우지 않는다.
    나머지를 충분히 흐리게 두면 대비만으로 어디를 보라는지 드러난다. */
