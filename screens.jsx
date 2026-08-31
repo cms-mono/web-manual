@@ -1976,19 +1976,17 @@ Object.assign(window, {
    유형 카드는 xref 로 연결돼 따라하기가 모달로 열리고, 모달에서
    [새 탭으로 열기]·[이 문서로 이동]을 쓸 수 있다.
    ------------------------------------------------------------ */
+/* [제목, 한 줄 설명, 꼬리표, 목적지 앵커]
+   목적지가 비어 있으면 아래 '어떤 메시지를 만들어볼까요?'로 스크롤한다.
+   예전에는 이 흐름도가 읽기 전용이고 그 아래 '자주 하는 작업' 카드만 눌렸는데,
+   둘의 내용이 거의 같은 데다 생김새도 비슷해 흐름도를 눌러보게 됐다.
+   흐름도 자체를 이동 수단으로 삼고 중복 섹션은 없앴다. */
 const HZ_HOME_FLOW = [
-  ["주소록 준비", "연락처를 미리 등록", "선택"],
-  ["메시지 만들기", "유형을 고르고 내용 작성", ""],
-  ["수신자 설정", "보낼 사람 지정", ""],
-  ["발송", "즉시 또는 예약", ""],
-  ["결과 확인", "성공 여부·상세 결과", ""],
-];
-
-const HZ_HOME_TASKS = [
-  ["주소록 준비하기", "연락처를 직접 등록하거나 파일로 업로드합니다.", "address"],
-  ["메시지 만들어보기", "메시지 유형을 선택하고 예제를 따라 만듭니다.", ""],
-  ["메시지 발송하기", "수신자와 발송 시간을 설정하여 발송합니다.", "send"],
-  ["결과 확인하기", "발송 성공 여부와 상세 결과를 확인합니다.", "result"],
+  ["주소록 준비", "연락처를 미리 등록", "선택", "step-rcs-address-1"],
+  ["메시지 만들기", "유형을 고르고 내용 작성", "", ""],
+  ["수신자 설정", "보낼 사람 지정", "", "step-rcs-send-6"],
+  ["발송", "즉시 또는 예약", "", "step-rcs-option-2"],
+  ["결과 확인", "성공 여부·상세 결과", "", "step-rcs-result-1"],
 ];
 
 /* [유형, 한 줄 기준, 작성 방식, 따라하기 앵커(없으면 준비 중)] */
@@ -2024,34 +2022,27 @@ function HermesGuideHome() {
       <div className="gh-sec">
         <h4 className="gh-sec-t">기본 발송 흐름</h4>
         <ol className="gh-flow">
-          {HZ_HOME_FLOW.map(([t, d, tag], k) => (
-            <li key={k}>
-              <span className="gh-flow-n">{k + 1}</span>
-              <b>{t}{tag && <em>{tag}</em>}</b>
-              <span>{d}</span>
-            </li>
-          ))}
+          {HZ_HOME_FLOW.map(([t, d, tag, sec], k) => {
+            const inner = (
+              <>
+                <span className="gh-flow-n">{k + 1}</span>
+                <b>{t}{tag && <em>{tag}</em>}</b>
+                <span>{d}</span>
+              </>
+            );
+            return (
+              <li key={k}>
+                {sec ? (
+                  <a className="gh-flow-a xref" data-to="hermes" data-sec={sec}>{inner}</a>
+                ) : (
+                  <a className="gh-flow-a" href="#gh-kinds"
+                     onClick={(e) => { e.preventDefault(); scrollToId("gh-kinds"); }}>{inner}</a>
+                )}
+              </li>
+            );
+          })}
         </ol>
-        <p className="gh-note">여러 수신자에게 반복적으로 발송한다면 주소록을 미리 등록해 두면 편리합니다.</p>
-      </div>
-
-      {/* 자주 하는 작업 */}
-      <div className="gh-sec">
-        <h4 className="gh-sec-t">자주 하는 작업</h4>
-        <div className="gh-tasks">
-          {HZ_HOME_TASKS.map(([t, d, sec], k) =>
-            sec ? (
-              <a key={k} className="gh-task xref" data-to="hermes" data-sec={"step-rcs-" + sec + "-1"}>
-                <b>{t}</b><span>{d}</span>
-              </a>
-            ) : (
-              <a key={k} className="gh-task" href="#gh-kinds"
-                 onClick={(e) => { e.preventDefault(); scrollToId("gh-kinds"); }}>
-                <b>{t}</b><span>{d}</span>
-              </a>
-            )
-          )}
-        </div>
+        <p className="gh-note">각 칸을 누르면 해당 단계 설명으로 이동합니다. 여러 수신자에게 반복적으로 발송한다면 주소록을 미리 등록해 두면 편리합니다.</p>
       </div>
 
       {/* 메시지 유형 선택 */}
