@@ -1059,9 +1059,21 @@ function AgentDetail({ agentId, index, onNavigate, anchor, query, navToken }) {
   // 페이지를 벗어나거나 언마운트 시 강조 제거
   React.useEffect(() => () => clearSearchHighlights(), [active]);
 
+  /* 좌측 네비로 옮겨 다녀도 주소는 그대로여서, URL 이 실제 보고 있는 곳과 어긋났다.
+     새로고침·링크 복사가 엉뚱한 곳을 가리키고, 본문의 해시 링크는 "이미 그 주소"가
+     되어 눌러도 반응이 없었다. replaceState 라 hashchange 도 히스토리도 늘지 않는다. */
+  const syncHash = React.useCallback((pageIdx, stepNo) => {
+    const pg = pages[pageIdx];
+    if (!pg || typeof history.replaceState !== "function") return;
+    const sec = "step-" + pg.serviceId + "-" + pg.featureId + "-" + (stepNo || 1);
+    const path = (location.hash || "#/").split("?")[0];
+    try { history.replaceState(null, "", path + "?sec=" + sec); } catch (e) {}
+  }, [pages]);
+
   function goPage(i) {
     setActive(i);
     setNavOpen(true);
+    syncHash(i, 1);
     if (topRef.current) {
       const y = topRef.current.getBoundingClientRect().top + window.scrollY - topClearance();
       window.scrollTo({ top: y, behavior: "smooth" });
@@ -1073,6 +1085,7 @@ function AgentDetail({ agentId, index, onNavigate, anchor, query, navToken }) {
   function goStep(pageIdx, n) {
     lockSpy(); // 스크롤이 멈출 때까지 스파이 억제
     setActiveStep(n);
+    syncHash(pageIdx, n);
     function scroll() {
       const el = document.getElementById("step-" + n);
       if (el) {

@@ -283,6 +283,24 @@ function App() {
     return () => window.removeEventListener("hashchange", applyHash);
   }, [applyHash]);
 
+  /* 본문에 쓰인 해시 링크(a[href^="#/"], 예: 스텝의 [따라하기 보기] 버튼)를 가로챈다.
+     브라우저에 맡기면 지금 주소와 값이 같을 때 hashchange 가 발생하지 않아
+     클릭해도 아무 일도 일어나지 않는다. navigate 와 같은 규칙으로 처리한다. */
+  React.useEffect(() => {
+    function onClick(e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest && e.target.closest('a[href^="#/"]');
+      if (!a || a.target === "_blank") return;
+      e.preventDefault();
+      const h = a.getAttribute("href");
+      navSeq.current += 1;
+      if (h === location.hash) applyHash();
+      else location.hash = h;
+    }
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [applyHash]);
+
   // ⌘K / Ctrl+K → 검색 포커스
   React.useEffect(() => {
     function onKey(e) {
