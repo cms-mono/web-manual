@@ -1364,7 +1364,7 @@ const CapPage = React.memo(function CapPage({ page, agentId }) {
           <span className="cap-wip-ico">🚧</span>
           <div>
             <div className="cap-wip-title">공사 중입니다</div>
-            <p>{page.intro || "이 항목은 준비 중입니다. 곧 업데이트될 예정입니다."}</p>
+            <p dangerouslySetInnerHTML={{ __html: page.intro || "이 항목은 준비 중입니다. 곧 업데이트될 예정입니다." }} />
           </div>
         </div>
       </div>
@@ -1373,7 +1373,8 @@ const CapPage = React.memo(function CapPage({ page, agentId }) {
   return (
     <div>
       <h2 className="doc-page-title">{page.title}</h2>
-      {page.intro && <p className="doc-page-intro">{page.intro}</p>}
+      {/* intro 도 body·note 와 같이 HTML 로 쓴다(<b>·<code> 등) */}
+      {page.intro && <p className="doc-page-intro" dangerouslySetInnerHTML={{ __html: page.intro }} />}
       {page.mapGroups ? (
         <GuideMap groups={page.mapGroups} />
       ) : (
