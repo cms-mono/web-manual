@@ -1256,11 +1256,14 @@ mark.search-hit {
   transform: translateY(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
 }
 .topmenu.show { transform: translateY(0); }
-/* 최상단에서는 본문을 메뉴 높이만큼 밀어 가리지 않게 한다(스크롤 시 0으로 접힘 → 오버레이로 전환)
-   height는 애니메이션하지 않는다 — 높이가 변하는 매 프레임 문서 전체 레이아웃이 다시 계산되어
-   행이 많은 표(결과코드)에서 스크롤 시작마다 끊긴다. 메뉴 자체는 transform으로 부드럽게 슬라이드. */
-.topmenu-spacer { height: 0; }
-.topmenu-spacer.on { height: calc(var(--header-h) + 1px); }
+/* 퀵메뉴가 덮을 자리 — 문서 맨 위에 메뉴 높이만큼 항상 비워 둔다.
+   ⚠ 이 높이는 절대 스크롤 위치에 따라 바꾸지 않는다.
+   예전엔 최상단(scrollY<12)에서만 펴고 아니면 접었는데, 경계에서 문서 높이가 65px
+   변하면 크롬의 스크롤 앵커링이 scrollTop을 그만큼 되돌려 놓는다.
+   그러면 다시 경계를 넘어 접히고 → 되돌리고 … 가 반복돼 맨 위로 올라가지 못하고
+   퀵메뉴가 내려왔다 튕겨나가기를 되풀이했다.
+   높이를 고정하면 문서 레이아웃이 변하지 않고, 메뉴는 transform 으로만 슬라이드한다. */
+.topmenu-spacer { height: calc(var(--header-h) + 1px); }
 .topmenu-inner {
   max-width: var(--maxw); margin: 0 auto; height: var(--header-h); padding: 0 24px;
   /* 드롭다운 패널이 아래로 넘쳐야 하므로 가로 스크롤(→ 세로 클리핑 유발) 대신 visible */

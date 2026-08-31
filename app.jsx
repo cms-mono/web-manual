@@ -266,15 +266,6 @@ function App() {
   const [theme, toggleTheme] = useTheme();
   const navSeq = React.useRef(0);
 
-  // 페이지 최상단에서는 퀵메뉴가 본문을 가리지 않도록 그만큼 본문을 밀어준다(스페이서).
-  const [atTop, setAtTop] = React.useState(true);
-  React.useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY < 12);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   // 매 내비게이션마다 증가하는 nonce(_seq)를 라우트에 실어, 동일 해시 재검색에도
   // 화면 효과(재스크롤·강조)가 다시 트리거되게 한다.
   const applyHash = React.useCallback(() => {
@@ -329,7 +320,9 @@ function App() {
     <div className="app-root">
       <TopMenu onNavigate={navigate} route={route} />
       <Header index={index} onNavigate={navigate} route={route} theme={theme} toggleTheme={toggleTheme} />
-      <div className={"topmenu-spacer" + (atTop ? " on" : "")} aria-hidden="true" />
+      {/* 퀵메뉴가 덮을 자리. 높이는 항상 고정이다 — 스크롤 위치에 따라 접었다 펴면
+          문서 높이가 바뀌고, 크롬의 스크롤 앵커링이 그만큼 되돌려 무한히 튕긴다. */}
+      <div className="topmenu-spacer" aria-hidden="true" />
       {screen}
       <Footer onNavigate={navigate} />
       <RightNav index={index} onNavigate={navigate} route={route} />

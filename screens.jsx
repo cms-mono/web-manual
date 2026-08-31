@@ -14,8 +14,7 @@ function scrollToId(id) {
   const y = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
   window.scrollTo({ top: y, behavior: "smooth" });
 }
-/* 최상단에서 출발하면 상단 퀵메뉴 자리(topmenu-spacer, 약 65px)가 접히면서
-   본문이 그만큼 위로 밀려 목표 지점이 헤더에 가려진다.
+/* 스크롤 도중 이미지가 늦게 로드되는 등으로 목표가 밀릴 수 있다.
    스크롤이 끝난 뒤 위치를 한 번 더 확인해 어긋난 만큼만 보정한다. */
 function scrollToIdSettled(id) {
   scrollToId(id);
@@ -2412,12 +2411,9 @@ function hzTargetY(el, headEl) {
     cover = (isNaN(st) ? hdrH + 8 : st) + headEl.getBoundingClientRect().height;
   }
 
-  /* 최상단(스페이서가 펼쳐진 상태)에서 내려가면 그만큼 문서가 위로 올라온다 */
-  const sp = document.querySelector(".topmenu-spacer");
-  const shrink = (sp && window.scrollY < 12) ? sp.getBoundingClientRect().height : 0;
-
-  const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight - shrink);
-  return Math.max(0, Math.min(docTop - shrink - cover - 16, max));
+  /* 퀵메뉴 스페이서는 높이가 고정이라 문서가 접히거나 펴지지 않는다(보정 불필요) */
+  const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  return Math.max(0, Math.min(docTop - cover - 16, max));
 }
 
 function hzReveal(el, headEl) {
