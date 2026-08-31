@@ -2040,6 +2040,19 @@ mark.search-hit {
   font-size: 11px; color: #9a9a9a; line-height: 1.4;
 }
 
+/* MMS 슬라이드형 미리보기 — 실제 화면은 캐러셀이라 옆 카드가 살짝 걸쳐 보인다 */
+.hz-real .hz-slide { display: flex; gap: 8px; overflow: hidden; padding: 2px 0 6px; }
+.hz-real .hz-slide-item {
+  flex: 0 0 148px; border: 1px solid #e2e2e2; border-radius: 8px;
+  background: #fff; overflow: hidden;
+}
+.hz-real .hz-slide-img {
+  height: 84px; display: flex; align-items: center; justify-content: center;
+  background: #eceff3; color: #9aa2ad; font-size: 11px; font-weight: 700;
+}
+.hz-real .hz-slide-item .txt-area { padding: 8px 9px 10px; }
+.hz-real .hz-slide-foot { margin: 6px 0 0; font-size: 11px; color: #8a8a8a; }
+
 /* 강조 / 흐리게 — 배경·테두리를 씌우지 않는다.
    나머지를 충분히 흐리게 두면 대비만으로 어디를 보라는지 드러난다. */
 .hz-real .hz-hi { position: relative; z-index: 2; }
