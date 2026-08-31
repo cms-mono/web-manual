@@ -1276,6 +1276,33 @@ function PeekModal({ target, onClose, onNavigate }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  /* 탭 줄이 한 화면에 다 안 들어간다(탭이 15개를 넘고 계속 는다).
+     가로로 스크롤되긴 했지만 스크롤바를 숨겨 둬서 그냥 잘린 것처럼 보였다.
+     양끝에 화살표를 두고, 더 갈 곳이 있을 때만 켠다. */
+  const tabsRef = React.useRef(null);
+  const [tabEdge, setTabEdge] = React.useState({ l: false, r: false });
+  const syncTabEdge = React.useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setTabEdge({ l: el.scrollLeft > 2, r: el.scrollLeft < max - 2 });
+  }, []);
+  React.useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    // 지금 보고 있는 탭을 가운데로 — scrollIntoView 는 바깥까지 움직여 직접 계산한다
+    const on = el.querySelector(".peek-tab.on");
+    if (on) el.scrollLeft = Math.max(0, on.offsetLeft - (el.clientWidth - on.offsetWidth) / 2);
+    syncTabEdge();
+    el.addEventListener("scroll", syncTabEdge, { passive: true });
+    window.addEventListener("resize", syncTabEdge);
+    return () => { el.removeEventListener("scroll", syncTabEdge); window.removeEventListener("resize", syncTabEdge); };
+  }, [syncTabEdge, idx, pages]);
+  function nudgeTabs(dir) {
+    const el = tabsRef.current;
+    if (el) el.scrollBy({ left: dir * Math.max(180, el.clientWidth * 0.7), behavior: "smooth" });
+  }
+
   if (!agent) return null;
   const page = pages[idx] || pages[0];
   const prev = idx > 0 ? pages[idx - 1] : null;
@@ -1307,12 +1334,22 @@ function PeekModal({ target, onClose, onNavigate }) {
           </div>
         </div>
         {pages.length > 1 && (
-          <div className="peek-tabs">
-            {pages.map((pg, i) => (
-              <button key={pg.key} className={"peek-tab" + (i === idx ? " on" : "")} onClick={() => go(i)}>
-                {pg.title}
-              </button>
-            ))}
+          <div className="peek-tabsbar">
+            <button className={"peek-tabnav l" + (tabEdge.l ? " on" : "")} onClick={() => nudgeTabs(-1)}
+                    tabIndex={tabEdge.l ? 0 : -1} aria-label="이전 탭 보기">
+              <Icon name="chevron" size={15} />
+            </button>
+            <div className="peek-tabs" ref={tabsRef}>
+              {pages.map((pg, i) => (
+                <button key={pg.key} className={"peek-tab" + (i === idx ? " on" : "")} onClick={() => go(i)}>
+                  {pg.title}
+                </button>
+              ))}
+            </div>
+            <button className={"peek-tabnav r" + (tabEdge.r ? " on" : "")} onClick={() => nudgeTabs(1)}
+                    tabIndex={tabEdge.r ? 0 : -1} aria-label="다음 탭 보기">
+              <Icon name="chevron" size={15} />
+            </button>
           </div>
         )}
         <div className="peek-body" ref={bodyRef}>
