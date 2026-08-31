@@ -2022,15 +2022,17 @@ mark.search-hit {
 .hz-tour-view.up::before { opacity: 1; }
 .hz-tour-view.down::after { opacity: 1; }
 
-/* 강조 / 흐리게 */
-.hz-real .hz-hi {
-  background: #fff6d5 !important;
-  box-shadow: 0 0 0 2px rgb(234, 160, 20), 0 2px 10px -2px rgba(234, 160, 20, .55);
-  border-radius: 4px; position: relative; z-index: 2;
-}
-.hz-real .hz-hi th, .hz-real .hz-hi .tit, .hz-real .hz-hi h2 { color: #111 !important; font-weight: 800 !important; }
-.hz-real button.hz-hi { background: #ffd85e !important; border-color: rgb(234, 160, 20) !important; color: #111 !important; }
-.hz-real .hz-lo { opacity: .28; }
+/* 강조 / 흐리게 — 배경·테두리를 씌우지 않는다.
+   나머지를 충분히 흐리게 두면 대비만으로 어디를 보라는지 드러난다. */
+.hz-real .hz-hi { position: relative; z-index: 2; }
+.hz-real .hz-hi th,
+.hz-real .hz-hi .tit,
+.hz-real .hz-hi h2,
+.hz-real .hz-hi > td > label,
+.hz-real .hz-hi .card-header h2 { color: #111 !important; font-weight: 700 !important; }
+.hz-real .hz-hi td, .hz-real .hz-hi label { color: #222 !important; }
+.hz-real button.hz-hi { font-weight: 700 !important; }
+.hz-real .hz-lo { opacity: .22; }
 
 /* 진행 표시 */
 .hz-tour-foot {
