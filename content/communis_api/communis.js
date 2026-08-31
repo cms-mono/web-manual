@@ -557,8 +557,8 @@ print(res.status_code, res.text)`;
               "<b>③ 발신정보</b> — 등록·승인된 발신번호 선택",
               "<b>④ 발송옵션</b> — 즉시 발송 / 예약 발송",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "신규 발송 4단계(메시지 작성·발송대상·발신정보·발송옵션)" },
-            note: "작성 중 <b>[테스트 발송]</b>으로 담당자 번호에 먼저 보내 확인하고, <b>[미리보기]</b>·우측 실시간 미리보기로 실제 표시를 확인할 수 있습니다.",
+            shot: { img: "assets/communis/web-flow-steps.png", url: "communis.kt.co.kr/ums/user/send/rcs/sendNew.do", label: "②발송대상 · ③발신번호 · ④발송옵션 — 채널이 달라도 같은 모양" },
+            note: "위 화면은 <b>②~④단계</b>입니다. <b>①메시지 작성</b>은 채널마다 달라 각 채널 탭에서 다룹니다. 작성 중 <b>[테스트 발송]</b>으로 담당자 번호에 먼저 보내 확인하고, 우측 실시간 미리보기로 실제 표시를 확인할 수 있습니다.",
           },
           {
             title: "광고성 메시지 처리",
@@ -581,7 +581,7 @@ print(res.status_code, res.text)`;
               "<b>템플릿 발송하기</b> — 미리 등록한 문자 템플릿을 불러와 발송",
               "<b>신규로 발송하기</b> — 원하는 내용을 직접 작성해 발송",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/message/choice.do", label: "문자 발송 방법 선택(템플릿 / 신규)" },
+            shot: { img: "assets/communis/web-sms-1-choice.png", url: "communis.kt.co.kr/ums/user/send/message/choice.do", label: "문자 발송 방법 선택(템플릿 / 신규)" },
           },
           {
             title: "① 메시지 작성",
@@ -592,7 +592,7 @@ print(res.status_code, res.text)`;
               "<b>템플릿 불러오기</b> — 등록된 문자 템플릿을 선택해 본문 자동 채움",
               "<b>광고성 메시지</b> 체크 시 무료수신거부 번호 입력",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "① 메시지 작성(종류·내용·광고성)" },
+            shot: { img: "assets/communis/web-sms-2-write.png", url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "① 메시지 작성 — 종류·내용·광고성 (우측 실시간 미리보기)" },
             note: "우측 실시간 미리보기로 (광고)·무료수신거부 표기를 확인할 수 있습니다. 종류(SMS/LMS/MMS)별 글자수·첨부 규격은 <b>API 연동 &gt; 문자</b> 탭과 동일합니다.",
           },
           {
@@ -602,6 +602,7 @@ print(res.status_code, res.text)`;
               "<b>직접 입력</b> — 수신번호를 직접 입력",
               "<b>주소록 불러오기</b> — [주소록](개인/공용)에 저장한 수신자를 선택",
             ],
+            shot: { img: "assets/communis/web-sms-3-target.png", url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "[+ 발송대상 추가하기] — 개인/공용 주소록 · 직접 등록 · 엑셀" },
             note: "치환변수를 쓰는 경우 수신자별 변수값이 함께 매핑되어야 합니다.",
           },
           {
@@ -611,7 +612,7 @@ print(res.status_code, res.text)`;
               "<b>③ 발신정보</b> — 등록·승인된 <b>발신번호</b>를 드롭다운에서 선택",
               "<b>④ 발송옵션</b> — <b>즉시 발송</b> 또는 <b>예약 발송</b>(예약 일시 지정)",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "발신번호 선택 · 발송옵션(즉시/예약)" },
+            shot: { img: "assets/communis/web-sms-4-sender.png", url: "communis.kt.co.kr/ums/user/send/message/sendNew.do", label: "③ 발신정보 — 등록·승인된 발신번호 선택" },
             note: "<b>[테스트 발송]</b>으로 담당자 번호에 먼저 보내 확인한 뒤 <b>[보내기]</b>로 실제 발송합니다.",
           },
         ],
@@ -665,6 +666,7 @@ print(res.status_code, res.text)`;
                 ["공통포맷 발송", "RCS 타입을 고르고 <b>직접 작성</b>(자유 양식)"],
               ],
             },
+            shot: { img: "assets/communis/web-rcs-1-tpl.png", url: "communis.kt.co.kr/ums/user/send/rcs/templateList.do", label: "RCS 템플릿 목록 — 브랜드명으로 조회, 승인된 템플릿만 발송 가능" },
           },
           {
             title: "공통포맷 발송 (직접 작성)",
@@ -676,7 +678,7 @@ print(res.status_code, res.text)`;
               "<b>광고성</b> 체크 시 무료수신거부 입력",
               "발송대상 → 발신정보 → 보내기",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/rcs/sendNew.do", label: "RCS 공통포맷 — RCS 타입·내용·버튼" },
+            shot: { img: "assets/communis/web-rcs-2-common.png", url: "communis.kt.co.kr/ums/user/send/rcs/sendNew.do", label: "RCS 공통포맷 — RCS 타입·내용·RCS 버튼" },
             note: "RCS 미지원 단말 대체발송(통합 RCS)·필드 상세 규격은 <b>API 연동 &gt; RCS</b> 탭을 참고하세요.",
           },
         ],
