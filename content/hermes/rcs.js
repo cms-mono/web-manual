@@ -189,7 +189,7 @@
           {
             title: "실제 화면 — 템플릿 설정 정보 · 변수 입력",
             body: "값을 넣으면 우측 미리보기가 <b>치환된 결과</b>로 바뀝니다.",
-            shot: { img: "assets/hermes/tmpl-1-form.png", url: "rcs.hermes.kt.com/message", label: "템플릿 설정 정보 · 변수 입력 · 미리보기(openrichcard)" },
+            shot: { img: "assets/hermes/tmpl-1-form.png", url: "rcs.hermes.kt.com/message", label: "템플릿 설정 정보 · 변수 입력 · 미리보기(openrichcard) — 화면은 변수 3개짜리 다른 템플릿 예시" },
             note: "<b>버튼 설정 정보 확인</b>은 위 별도 영역, <b>변수 입력</b>은 <b>메시지 공통 정보</b> 안에 있습니다. 변수 아래의 <b>21 / 90</b> 이 총합 카운터입니다.",
           },
         ],
