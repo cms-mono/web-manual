@@ -2071,6 +2071,17 @@ mark.search-hit {
 .hz-real .hz-slide-item .txt-area { padding: 8px 9px 10px; }
 .hz-real .hz-slide-foot { margin: 6px 0 0; font-size: 11px; color: #8a8a8a; }
 
+/* 템플릿 — 변수 입력 줄 (변수명 · 입력칸 · 글자수) */
+.hz-real .hz-vars { display: flex; flex-direction: column; gap: 6px; }
+.hz-real .hz-var { display: flex; align-items: center; gap: 8px; }
+.hz-real .hz-var > i {
+  flex: 0 0 66px; font-style: normal; font-size: 12px; font-weight: 700; color: #555;
+}
+.hz-real .hz-var > input { flex: 1; }
+.hz-real .hz-var > em { flex: 0 0 54px; font-style: normal; font-size: 11px; color: #9a9a9a; text-align: right; }
+.hz-real .hz-var-total { display: block; text-align: right; font-size: 11px; color: #9a9a9a; margin-top: 2px; }
+.hz-real .hz-ro { font-size: 12.5px; color: #555; }
+
 /* 강조 / 흐리게 — 배경·테두리를 씌우지 않는다.
    나머지를 충분히 흐리게 두면 대비만으로 어디를 보라는지 드러난다. */
 .hz-real .hz-hi { position: relative; z-index: 2; }
