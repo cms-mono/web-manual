@@ -1971,6 +1971,8 @@ mark.search-hit {
 .hz-say-tx span { font-size: 13.5px; color: var(--text-2); line-height: 1.68; }
 .hz-say-tx i { font-style: normal; color: var(--text-3); }
 .hz-say-tx .hz-ex { color: var(--accent-text); font-weight: 800; }
+/* 주의가 아니라 '이대로 하면 실패한다'는 대목 */
+.hz-say-tx .hz-warn { color: #b42318; font-weight: 800; }
 .hz-say-tx code {
   font-family: var(--mono-font); font-size: 12px; background: var(--surface);
   border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; color: var(--text);
