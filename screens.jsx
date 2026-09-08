@@ -2346,7 +2346,9 @@ const HZ_TYPES = {
   },
   mms: {
     id: "mms", label: "MMS 슬라이드형", spec: "기존 RCS", base: "CMwMhM0300",
-    shot: "",
+    shot: "assets/hermes/result-mms.png",
+    shotAlt: "기존 RCS · MMS 슬라이드형으로 발송한 카드가 수신자 단말에 도착한 화면",
+    shotCap: "기존 RCS · MMS 슬라이드형 수신 화면 · 카드를 옆으로 넘겨 봅니다 (첫 카드 이미지는 가림 처리)",
     set: {
       msgtype: [["규격", "기존 RCS"], ["종류", "슬라이드형(Medium, 3장)"], ["메시지 베이스", "CMwMhM0300"]],
       write: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["만료 옵션", "40초"],
@@ -2374,7 +2376,9 @@ const HZ_TYPES = {
   },
   lms: {
     id: "lms", label: "LMS", spec: "기존 RCS", base: "SL000000",
-    shot: "",
+    shot: "assets/hermes/result-lms.png",
+    shotAlt: "기존 RCS · LMS로 발송한 점검 안내가 수신자 단말에 도착한 화면",
+    shotCap: "기존 RCS · LMS 수신 화면 · 제목이 굵게 맨 위에 붙습니다 (2026-09-08 실제 발송)",
     set: {
       msgtype: [["규격", "기존 RCS"], ["종류", "LMS"], ["메시지 베이스", "SL000000"]],
       write: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["본문 복사", "허용"],
