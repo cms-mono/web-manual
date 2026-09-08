@@ -43,7 +43,7 @@
           },
         ],
         list: [
-          "<b>웹 발송</b> — <b>KT Hermes</b>(<code>rcs.hermes.kt.com</code>) 로그인 후 발송",
+          "<b>웹 발송</b> — <b>KT Hermes</b>(<a class=\"exref\" href=\"https://rcs.hermes.kt.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcs.hermes.kt.com</a>) 로그인 후 발송",
           "<b>API 발송</b> — REST API로 발송 요청 <i>(API 포털·규격은 확인 필요)</i>",
           "<b>Agent 발송</b> — <b>MCS &amp; X_MCS Agent(RCS 버전)</b>로 발송. 기존 <code>SDK_SMS/MMS_SEND</code> 테이블에 <code>RCS_*</code> 컬럼을 채워 발송",
         ],

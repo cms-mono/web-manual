@@ -1449,6 +1449,15 @@ mark.search-hit {
 .xref:hover { background: var(--accent-soft); border-radius: 4px; border-bottom-color: transparent; }
 .xref::after { content: "↗"; font-size: .85em; margin-left: 3px; opacity: .7; }
 
+/* 매뉴얼 밖(실제 서비스 사이트 등)으로 나가는 링크 — 안쪽 참조(.xref)와 구분한다 */
+.exref {
+  color: var(--accent-text); font-weight: 700; text-decoration: none;
+  border-bottom: 1px solid currentColor; padding-bottom: 1px;
+  font-family: var(--mono-font); font-size: .95em;
+}
+.exref:hover { background: var(--accent-soft); border-radius: 4px; border-bottom-color: transparent; }
+.exref::after { content: "↗"; font-size: .85em; margin-left: 3px; opacity: .7; font-family: inherit; }
+
 .peek-back {
   position: fixed; inset: 0; z-index: 200; background: rgba(15, 23, 42, .48);
   backdrop-filter: blur(2px); display: flex; align-items: flex-start; justify-content: center;
