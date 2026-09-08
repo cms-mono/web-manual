@@ -2378,7 +2378,7 @@ const HZ_TYPES = {
     id: "lms", label: "LMS", spec: "기존 RCS", base: "SL000000",
     shot: "assets/hermes/result-lms.png",
     shotAlt: "기존 RCS · LMS로 발송한 점검 안내가 수신자 단말에 도착한 화면",
-    shotCap: "기존 RCS · LMS 수신 화면 · 제목이 굵게 맨 위에 붙습니다 (2026-09-08 실제 발송)",
+    shotCap: "기존 RCS · LMS 수신 화면 · 제목이 굵게 맨 위에 붙습니다 (2026-09-08 실제 발송 · 수신자 이름은 가림 처리)",
     set: {
       msgtype: [["규격", "기존 RCS"], ["종류", "LMS"], ["메시지 베이스", "SL000000"]],
       write: [["'(광고)' 표시", "사용"], ["무료 수신거부번호", "08012345678"], ["본문 복사", "허용"],
