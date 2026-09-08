@@ -99,7 +99,7 @@
     {
       title: "카카오 비즈니스 로그인",
       body:
-        "<code>business.kakao.com</code>에 접속해 카카오 계정으로 로그인합니다. 계정이 없다면 회원가입 후 안내를 따릅니다.",
+        "<a class=\"exref\" href=\"https://business.kakao.com\" target=\"_blank\" rel=\"noopener noreferrer\">business.kakao.com</a>에 접속해 카카오 계정으로 로그인합니다. 계정이 없다면 회원가입 후 안내를 따릅니다.",
       shot: shot("business.kakao.com", "카카오 비즈니스 로그인 화면"),
     },
     {

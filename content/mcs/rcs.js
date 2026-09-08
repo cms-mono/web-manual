@@ -39,7 +39,7 @@
             title: "RCS 발송 사전 준비",
             body: "RCS를 발송하려면 <b>RCS Biz Center</b>에서 브랜드·에이전트가 등록되어 있어야 하고, RCS 계정 정보가 필요합니다.",
             list: [
-              "<b>RCS Biz Center 등록</b> — RCS 브랜드(ChatBot) 및 메시지 템플릿(메시지베이스) 등록 (<code>rcsbizcenter.com</code>)",
+              "<b>RCS Biz Center 등록</b> — RCS 브랜드(ChatBot) 및 메시지 템플릿(메시지베이스) 등록 (<a class=\"exref\" href=\"https://www.rcsbizcenter.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcsbizcenter.com</a>)",
               "<b>RCS 계정 ‘A2P 결과 처리 방식’</b> 은 반드시 <b>‘API 조회’</b> 로 설정되어야 합니다 (미설정 시 발송 결과를 수신하지 못함)",
               "<b>대행사(Agency) 고객</b> — RCS Biz Center에서 발급받은 <b>Agency ID / Agency Key</b> 가 필요하며, 발송 시 <code>RCS_BRAND_KEY</code>(BrandKey) 입력이 필수입니다",
               "<b>대표 발신번호</b> — RCS 브랜드의 대표 발신번호(<code>RCS_CHATBOT_ID</code>). 미입력 시 <code>CALLBACK</code> 값을 사용",

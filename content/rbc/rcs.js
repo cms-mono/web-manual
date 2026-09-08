@@ -26,7 +26,7 @@
         steps: [
           {
             title: "RBC란 & 전체 흐름",
-            body: "<b>RCS Biz Center(RBC)</b>는 이동통신 3사가 공동 운영하는 RCS 기업메시지 관리 포털(<code>www.rcsbizcenter.com</code>)입니다. RCS를 발송하려면 <b>RBC에서 브랜드와 대화방(발신번호)을 먼저 등록·승인</b>받아야 합니다.",
+            body: "<b>RCS Biz Center(RBC)</b>는 이동통신 3사가 공동 운영하는 RCS 기업메시지 관리 포털(<a class=\"exref\" href=\"https://www.rcsbizcenter.com\" target=\"_blank\" rel=\"noopener noreferrer\">www.rcsbizcenter.com</a>)입니다. RCS를 발송하려면 <b>RBC에서 브랜드와 대화방(발신번호)을 먼저 등록·승인</b>받아야 합니다.",
             list: [
               "① <b>RBC 가입</b> — 기업담당자(마스터/매니저) 회원가입",
               "② <b>브랜드 개설</b> — 브랜드 정보·홈 설정 후 승인 요청",
@@ -73,7 +73,7 @@
         steps: [
           {
             title: "① 회원가입 — 기업담당자",
-            body: "<code>www.rcsbizcenter.com</code> 접속 후 <b>회원가입 &gt; 기업담당자 회원가입</b>을 클릭합니다.",
+            body: "<a class=\"exref\" href=\"https://www.rcsbizcenter.com\" target=\"_blank\" rel=\"noopener noreferrer\">www.rcsbizcenter.com</a> 접속 후 <b>회원가입 &gt; 기업담당자 회원가입</b>을 클릭합니다.",
             list: [
               "<b>마스터 신청</b>(브랜드 등록 희망) — <b>사업자등록증</b> 필요",
               "대표자 본인 신청 — 본인 신분증 (휴대폰 본인인증으로 대체 가능)",

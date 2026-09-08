@@ -258,7 +258,7 @@ print(res.status_code, res.text)`;
         steps: [
           {
             title: "회원가입 — 접속 & 회원 유형 선택",
-            body: "커뮤니즈 포탈 <code>communis.kt.co.kr</code> 접속 후 <b>회원가입</b>을 클릭하고, 6가지 회원 유형 중 <b>법인사업자</b>를 선택합니다.",
+            body: "커뮤니즈 포탈 <a class=\"exref\" href=\"https://communis.kt.co.kr\" target=\"_blank\" rel=\"noopener noreferrer\">communis.kt.co.kr</a> 접속 후 <b>회원가입</b>을 클릭하고, 6가지 회원 유형 중 <b>법인사업자</b>를 선택합니다.",
             list: [
               "회원 유형 6종: 개인사업자 · 법인사업자 · 특부가 법인사업자 · 공공기관 · 재판매사 · 전문협력사",
               "법인사업자 준비 서류: <b>사업자등록증 · 법인 인감증명서 · 위임장 · 담당자 신분증</b>",
@@ -437,7 +437,7 @@ print(res.status_code, res.text)`;
               },
             ],
             shot: { img: "assets/communis/sender-rcs.png", url: "communis.kt.co.kr/sender/rcs", label: "발신정보 — RCS 발신번호" },
-            note: "대행사 권한 부여 후 <b>서버 동기화 약 3~4시간</b> 뒤 Hermes(발송)에서 브랜드·대화방이 확인됩니다. 상세: 브랜드 <code>docs.rcsbizcenter.com/policy/brand</code> · 대화방 <code>/policy/chatbot</code>. 진행 문의 02-333-7223(내선 1).",
+            note: "대행사 권한 부여 후 <b>서버 동기화 약 3~4시간</b> 뒤 Hermes(발송)에서 브랜드·대화방이 확인됩니다. 상세: 브랜드 <a class=\"exref\" href=\"https://docs.rcsbizcenter.com/policy/brand\" target=\"_blank\" rel=\"noopener noreferrer\">docs.rcsbizcenter.com/policy/brand</a> · 대화방 <code>/policy/chatbot</code>. 진행 문의 02-333-7223(내선 1).",
           },
           {
             title: "카카오 발신프로필 ① 카카오 채널 준비 (Part A)",
@@ -737,7 +737,7 @@ print(res.status_code, res.text)`;
                 ["API 도메인 (외부)", "<code>https://api.communis.kt.com</code>"],
                 ["API 도메인 (내부)", "<code>https://api-in.communis.kt.com</code> (KT 내부망 연동용)"],
                 ["인증 방식", "Basic — <code>Authorization: Basic {base64(APIID:APIPW)}</code>"],
-                ["포탈 / 문의", "<code>communis.kt.co.kr</code> 포탈 Q&amp;A 또는 <code>communis@kt.com</code>"],
+                ["포탈 / 문의", "<a class=\"exref\" href=\"https://communis.kt.co.kr\" target=\"_blank\" rel=\"noopener noreferrer\">communis.kt.co.kr</a> 포탈 Q&amp;A 또는 <code>communis@kt.com</code>"],
               ],
             },
             note: "API-ID·API-PW는 Communis 콘솔에서 발급합니다. 접속 IP 등록 등 사전 절차가 필요할 수 있습니다.",

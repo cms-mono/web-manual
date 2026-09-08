@@ -32,7 +32,7 @@
               "<b>Part A · 카카오 비즈니스</b> — ①로그인 → ②채널 생성(유형·사업자·정보) → ③비즈니스 심사 신청 → ④승인 후 검색용 ID 확인",
               "<b>Part B · 커뮤니즈</b> — ①메뉴 이동 → ②등록 시작 → ③정보 입력 → ④토큰 요청 → ⑤6자리 인증 → ⑥발신키 발급 완료",
             ],
-            note: "⚠ <b>Part A(카카오 영역)는 KT·Communis·모노의 직접 지원 범위가 아닙니다.</b> 심사 소요 시간·반려 사유 등 카카오 정책 문의는 <b>카카오 비즈니스 고객센터</b>(<code>center-pf.kakao.com</code>)로 하세요.",
+            note: "⚠ <b>Part A(카카오 영역)는 KT·Communis·모노의 직접 지원 범위가 아닙니다.</b> 심사 소요 시간·반려 사유 등 카카오 정책 문의는 <b>카카오 비즈니스 고객센터</b>(<a class=\"exref\" href=\"https://center-pf.kakao.com\" target=\"_blank\" rel=\"noopener noreferrer\">center-pf.kakao.com</a>)로 하세요.",
           },
           {
             title: "사전 준비물",
@@ -111,7 +111,7 @@
               "요구 서류 업로드 후 제출",
             ],
             shot: { img: "assets/kakao/a5-review.png", url: "business.kakao.com", label: "비즈니스 심사 신청" },
-            note: "필요 서류 — 사업자등록증 · 전자증명서 제출용 휴대폰 · (해당 시) 인허가 서류 · (대행사) 계약서·사업자등록증. <b>TIP</b> 서류의 상호·업종이 채널 정보(채널명·소개글·프로필 사진)와 <b>일치</b>해야 반려를 피할 수 있습니다. 심사 소요 시간·반려 사유는 카카오 정책에 따라 수시로 바뀌므로 <code>center-pf.kakao.com</code> 공지사항을 확인하세요.",
+            note: "필요 서류 — 사업자등록증 · 전자증명서 제출용 휴대폰 · (해당 시) 인허가 서류 · (대행사) 계약서·사업자등록증. <b>TIP</b> 서류의 상호·업종이 채널 정보(채널명·소개글·프로필 사진)와 <b>일치</b>해야 반려를 피할 수 있습니다. 심사 소요 시간·반려 사유는 카카오 정책에 따라 수시로 바뀌므로 <a class=\"exref\" href=\"https://center-pf.kakao.com\" target=\"_blank\" rel=\"noopener noreferrer\">center-pf.kakao.com</a> 공지사항을 확인하세요.",
           },
           {
             title: "⑥ 심사 승인 후 — 검색용 아이디 확인",
@@ -128,7 +128,7 @@
         steps: [
           {
             title: "① 커뮤니즈 로그인 및 메뉴 이동",
-            body: "<code>communis.kt.co.kr</code> 로그인 후 상단 <b>대시보드</b> 버튼을 클릭하고, 좌측 메뉴에서 <b>발신정보 &gt; 카카오 발신프로필</b>로 이동합니다.",
+            body: "<a class=\"exref\" href=\"https://communis.kt.co.kr\" target=\"_blank\" rel=\"noopener noreferrer\">communis.kt.co.kr</a> 로그인 후 상단 <b>대시보드</b> 버튼을 클릭하고, 좌측 메뉴에서 <b>발신정보 &gt; 카카오 발신프로필</b>로 이동합니다.",
             shot: { img: "assets/kakao/b1-menu.png", url: "communis.kt.co.kr/kakao/senderprofile", label: "발신정보 &gt; 카카오 발신프로필" },
             note: "⚠ 로그인만 한 상태(메인 페이지)에서는 <b>좌측 메뉴가 보이지 않습니다.</b> 반드시 상단 <b>대시보드</b>로 먼저 진입해야 좌측 메뉴가 나타납니다.",
           },

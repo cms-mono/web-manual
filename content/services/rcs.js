@@ -17,7 +17,7 @@
         title: "사전 준비 — RCS Biz Center 등록",
         body: "RCS 발송 전, <b>RCS Biz Center(RBC)</b>에서 회원가입 후 브랜드·대화방을 등록하고 <b>KT에 운영 권한을 부여</b>해야 합니다.",
         list: [
-          "<b>① 회원가입</b> — RCS Biz Center(<code>rcsbizcenter.com</code>) 가입",
+          "<b>① 회원가입</b> — RCS Biz Center(<a class=\"exref\" href=\"https://www.rcsbizcenter.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcsbizcenter.com</a>) 가입",
           "<b>② 브랜드 등록</b> — 발송에 사용할 RCS 브랜드 등록",
           "<b>③ 대화방 등록</b> — 브랜드의 대화방(채널) 등록",
           "<b>④ 운영 권한 부여</b> — <b>브랜드 운영 관리 → 대행사 운영권한 부여</b>에서 <b>케이티(<code>ktbizrcs</code>)</b>에게 <b>운영권한(관리)</b>을 부여",
