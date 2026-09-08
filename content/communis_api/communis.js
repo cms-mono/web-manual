@@ -633,7 +633,7 @@ print(res.status_code, res.text)`;
               "치환변수(<code>#{변수}</code>) 값 입력",
               "발송대상 추가 → 발송옵션(즉시/예약) → 보내기",
             ],
-            shot: { url: "communis.kt.co.kr/ums/user/send/alimtalk/templateList.do", label: "알림톡 — 승인 템플릿 목록에서 선택" },
+            shot: { img: "assets/communis/web-kakao-tpl.png", url: "communis.kt.co.kr/ums/user/send/alimtalk/templateList.do", label: "알림톡 템플릿 목록 — 승인된 템플릿만 카드로 표시" },
             note: "알림톡 = 정보성. 템플릿은 카카오 검수 승인 후에만 목록에 나타납니다.",
           },
           {
@@ -711,7 +711,7 @@ print(res.status_code, res.text)`;
                 ["국제SMS 발송통계", "국제 SMS 전용 통계"],
               ],
             },
-            shot: { url: "communis.kt.co.kr/ums/admin/statistics/send/list.do", label: "발송통계 — 기간·채널별 발송량/성공·실패" },
+            shot: { img: "assets/communis/web-result-stat.png", url: "communis.kt.co.kr/ums/admin/statistics/send/list.do", label: "통계 > 발송통계 — 통합/웹발송/API 탭 · 월별 채널별 성공·실패" },
             note: "대시보드 상단에서도 전체 발송량(성공/실패)과 최근 3개월 발송량 추이를 볼 수 있습니다.",
           },
           {
