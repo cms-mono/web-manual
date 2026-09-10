@@ -4,7 +4,8 @@
    rcs.hermes.kt.com 의 [메시지발송(웹)] 영역 전용 가이드.
    코딩 없이 웹에서 RCS를 직접 발송·조회·관리하는 방법을 다룬다.
 
-   ※ 브랜드·대화방(발신번호) 등록은 RBC에서 선행 → [기타·부록] RBC 가이드 참고
+   ※ 브랜드 개설 · 대화방(발신번호) 등록 · 대행사 운영권한 부여(케이티)는
+      모두 RBC에서 선행 → [기타·부록] RBC 가이드 참고
    ※ API 연동 발송은 별도(RCS API)
 
    출처: KT 스마트메시지 RCS 발송 포탈 사용자 가이드 v0.8.2 + 실제 화면(2026-08)
@@ -31,19 +32,21 @@
         steps: [
           {
             title: "웹 발송 서비스 이용 프로세스",
-            body: "발송포탈을 쓰려면 아래 단계를 순서대로 마쳐야 합니다. <b>①~②는 발송포탈 사용 전 필수 단계</b>입니다.",
+            body: "발송포탈을 쓰려면 아래 단계를 순서대로 마쳐야 합니다. <b>①~③은 RBC(RCS Biz Center)</b>에서, <b>④는 KT</b>에, <b>⑤~⑦은 발송포탈</b>에서 진행합니다. <b>①~④를 모두 마쳐야</b> 발송포탈에서 메시지를 보낼 수 있습니다.",
             table: {
               cols: ["단계", "내용", "참고"],
               colWidths: ["24%", "48%", "28%"],
               rows: [
-                ["① RBC 브랜드 생성", "RBC 사이트에서 기업·브랜드·발신번호(대화방) 생성", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-brand-1\">RBC 브랜드 개설 가이드</a>"],
-                ["② KT RCS 상품 청약", "RCS 상품 가입 등 청약 신청", "<b>KT 영업대표</b> 또는 <b>KT RCS 고객센터</b>로 문의<br><code>02-2650-0164</code> · <code>ktrcs@kt.com</code>"],
-                ["③ 고객발송포탈 로그인", "청약 완료된 계정으로 포탈 최초 로그인", "<a class=\"exref\" href=\"https://rcs.hermes.kt.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcs.hermes.kt.com</a>"],
-                ["④ 이용동의 · 발송 ID 생성", "포탈 이용동의 후 청약된 RCS_ID로 <b>발송용 P_RCS_ID</b> 생성", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-rcsid-1\">포탈 발송용 RCS ID 생성</a>"],
-                ["⑤ 메시지 발송", "생성된 <b>메시지발송(웹)</b> 메뉴에서 발송·관리", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-flowsms-1\">SMS 따라하기</a>"],
+                ["① RBC 브랜드 개설", "RBC에서 기업 가입 후 <b>브랜드를 개설</b>하고 <b>승인</b>까지 받습니다.", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-brand-1\">RBC 브랜드 개설</a>"],
+                ["② 대화방(발신번호) 등록", "그 브랜드에 <b>대화방(=발신번호)</b>을 등록하고 <b>승인</b>까지 받습니다. <b>통신서비스가입증명원</b>이 반드시 첨부되어야 합니다.", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-room-1\">대화방(발신번호) 등록</a>"],
+                ["③ 대행사 운영권한 부여", "<b>내 브랜드 관리 &gt; 브랜드 운영 관리 &gt; 대행사 운영권한 부여</b>에서 <b>‘케이티’</b>를 지정합니다. <b class=\"hz-warn\">이 단계가 빠지면 KT를 통한 발송이 되지 않습니다.</b>", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-agency-1\">대행사 운영권한 부여</a>"],
+                ["④ KT RCS 상품 청약", "RCS 상품 가입 등 청약 신청", "<b>KT 영업대표</b> 또는 <b>KT RCS 고객센터</b>로 문의<br><code>02-2650-0164</code> · <code>ktrcs@kt.com</code>"],
+                ["⑤ 고객발송포탈 로그인", "청약 완료된 계정으로 포탈 최초 로그인", "<a class=\"exref\" href=\"https://rcs.hermes.kt.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcs.hermes.kt.com</a>"],
+                ["⑥ 이용동의 · 발송 ID 생성", "포탈 이용동의 후 청약된 RCS_ID로 <b>발송용 P_RCS_ID</b> 생성", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-rcsid-1\">포탈 발송용 RCS ID 생성</a>"],
+                ["⑦ 메시지 발송", "생성된 <b>메시지발송(웹)</b> 메뉴에서 발송·관리", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-flowsms-1\">SMS 따라하기</a>"],
               ],
             },
-            note: "RBC(RCS Biz Center)는 RCS 브랜드를 생성·등록하는 사이트입니다. 브랜드·대화방 승인이 끝나야 포탈에서 발신번호를 선택할 수 있습니다. → <a class=\"xref\" data-to=\"rbc\">RCS Biz Center(RBC) 가이드</a>",
+            note: "⚠ <b>①~③은 순서를 지켜야 합니다</b> — <b>브랜드 승인이 완료된 뒤에만</b> ③ 대행사 지정이 가능합니다. 또 ③을 마쳐도 <b>서버 동기화에 약 3~4시간</b>이 걸려, 그 전에는 발송포탈의 브랜드·발신번호 목록이 비어 보일 수 있습니다.<br>발송포탈에서 <b>브랜드가 안 보이면 ①·③을</b>, <b>발신번호만 안 보이면 ②를</b> 먼저 확인하세요. → <a class=\"xref\" data-to=\"rbc\">RCS Biz Center(RBC) 가이드</a>",
           },
           {
             title: "메시지발송(웹) 메뉴 구성",
@@ -240,7 +243,7 @@
           {
             title: "⑤ 메시지 저장",
             body: "<b>메시지 이름</b>을 입력하고 <b>[메시지 저장]</b>을 누릅니다. <b>저장하지 않으면 발송할 수 없습니다</b> — 저장 없이 [발송]을 누르면 <i>메시지를 저장해야 발송이 가능합니다</i> 안내가 뜹니다. (2026-09-08 확인)",
-            note: "⚠ <b>저장하면 수신자 목록 · 발송그룹ID · 표기 의무 체크가 초기화됩니다.</b> 저장을 먼저 하고 그 다음에 수신자·발송그룹ID를 채우는 순서로 진행하세요. 예전 안내(저장 후 발송 / 저장하지 않고 발송</b> 중 선택할 수 있습니다.",
+            note: "⚠ <b>저장하면 수신자 목록 · 발송그룹ID · 표기 의무 체크가 초기화됩니다.</b> 저장을 먼저 하고, 그 다음에 발송 정보·수신자를 채우는 순서로 진행하세요.<br>가이드 v0.8.2의 <i>‘저장 후 발송 / 저장하지 않고 발송 중 선택’</i> 설명은 현재 화면과 다릅니다. (2026-09-08 실제 발송으로 확인)",
           },
           {
             title: "⑥ 발송 정보 · 수신자 · 발송",
