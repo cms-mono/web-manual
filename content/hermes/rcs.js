@@ -40,7 +40,7 @@
                 ["① RBC 브랜드 개설", "RBC에서 기업 가입 후 <b>브랜드를 개설</b>하고 <b>승인</b>까지 받습니다.", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-brand-1\">RBC 브랜드 개설</a>"],
                 ["② 대화방(발신번호) 등록", "그 브랜드에 <b>대화방(=발신번호)</b>을 등록하고 <b>승인</b>까지 받습니다. <b>통신서비스가입증명원</b>이 반드시 첨부되어야 합니다.", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-room-1\">대화방(발신번호) 등록</a>"],
                 ["③ 대행사 운영권한 부여", "<b>내 브랜드 관리 &gt; 브랜드 운영 관리 &gt; 대행사 운영권한 부여</b>에서 <b>‘케이티’</b>를 지정합니다. <b class=\"hz-warn\">이 단계가 빠지면 KT를 통한 발송이 되지 않습니다.</b>", "<a class=\"xref\" data-to=\"rbc\" data-sec=\"step-rcs-agency-1\">대행사 운영권한 부여</a>"],
-                ["④ KT RCS 상품 청약", "RCS 상품 가입 등 청약 신청", "<b>KT 영업대표</b> 또는 <b>KT RCS 고객센터</b>로 문의<br><code>02-2650-0164</code> · <code>ktrcs@kt.com</code>"],
+                ["④ KT RCS 상품 청약", "RCS 상품 가입 등 청약 신청", "<b>KT 영업대표</b> 또는 <b>KT RCS 고객센터</b>로 문의"],
                 ["⑤ 고객발송포탈 로그인", "청약 완료된 계정으로 포탈 최초 로그인", "<a class=\"exref\" href=\"https://rcs.hermes.kt.com\" target=\"_blank\" rel=\"noopener noreferrer\">rcs.hermes.kt.com</a>"],
                 ["⑥ 이용동의 · 발송 ID 생성", "포탈 이용동의 후 청약된 RCS_ID로 <b>발송용 P_RCS_ID</b> 생성", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-rcsid-1\">포탈 발송용 RCS ID 생성</a>"],
                 ["⑦ 메시지 발송", "생성된 <b>메시지발송(웹)</b> 메뉴에서 발송·관리", "<a class=\"xref\" data-to=\"hermes\" data-sec=\"step-rcs-flowsms-1\">SMS 따라하기</a>"],

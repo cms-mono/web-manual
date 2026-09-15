@@ -3060,9 +3060,10 @@ function HermesSendFlow({ type }) {
       {/* 여기부터가 따라하기 — 위의 완성 예시와 눈으로 갈라 준다 */}
       <div className="hz-sep" aria-hidden="true"><span /></div>
       <p className="hz-lead" dangerouslySetInnerHTML={{ __html:
-        "아래는 <b>실제 헤르메스 화면</b>입니다(입력은 되지 않습니다). " +
-        "<b>[다음]</b>으로 단계를 넘기면 채워야 할 영역이 차례로 표시되고, " +
-        "<b>[가이드 보기]</b>를 누르면 각 칸을 하나씩 짚어주는 안내가 열립니다." }} />
+        "아래 재현 화면을 보며 순서대로 따라해 보세요.<br>" +
+        "<b>[다음]</b>을 누르면 단계별 설정 영역이 표시됩니다." }} />
+      <p className="hz-lead" dangerouslySetInnerHTML={{ __html:
+        "항목별 설명이 필요하면 <b>[가이드 보기]</b>를 눌러주세요." }} />
 
       {/* 6단계 한눈에 — 눌러서 바로 이동. 스크롤하면 지나가므로
           지금 어느 단계인지는 아래 조작 바가 계속 알려준다. */}

@@ -15,8 +15,8 @@
 
   /* text */
   --text: #0f172a;
-  --text-2: #475569;
-  --text-3: #94a3b8;
+  --text-2: #334155;
+  --text-3: #64748b;
   --text-inv: #ffffff;
 
   /* accent (indigo) */
@@ -79,8 +79,8 @@
   --border-strong: #324063;
 
   --text: #eef2f9;
-  --text-2: #a9b4c9;
-  --text-3: #6b7793;
+  --text-2: #c3ccdc;
+  --text-3: #93a0bb;
   --text-inv: #0b1120;
 
   --accent: #818cf8;
@@ -271,7 +271,7 @@ button { font-family: inherit; cursor: pointer; }
 .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
 .tab:not(.active):hover { color: var(--text); }
 .tab svg { width: 16px; height: 16px; }
-.tab-hint { text-align: center; color: var(--text-3); font-size: 14px; margin: 0 0 30px; }
+.tab-hint { text-align: center; color: var(--text-3); font-size: 15px; margin: 0 0 30px; }
 
 /* card grids */
 .grid { display: grid; gap: 18px; }
@@ -433,7 +433,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .callout .ico { color: var(--accent-text); flex-shrink: 0; margin-top: 1px; }
 .callout .ico svg { width: 20px; height: 20px; }
-.callout-body { font-size: 14px; color: var(--text); line-height: 1.6; }
+.callout-body { font-size: 15px; color: var(--text); line-height: 1.6; }
 .callout-body b { font-weight: 700; }
 .callout.warn { background: var(--legacy-soft); border-color: var(--legacy-border); }
 .callout.warn .ico { color: var(--legacy); }
@@ -447,7 +447,7 @@ button { font-family: inherit; cursor: pointer; }
   display: grid; place-items: center; font-weight: 800; font-size: 14px; flex-shrink: 0;
 }
 .svc-section-head h2 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 0; flex: 1; }
-.svc-section-meta { font-size: 14px; color: var(--text-2); margin: 0 0 6px 44px; }
+.svc-section-meta { font-size: 15px; color: var(--text-2); margin: 0 0 6px 44px; }
 
 /* download bar */
 .dl-bar {
@@ -502,11 +502,11 @@ button { font-family: inherit; cursor: pointer; }
   padding: 18px 20px; min-width: 0;
 }
 .step-body h4 { font-size: 16px; font-weight: 700; margin: 0 0 8px; letter-spacing: -.01em; }
-.step-body p { font-size: 14px; color: var(--text-2); margin: 0; line-height: 1.65; text-wrap: pretty; }
-.step-body ol, .step-body ul { font-size: 14px; color: var(--text-2); margin: 8px 0 0; padding-left: 20px; line-height: 1.7; }
+.step-body p { font-size: 15px; color: var(--text-2); margin: 0; line-height: 1.65; text-wrap: pretty; }
+.step-body ol, .step-body ul { font-size: 15px; color: var(--text-2); margin: 8px 0 0; padding-left: 20px; line-height: 1.7; }
 .step-body li { margin-bottom: 4px; }
 .step-body li::marker { color: var(--text-3); font-weight: 700; }
-.step-body code { font-family: var(--mono-font); font-size: 12.5px; background: var(--bg-sunken); padding: 1px 6px; border-radius: 5px; color: var(--accent-text); }
+.step-body code { font-family: var(--mono-font); font-size: 13.5px; background: var(--bg-sunken); padding: 1px 6px; border-radius: 5px; color: var(--accent-text); }
 .step-note {
   display: flex; gap: 9px; margin-top: 12px; padding: 11px 13px; border-radius: 9px;
   background: var(--bg-soft); border: 1px solid var(--border); font-size: 13px; color: var(--text-2); line-height: 1.55;
@@ -843,7 +843,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 .cap-head { display: flex; align-items: center; gap: 16px; margin: 12px 0 14px; }
 .cap-avatar { width: 56px; height: 56px; border-radius: 15px; flex-shrink: 0; display: grid; place-items: center; font-weight: 800; font-size: 16px; }
 .cap-head h1 { font-size: 27px; font-weight: 800; letter-spacing: -0.5px; }
-.cap-head p { font-size: 14.5px; color: var(--text-2); margin-top: 4px; }
+.cap-head p { font-size: 15.5px; color: var(--text-2); margin-top: 4px; }
 
 .cap-jump {
   display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; position: sticky; top: 72px; z-index: 5;
@@ -857,7 +857,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 .cap-section-num { width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
 .cap-section-head h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.4px; }
 .cap-ctx { font-size: 12px; font-weight: 700; color: var(--accent-text); background: var(--accent-soft); padding: 2px 9px; border-radius: 20px; }
-.cap-intro { font-size: 14px; color: var(--text-2); margin: 0 0 18px 36px; }
+.cap-intro { font-size: 15px; color: var(--text-2); margin: 0 0 18px 36px; }
 
 .cap-stack { display: flex; flex-direction: column; gap: 16px; }
 /* 본문 그룹 구분 헤더 (발송하기 / DB 테이블 규격 / 결과 확인) */
@@ -870,7 +870,7 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 .cap-step { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 18px 22px 20px; scroll-margin-top: 92px; }
 .cap-step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cap-num { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent-text); font-size: 12px; font-weight: 800; display: grid; place-items: center; flex-shrink: 0; }
-.cap-step-head h3 { font-size: 16.5px; font-weight: 700; letter-spacing: -0.3px; }
+.cap-step-head h3 { font-size: 17.5px; font-weight: 700; letter-spacing: -0.3px; }
 /* 소제목 클릭 → 섹션 링크 복사 */
 .cap-step-head h3.cap-title { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; border-radius: 7px; padding: 1px 4px; margin: -1px -4px; transition: background .12s; }
 .cap-step-head h3.cap-title:hover { background: var(--accent-soft); }
@@ -892,39 +892,39 @@ button.site-link { font: inherit; color: inherit; text-align: left; cursor: poin
 .cap-snap:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 .cap-step .shot { margin-top: 0; }
 .cap-step .shot-canvas { height: 300px; }
-.cap-caption { font-size: 13.5px; color: var(--text-2); margin-top: 10px; padding-left: 2px; }
+.cap-caption { font-size: 14.5px; color: var(--text-2); margin-top: 10px; padding-left: 2px; }
 
 /* 상세 헤더 소개 불릿 */
-.cap-lead { font-size: 14.5px; color: var(--text-2); margin: 6px 0 26px; line-height: 1.6; }
+.cap-lead { font-size: 15.5px; color: var(--text-2); margin: 6px 0 26px; line-height: 1.6; }
 .cap-lead-list { list-style: none; margin: 8px 0 30px; padding: 0; display: flex; flex-direction: column; gap: 9px; }
-.cap-lead-list li { position: relative; padding-left: 20px; font-size: 14.5px; color: var(--text-2); line-height: 1.55; }
+.cap-lead-list li { position: relative; padding-left: 20px; font-size: 15.5px; color: var(--text-2); line-height: 1.55; }
 .cap-lead-list li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .cap-lead-list b { color: var(--text); font-weight: 700; }
-.cap-lead-list code { font-family: var(--mono-font); font-size: 12.5px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent-text); }
+.cap-lead-list code { font-family: var(--mono-font); font-size: 13.5px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--accent-text); }
 
 /* 스텝 본문 (설명/목록/표/코드/노트) */
 .cap-body { padding-left: 34px; display: flex; flex-direction: column; gap: 12px; }
-.cap-body > p { font-size: 14.5px; color: var(--text-2); line-height: 1.65; }
-.cap-body code { font-family: var(--mono-font); font-size: 12.5px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; color: var(--accent-text); }
+.cap-body > p { font-size: 15.5px; color: var(--text-2); line-height: 1.65; }
+.cap-body code { font-family: var(--mono-font); font-size: 13.5px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; color: var(--accent-text); }
 .cap-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.cap-list li { position: relative; padding-left: 18px; font-size: 14px; color: var(--text-2); line-height: 1.55; }
+.cap-list li { position: relative; padding-left: 18px; font-size: 15px; color: var(--text-2); line-height: 1.55; }
 .cap-list li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 2px; background: var(--border-strong); }
 
 /* 표 레이아웃 */
 .cap-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); }
-.cap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cap-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .cap-table.fixed { table-layout: fixed; }
 .cap-table.fixed td { word-break: keep-all; overflow-wrap: anywhere; }
 .cap-table th, .cap-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); }
-.cap-table th { background: var(--surface-2); font-weight: 700; color: var(--text); font-size: 12px; white-space: nowrap; }
+.cap-table th { background: var(--surface-2); font-weight: 700; color: var(--text); font-size: 13px; white-space: nowrap; }
 .cap-table td { color: var(--text-2); vertical-align: top; }
 .cap-table.schema td:first-child { font-family: var(--mono-font); font-size: 12px; color: var(--text); white-space: nowrap; }
 .cap-table tr:last-child td { border-bottom: none; }
-.cap-table code { font-family: var(--mono-font); font-size: 12px; background: none; border: none; padding: 0; color: var(--text); }
+.cap-table code { font-family: var(--mono-font); font-size: 13px; background: none; border: none; padding: 0; color: var(--text); }
 
 /* 여러 표 묶음 (네트워크 설정 등) */
 .cap-subtable + .cap-subtable { margin-top: 0; } /* 간격은 cap-body의 gap(12px)으로 통일 */
-.cap-subtable-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.cap-subtable-label { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
 
 /* 코드 / 쿼리 블록 — 터미널 스타일 (상단 신호등 점) */
 .cap-code {
@@ -1006,7 +1006,7 @@ mark.search-hit {
 .mstg-fmt { font-size: 11.5px; color: var(--text-3); font-family: var(--mono-font); }
 
 /* 노트 */
-.cap-note { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--text-2); background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; line-height: 1.55; }
+.cap-note { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: var(--text-2); background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; line-height: 1.55; }
 .cap-note .ni { color: var(--accent-text); flex-shrink: 0; margin-top: 1px; display: flex; }
 
 /* 전체보기 등 강조 CTA 버튼 (스텝 본문 내) */
@@ -1171,14 +1171,14 @@ mark.search-hit {
 }
 .cap-wip-ico { font-size: 30px; line-height: 1; }
 .cap-wip-title { font-size: 16px; font-weight: 800; margin-bottom: 5px; }
-.cap-wip p { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+.cap-wip p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
 
 /* 좌측 네비 + 페이지 레이아웃 */
 .doc-layout { display: grid; grid-template-columns: 224px 1fr; gap: 34px; align-items: start; margin-top: 6px; }
 .doc-nav { position: sticky; top: 78px; align-self: start; display: flex; flex-direction: column; gap: 3px; max-height: calc(100vh - 96px); overflow: auto; padding-right: 4px; }
 .doc-nav-group + .doc-nav-group { margin-top: 14px; }
 .doc-nav-svc { font-size: 11.5px; font-weight: 800; color: var(--text-3); padding: 4px 10px 6px; }
-.doc-nav-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; text-align: left; font-size: 13.5px; font-weight: 600; color: var(--text-2); padding: 8px 12px; border-radius: 8px; border: none; border-left: 2px solid transparent; background: none; cursor: pointer; line-height: 1.4; }
+.doc-nav-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; text-align: left; font-size: 14.5px; font-weight: 600; color: var(--text-2); padding: 8px 12px; border-radius: 8px; border: none; border-left: 2px solid transparent; background: none; cursor: pointer; line-height: 1.4; }
 .doc-nav-caret { flex-shrink: 0; opacity: .5; transition: transform .18s ease; }
 .doc-nav-item.active .doc-nav-caret { opacity: .8; }
 .doc-nav-item:hover { background: var(--bg-soft); color: var(--text); }
@@ -1631,15 +1631,15 @@ mark.search-hit {
   flex-shrink: 0; font-size: 11px; font-weight: 800; letter-spacing: .04em;
   color: var(--accent-text); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px;
 }
-.hz-goal-head b { flex: 1; font-size: 14.5px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.hz-goal-head b { flex: 1; font-size: 15.5px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
 .hz-goal-arr { color: var(--text-3); transition: transform .18s; flex-shrink: 0; }
 .hz-goal.open .hz-goal-arr { transform: rotate(90deg); }
 .hz-goal-body {
   display: flex; justify-content: center;
   padding: 14px 16px 16px; border-top: 1px solid var(--border);
 }
-.hz-goal-tx p { font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 0 0 8px; }
-.hz-goal-tx ul { margin: 0 0 8px; padding-left: 18px; font-size: 13px; color: var(--text-2); line-height: 1.75; }
+.hz-goal-tx p { font-size: 14.5px; color: var(--text-2); line-height: 1.7; margin: 0 0 8px; }
+.hz-goal-tx ul { margin: 0 0 8px; padding-left: 18px; font-size: 14px; color: var(--text-2); line-height: 1.75; }
 .hz-goal-tx code {
   font-family: var(--mono-font); font-size: 12px; background: var(--bg-sunken);
   padding: 1px 5px; border-radius: 4px;
@@ -1667,7 +1667,7 @@ mark.search-hit {
   display: block; width: 100%; max-width: 560px; height: auto;
   border: 1px solid var(--border); border-radius: 10px;
 }
-.hz-goal-shot figcaption { font-size: 11.5px; color: var(--text-3); font-weight: 600; }
+.hz-goal-shot figcaption { font-size: 12.5px; color: var(--text-3); font-weight: 600; }
 .hz-goal-todo {
   margin: 0; padding: 26px 14px; text-align: center;
   font-size: 12.5px; font-weight: 600; color: var(--text-3);
@@ -1679,13 +1679,13 @@ mark.search-hit {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
   padding-top: 10px; margin-top: 2px; border-top: 1px dashed var(--border);
 }
-.hz-set-k { font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: var(--text-3); margin-right: 2px; }
+.hz-set-k { font-size: 11.5px; font-weight: 800; letter-spacing: .04em; color: var(--text-3); margin-right: 2px; }
 .hz-set-i {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; color: var(--text); background: var(--surface);
   border: 1px solid var(--border); border-radius: 100px; padding: 3px 10px;
 }
-.hz-set-i i { font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--text-3); }
+.hz-set-i i { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--text-3); }
 
 @media (max-width: 860px) {
   .hz-goal-body { grid-template-columns: minmax(0,1fr); }
@@ -1772,7 +1772,7 @@ mark.search-hit {
 .hz-sep::before, .hz-sep::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 .hz-sep span { width: 4px; height: 4px; border-radius: 50%; background: var(--border-strong); }
 .hz-lead {
-  font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 0 0 14px;
+  font-size: 15px; color: var(--text-2); line-height: 1.7; margin: 0 0 14px;
 }
 .hz-lead b { color: var(--text); font-weight: 700; }
 
@@ -1790,15 +1790,15 @@ mark.search-hit {
 }
 .hz-steps button:hover { border-color: var(--accent); }
 .hz-steps .n {
-  font-size: 10.5px; font-weight: 800; color: var(--text-3);
+  font-size: 11.5px; font-weight: 800; color: var(--text-3);
   font-variant-numeric: tabular-nums;
 }
 .hz-steps b {
-  font-size: 12.5px; font-weight: 700; color: var(--text-2); line-height: 1.3;
+  font-size: 13.5px; font-weight: 700; color: var(--text-2); line-height: 1.3;
   word-break: keep-all;
 }
 .hz-steps em {
-  font-style: normal; font-size: 10px; font-weight: 700; color: var(--text-3);
+  font-style: normal; font-size: 11px; font-weight: 700; color: var(--text-3);
   background: var(--bg-sunken); border-radius: 100px; padding: 1px 6px;
 }
 .hz-steps li.done button { background: var(--surface-2); }
@@ -1831,8 +1831,8 @@ mark.search-hit {
 }
 .hz-head-acts { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
 .hz-head-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.hz-head-tx span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-.hz-head-tx em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
+.hz-head-tx span { font-size: 14.5px; color: var(--text-2); line-height: 1.6; }
+.hz-head-tx em { font-style: normal; font-size: 13.5px; color: var(--text-3); line-height: 1.55; }
 
 /* 제목 드롭다운 — 눌러서 원하는 단계로 바로 이동 */
 .hz-pick { position: relative; }
@@ -1871,7 +1871,7 @@ mark.search-hit {
 }
 .hz-dots { display: inline-flex; gap: 4px; }
 .hz-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); display: block; }
-.hz-path { flex: 1; font-size: 11px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hz-path { flex: 1; font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hz-live {
   flex-shrink: 0; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px;
   background: var(--accent-soft); color: var(--accent-text);
@@ -1889,7 +1889,7 @@ mark.search-hit {
 
 /* 상단 탭(장식) */
 .hz-tabrow { display: flex; gap: 4px; border-bottom: 1px solid #dadbdd; margin-bottom: 4px; }
-.hz-tabon, .hz-taboff { padding: 9px 16px; font-size: 13px; font-weight: 500; }
+.hz-tabon, .hz-taboff { padding: 9px 16px; font-size: 14px; font-weight: 500; }
 .hz-tabon { color: rgb(27,174,197); border-bottom: 2px solid rgb(27,174,197); }
 .hz-taboff { color: #999; }
 
@@ -1940,9 +1940,9 @@ mark.search-hit {
   padding: 13px 20px; border-bottom: 1px solid var(--border); background: var(--surface-2);
   display: flex; flex-direction: column; gap: 4px;
 }
-.hz-zoom-desc span { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-.hz-zoom-desc em { font-style: normal; font-size: 12.5px; color: var(--text-3); line-height: 1.55; }
-.hz-zoom-cta { font-size: 12.5px; font-weight: 700; color: var(--text-3); margin-top: 2px; }
+.hz-zoom-desc span { font-size: 14.5px; color: var(--text-2); line-height: 1.6; }
+.hz-zoom-desc em { font-style: normal; font-size: 13.5px; color: var(--text-3); line-height: 1.55; }
+.hz-zoom-cta { font-size: 13.5px; font-weight: 700; color: var(--text-3); margin-top: 2px; }
 .hz-zoom-cta span {
   color: var(--accent-text); background: var(--accent-soft);
   padding: 1px 7px; border-radius: 20px; font-weight: 800;
@@ -1976,8 +1976,8 @@ mark.search-hit {
   display: inline-flex; align-items: center; justify-content: center; margin-top: 1px;
 }
 .hz-say-tx { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.hz-say-tx b { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
-.hz-say-tx span { font-size: 13.5px; color: var(--text-2); line-height: 1.68; }
+.hz-say-tx b { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
+.hz-say-tx span { font-size: 15px; color: var(--text-2); line-height: 1.68; }
 .hz-say-tx i { font-style: normal; color: var(--text-3); }
 .hz-say-tx .hz-ex { color: var(--accent-text); font-weight: 800; }
 /* 주의가 아니라 '이대로 하면 실패한다'는 대목 */
@@ -2118,7 +2118,7 @@ mark.search-hit {
 .hz-tour-dots i:hover { transform: scale(1.25); }
 .hz-tour-dots i.done { background: color-mix(in srgb, var(--accent) 45%, transparent); }
 .hz-tour-dots i.on { background: var(--accent); transform: scale(1.3); }
-.hz-tour-hint { font-size: 11.5px; color: var(--text-3); font-weight: 600; }
+.hz-tour-hint { font-size: 12.5px; color: var(--text-3); font-weight: 600; }
 
 /* 본문의 '가이드 보기' 버튼은 눈에 띄게 */
 /* 공통 / 유형별 꼬리표 */
@@ -2151,4 +2151,4 @@ mark.search-hit {
 .hz-navbtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-text); }
 .hz-navbtn.pri:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
 .hz-navbtn:disabled { opacity: .4; cursor: default; }
-.hz-navbtn.sm { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; font-size: 12.5px; }
+.hz-navbtn.sm { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; font-size: 13.5px; }
