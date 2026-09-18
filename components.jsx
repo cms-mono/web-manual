@@ -139,16 +139,28 @@ function highlight(text, q) {
 }
 
 /* ---------------- 검색바 + 자동완성 ---------------- */
-function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
-  const [q, setQ] = React.useState("");
+function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, onQueryChange, noAc }) {
+  const [q, setQ] = React.useState(initial || "");
   const [open, setOpen] = React.useState(false);
-  const [active, setActive] = React.useState(0);
+  /* -1 = 아직 아무 제안도 고르지 않음.
+     이 상태에서 Enter 를 누르면 '검색 결과 페이지'로 간다. 예전에는 0 으로
+     시작해서 Enter 가 항상 첫 제안 문서로 튀었고, 그래서 결과 페이지는
+     검색 결과가 하나도 없을 때만 열렸다. */
+  const [active, setActive] = React.useState(-1);
   const ref = React.useRef(null);
   const inputRef = React.useRef(null);
 
   React.useEffect(() => {
     if (autoFocus && inputRef.current) inputRef.current.focus();
   }, [autoFocus]);
+
+  // 주소(?q=)로 들어온 검색어를 입력칸에 채운다
+  React.useEffect(() => { setQ(initial || ""); }, [initial]);
+
+  function change(v) {
+    setQ(v);
+    if (onQueryChange) onQueryChange(v);   // 결과 페이지는 이걸로 즉시 걸러낸다
+  }
 
   React.useEffect(() => {
     function onDoc(e) {
@@ -163,7 +175,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
     return searchIndex(index, q).slice(0, 8);
   }, [q, index]);
 
-  React.useEffect(() => setActive(0), [q]);
+  React.useEffect(() => setActive(-1), [q]);
 
   function go(r) {
     setOpen(false);
@@ -176,21 +188,23 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
     onNavigate(route);
   }
   function submit() {
-    if (results[active]) {
-      go(results[active]);
-    } else if (q.trim()) {
-      setOpen(false);
-      if (inputRef.current) inputRef.current.blur();
-      onNavigate({ name: "search", q: q.trim() });
-    }
+    // 방향키·마우스로 제안을 고른 뒤 Enter → 그 문서로
+    if (active >= 0 && results[active]) { go(results[active]); return; }
+    // 그냥 Enter → 검색 결과 페이지로
+    const term = q.trim();
+    if (!term) return;
+    setOpen(false);
+    if (inputRef.current) inputRef.current.blur();
+    onNavigate({ name: "search", q: term });
   }
   function onKey(e) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      setOpen(true);
       setActive((a) => Math.min(a + 1, results.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((a) => Math.max(a - 1, 0));
+      setActive((a) => Math.max(a - 1, -1));
     } else if (e.key === "Enter") {
       e.preventDefault();
       submit();
@@ -212,7 +226,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
           value={q}
           placeholder={placeholder || "문서·서비스·Agent 검색…"}
           onChange={(e) => {
-            setQ(e.target.value);
+            change(e.target.value);
             setOpen(true);
           }}
           onFocus={() => q && setOpen(true)}
@@ -220,7 +234,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
           onKeyDown={onKey}
         />
         {q ? (
-          <button className="search-clear" onClick={() => { setQ(""); inputRef.current.focus(); }} aria-label="지우기">
+          <button className="search-clear" onClick={() => { change(""); inputRef.current.focus(); }} aria-label="지우기">
             <Icon name="x" size={16} />
           </button>
         ) : (
@@ -228,7 +242,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus }) {
         )}
       </div>
 
-      {open && q.trim() && (
+      {!noAc && open && q.trim() && (
         <div className="ac">
           {results.length === 0 ? (
             <div className="ac-empty">

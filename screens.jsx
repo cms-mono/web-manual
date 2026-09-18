@@ -1901,13 +1901,22 @@ function SearchResults({ query, index, onNavigate }) {
               onNavigate={onNavigate}
               large
               autoFocus
+              noAc
+              initial={query}
+              onQueryChange={setQ}
               placeholder="검색어를 입력하세요…"
             />
           </div>
           <h1>
-            <span className="q">"{q}"</span> 검색 결과
+            {q.trim()
+              ? <><span className="q">"{q}"</span> 검색 결과</>
+              : "검색"}
           </h1>
-          <p className="meta">{results.length}건의 결과를 찾았습니다.</p>
+          <p className="meta">
+            {q.trim()
+              ? results.length + "건의 결과를 찾았습니다."
+              : "매뉴얼 본문 · 서비스 · Agent · 결과코드를 한 번에 찾습니다."}
+          </p>
         </div>
 
         <div className="results-filters">
@@ -1923,7 +1932,13 @@ function SearchResults({ query, index, onNavigate }) {
           ))}
         </div>
 
-        {filtered.length === 0 ? (
+        {!q.trim() ? (
+          <div className="empty-state">
+            <div className="ico"><Icon name="search" size={30} /></div>
+            <h3>검색어를 입력하세요</h3>
+            <p>예) <b>55709</b> · <b>대화방</b> · <b>Fallback</b> · <b>주소록</b></p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="empty-state">
             <div className="ico"><Icon name="search" size={30} /></div>
             <h3>결과가 없습니다</h3>
