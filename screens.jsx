@@ -1339,7 +1339,7 @@ function PeekModal({ target, onClose, onNavigate }) {
   const href = location.href.split("#")[0] + routeToHash(route);
 
   return (
-    <div className="peek-back" onClick={onClose}>
+    <div className={"peek-back" + (target.over ? " top" : "")} onClick={onClose}>
       <div className="peek" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="peek-head">
           <div className="peek-tt">
@@ -1409,7 +1409,11 @@ function PeekModal({ target, onClose, onNavigate }) {
   );
 }
 
-/* 본문 어디서든 a.xref 클릭을 가로채 미리보기를 띄운다 */
+/* 본문 어디서든 a.xref 클릭을 가로채 미리보기를 띄운다.
+
+   캡처 단계로 듣는다 — 미리보기·크게보기·따라하기 패널은 배경을 눌렀을 때만
+   닫히게 하려고 onClick 에서 stopPropagation 을 한다. 그 탓에 버블 단계로는
+   패널 안의 xref 클릭이 여기까지 오지 못해 링크가 통째로 죽어 있었다. */
 function usePeek() {
   const [target, setTarget] = React.useState(null);
   React.useEffect(() => {
@@ -1419,10 +1423,13 @@ function usePeek() {
       const t = peekTargetOf(a);
       if (!t) return;
       e.preventDefault();
+      e.stopPropagation();   // 열려 있던 패널이 닫히거나 따라하기가 넘어가지 않게
+      // 따라하기·크게보기(z 210) 안에서 눌렀다면 미리보기를 그 위로 띄운다
+      t.over = !!document.querySelector(".peek-back.over");
       setTarget(t);
     }
-    document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
   }, []);
   return [target, setTarget];
 }
@@ -2689,6 +2696,8 @@ function HzZoom({ step, idx, steps, type, onClose, onGo, onGuide, paused }) {
   React.useEffect(() => {
     if (paused) return;
     function onKey(e) {
+      // 위에 미리보기가 떠 있으면 그쪽이 먼저다
+      if (document.querySelector(".peek-back.top")) return;
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") onGo(idx + 1);
       if (e.key === "ArrowLeft") onGo(idx - 1);
@@ -2816,6 +2825,8 @@ function HzTour({ stepIdx, sub, steps, type, onMove, onClose }) {
 
   React.useEffect(() => {
     function onKey(e) {
+      // 위에 미리보기가 떠 있으면 그쪽이 먼저다
+      if (document.querySelector(".peek-back.top")) return;
       if (e.key === "Escape") { e.preventDefault(); onClose(); return; }
       if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); onMove(1); }
       if (e.key === "ArrowLeft") { e.preventDefault(); onMove(-1); }

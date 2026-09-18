@@ -1958,6 +1958,8 @@ mark.search-hit {
    세로 flex — 설명은 위에 고정, 화면은 남은 높이를 채우되 넘치지 않는다.
    팝업 안에 스크롤은 만들지 않고, 화면을 '옮겨서' 강조 지점을 보여준다. */
 .peek-back.over { z-index: 210; }
+/* 따라하기·크게보기 안에서 상호참조를 누르면 그 위로 미리보기가 뜬다 */
+.peek-back.top { z-index: 220; }
 .hz-tour {
   display: flex; flex-direction: column;
   width: min(1240px, 95vw); height: min(92vh, 940px); max-height: 92vh;
