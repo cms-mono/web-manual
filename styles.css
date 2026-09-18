@@ -226,6 +226,14 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--text-3); display: flex; justify-content: space-between; align-items: center;
   background: var(--surface-2);
 }
+/* 전체 결과 보기 — 눌러서도 갈 수 있게 (Enter 만으로는 찾기 어렵다는 피드백) */
+.ac-all {
+  font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  color: var(--accent-text); background: var(--surface); padding: 4px 10px;
+  border: 1px solid var(--border-strong); border-radius: 999px;
+  transition: background .12s, border-color .12s;
+}
+.ac-all:hover { background: var(--accent-soft); border-color: var(--accent); }
 
 /* ============================ LAYOUT ============================ */
 .page { flex: 1; }

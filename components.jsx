@@ -147,6 +147,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
      시작해서 Enter 가 항상 첫 제안 문서로 튀었고, 그래서 결과 페이지는
      검색 결과가 하나도 없을 때만 열렸다. */
   const [active, setActive] = React.useState(-1);
+  const [hover, setHover] = React.useState(-1);   // 표시만 — Enter 동작에는 관여하지 않는다
   const ref = React.useRef(null);
   const inputRef = React.useRef(null);
 
@@ -175,7 +176,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
     return searchIndex(index, q).slice(0, 8);
   }, [q, index]);
 
-  React.useEffect(() => setActive(-1), [q]);
+  React.useEffect(() => { setActive(-1); setHover(-1); }, [q]);
 
   function go(r) {
     setOpen(false);
@@ -187,15 +188,18 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
     const route = r.route && r.route.name === "agent" ? Object.assign({}, r.route, { q: term }) : r.route;
     onNavigate(route);
   }
-  function submit() {
-    // 방향키·마우스로 제안을 고른 뒤 Enter → 그 문서로
-    if (active >= 0 && results[active]) { go(results[active]); return; }
-    // 그냥 Enter → 검색 결과 페이지로
+  function showAll() {
     const term = q.trim();
     if (!term) return;
     setOpen(false);
     if (inputRef.current) inputRef.current.blur();
     onNavigate({ name: "search", q: term });
+  }
+  function submit() {
+    // 방향키로 항목을 고른 뒤 Enter → 그 문서로
+    if (active >= 0 && results[active]) { go(results[active]); return; }
+    // 그냥 Enter → 전체 결과 페이지로
+    showAll();
   }
   function onKey(e) {
     if (e.key === "ArrowDown") {
@@ -243,7 +247,7 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
       </div>
 
       {!noAc && open && q.trim() && (
-        <div className="ac">
+        <div className="ac" onMouseLeave={() => setHover(-1)}>
           {results.length === 0 ? (
             <div className="ac-empty">
               "<b>{q}</b>"에 대한 결과가 없습니다.
@@ -259,8 +263,8 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
                       return (
                         <div
                           key={r.type + r.id}
-                          className={"ac-item" + (flatIdx === active ? " active" : "")}
-                          onMouseEnter={() => setActive(flatIdx)}
+                          className={"ac-item" + (flatIdx === (hover >= 0 ? hover : active) ? " active" : "")}
+                          onMouseEnter={() => setHover(flatIdx)}
                           onMouseDown={(e) => { e.preventDefault(); go(r); }}
                         >
                           <AcIcon r={r} />
@@ -276,8 +280,14 @@ function SearchBar({ index, onNavigate, large, placeholder, autoFocus, initial, 
                 ) : null
               )}
               <div className="ac-foot">
-                <span>↑↓ 이동 · ↵ 열기</span>
-                <span>전체 결과 보기 ↵</span>
+                <span>{active >= 0 ? "↑↓ 이동 · ↵ 열기" : "↑↓ 항목 고르기"}</span>
+                <button
+                  type="button"
+                  className="ac-all"
+                  onMouseDown={(e) => { e.preventDefault(); showAll(); }}
+                >
+                  전체 결과 보기{active >= 0 ? "" : " ↵"}
+                </button>
               </div>
             </>
           )}
